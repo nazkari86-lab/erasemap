@@ -1,0 +1,29 @@
+{
+  "dataset": "Olivetti Faces via scikit-learn",
+  "dataset_source": "https://scikit-learn.org/stable/datasets/real_world.html#the-olivetti-faces-dataset",
+  "forget_subject": 0,
+  "metrics": [
+    "deleted_class_present",
+    "forgotten_class_probability",
+    "retained_test_accuracy",
+    "retained_prediction_disagreement",
+    "erasemap_status"
+  ],
+  "model": {
+    "classifier": "LogisticRegression",
+    "max_iter": 3000,
+    "pca_components": 80,
+    "pca_whiten": true,
+    "scaler": "StandardScaler"
+  },
+  "primary_endpoint": "deleted_class_present_after_exact_retraining",
+  "random_seed": 20260821,
+  "schema_version": "erasemap-real-face-v1",
+  "success_criteria": {
+    "deleted_class_present": false,
+    "erasemap_status": "COMPLETE",
+    "minimum_retained_accuracy_delta": -0.05
+  },
+  "test_images_per_subject": 3,
+  "train_images_per_subject": 7
+}

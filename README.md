@@ -29,6 +29,23 @@ valid scientific result and therefore exits successfully.
 See [docs/CORE_PROTOCOL.md](docs/CORE_PROTOCOL.md) for the frozen experiment, baselines, evidence
 contracts, receipt boundary, and interpretation rules.
 
+## Real-face experiment
+
+The repository also contains a reproducible deletion experiment on 400 public Olivetti face
+images and two actually trained identification heads: pixels → PCA → logistic regression, and a
+frozen ImageNet ResNet-18 feature extractor → PCA → logistic regression. Exact retraining without
+the requested identity is compared with the unsafe baseline of deleting its records while leaving
+the deployed model unchanged.
+
+```bash
+python -m erasemap.real_experiment
+TORCH_HOME=data/real/torch PYTHONPATH=src \
+  python experiments/run_resnet18_face_unlearning.py
+```
+
+See [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for measured results and strict
+claim boundaries.
+
 ## Development
 
 ```bash

@@ -1,0 +1,26 @@
+{
+  "backbone": {
+    "architecture": "ResNet-18",
+    "feature_dimension": 512,
+    "training_dataset": "ImageNet-1K",
+    "weights": "IMAGENET1K_V1"
+  },
+  "dataset": "Olivetti Faces via scikit-learn",
+  "forget_subject": 0,
+  "head": {
+    "classifier": "LogisticRegression",
+    "max_iter": 3000,
+    "pca_components": 80,
+    "pca_whiten": true
+  },
+  "primary_endpoint": "deleted_class_present_after_exact_head_retraining",
+  "random_seed": 20260821,
+  "schema_version": "erasemap-real-face-resnet18-v1",
+  "success_criteria": {
+    "deleted_class_present": false,
+    "erasemap_status": "COMPLETE",
+    "minimum_retained_accuracy_delta": -0.05
+  },
+  "test_images_per_subject": 3,
+  "train_images_per_subject": 7
+}

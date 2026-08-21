@@ -1,0 +1,38 @@
+{
+  "external": {
+    "dataset": {"images": 572, "name": "MUFAC content-unseen subset", "subjects": 60},
+    "exact_privacy_advantage": 0.5541845238,
+    "exact_retained_auc": 0.9256485377,
+    "functional_embedding_mse_ratio_to_stale": 1.0032592524,
+    "influence_selective_privacy_advantage": 0.6261765873,
+    "influence_selective_retained_auc": 0.9262371567,
+    "influence_selective_speedup": 3.4946280586,
+    "manifest_sha256": "481cd076417f5a016720a8ac1f49b3c45efe7f7cdc2ddbf57d86597402b92909",
+    "result_sha256": "5e0e7af5bae819ff709e9fe730429f2609d5fe52369c63359ed569c4fd668a04",
+    "success": true,
+    "trials": 500,
+    "worst_privacy_advantage_gap_to_exact": 0.0719920635
+  },
+  "freeze_revision": "e05e42fcdfe1ab50e3d535961fc6b972e682ff7d",
+  "lfw_confirmation": {
+    "exact_privacy_advantage": 0.2729615894,
+    "exact_retained_auc": 0.9942400472,
+    "functional_embedding_mse_ratio_to_stale": 1.0046693830,
+    "influence_selective_privacy_advantage": 0.2981493242,
+    "influence_selective_retained_auc": 0.9939768917,
+    "influence_selective_speedup": 7.3356337068,
+    "result_sha256": "972a22022621d50e114ad428a745f738d160154c8bd37076ac077cf47dff288d",
+    "success": true,
+    "trials": 500,
+    "worst_privacy_advantage_gap_to_exact": 0.0251877349
+  },
+  "olivetti_development": {
+    "functional_embedding_mse_ratio_to_stale": 1.0048275024,
+    "result_sha256": "199c49e6cc079a0877d539af6b6ea286cce195ba020fb65d02871f4a0205d6d7",
+    "success": true,
+    "trials": 500,
+    "worst_privacy_advantage_gap_to_exact": 0.0895238095
+  },
+  "protocol_sha256": "497e377d50c00eb33a30c3a716d040c48412c23620c73f572cdaa9eae4f981f9",
+  "schema_version": "erasemap-public-task-agnostic-v2.1-summary"
+}

@@ -24,6 +24,20 @@ def test_task_agnostic_public_result_meets_frozen_targets() -> None:
     assert lineage["speedup_vs_exact"] >= 1.5
 
 
+def test_task_agnostic_v21_external_result_meets_frozen_targets() -> None:
+    result = load("task-agnostic-v21-summary.json")
+    external = result["external"]
+    assert isinstance(external, dict)
+    assert external["success"] is True
+    assert external["functional_embedding_mse_ratio_to_stale"] <= 1.01
+    assert external["worst_privacy_advantage_gap_to_exact"] <= 0.10
+    assert (
+        external["influence_selective_retained_auc"]
+        >= external["exact_retained_auc"] - 0.01
+    )
+    assert external["influence_selective_speedup"] >= 1.5
+
+
 def test_head_only_encoder_metrics_equal_stale() -> None:
     result = load("task-agnostic-v2-summary.json")
     evaluation = result["evaluation"]

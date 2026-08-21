@@ -59,18 +59,23 @@ See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict
 claim boundaries.
 
-## Task-agnostic v2
+## Task-agnostic v2.1
 
-Version 2 removes the trivial deleted-output-class endpoint. It evaluates an unchanged face
-verification task over 100 forgotten-identity trials per dataset. The new lineage-guided method
-preserved LFW verification AUC at 0.9930, brought confidence membership inference near chance, and
-was 3.78× faster than exact retraining under the frozen local protocol.
+Version 2.1 keeps the unchanged face-verification task, corrects the v2 primary-endpoint gate,
+renames the neural update honestly to influence-selective unlearning, and evaluates four
+orientation-invariant privacy attacks. The lineage graph now selects whether model remediation is
+exact retraining, a protocol-approved approximate update, or blocked pending evidence.
 
-![Task-agnostic identity-unlearning results](docs/assets/task-agnostic-v2.png)
+The method passed 100 deletion trials on each of Olivetti development, locked LFW confirmation,
+and a content-unseen MUFAC subset frozen before its 572 images were accessed. On MUFAC it preserved
+retained verification AUC at 0.92624 versus 0.92565 for exact retraining, stayed within the frozen
+1% primary non-inferiority margin, and ran 3.49× faster. This is external benchmark evidence, not
+production validation or a formal privacy guarantee.
 
-See [docs/TASK_AGNOSTIC_V2_REPORT.md](docs/TASK_AGNOSTIC_V2_REPORT.md) for confidence intervals,
-system fault-injection results, limitations, and the production-like eGov simulator. A real service
-can map its components through [docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md).
+See [docs/TASK_AGNOSTIC_V21_REPORT.md](docs/TASK_AGNOSTIC_V21_REPORT.md) for the frozen endpoints,
+confidence intervals, critique response, and remaining limitations. The historical v2 result is
+preserved in [docs/TASK_AGNOSTIC_V2_REPORT.md](docs/TASK_AGNOSTIC_V2_REPORT.md). A real service can
+map its components through [docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md).
 
 ## Development
 

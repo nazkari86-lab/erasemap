@@ -85,9 +85,10 @@ def pair_scores(
         raise ValueError("at least one positive pair is required")
     negative_pairs: list[tuple[int, int]] = []
     while len(negative_pairs) < len(positive_pairs):
-        left, right = (int(value) for value in rng.choice(indices, size=2, replace=False))
-        if targets[left] != targets[right]:
-            negative_pairs.append((left, right))
+        remaining = len(positive_pairs) - len(negative_pairs)
+        candidates = rng.choice(indices, size=(max(32, remaining * 2), 2), replace=True)
+        different = candidates[targets[candidates[:, 0]] != targets[candidates[:, 1]]]
+        negative_pairs.extend((int(left), int(right)) for left, right in different[:remaining])
     positive = np.asarray([np.dot(embeddings[a], embeddings[b]) for a, b in positive_pairs])
     negative = np.asarray([np.dot(embeddings[a], embeddings[b]) for a, b in negative_pairs])
     return positive, negative

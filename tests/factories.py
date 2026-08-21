@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from erasemap.domain import (
     Artifact,
     ArtifactState,
@@ -5,6 +7,8 @@ from erasemap.domain import (
     Edge,
     EdgeType,
     ErasureGraph,
+    Evidence,
+    EvidenceKind,
 )
 
 
@@ -45,3 +49,30 @@ def simple_graph() -> ErasureGraph:
         Edge("template", "index", EdgeType.INDEXED_AS),
     )
     return ErasureGraph(nodes=nodes, edges=edges)
+
+
+def absence_evidence(node: Artifact) -> Evidence:
+    return Evidence(
+        id=f"{node.id}-proof",
+        artifact_id=node.id,
+        kind=EvidenceKind.ABSENCE_CHECK,
+        commitment=node.commitment,
+        observed_absent=True,
+        issued_epoch=90,
+        expires_epoch=200,
+    )
+
+
+def graph_with_orphaned_index() -> tuple[ErasureGraph, dict[str, Evidence]]:
+    graph = simple_graph()
+    erased_source = replace(graph.nodes["source"], state=ArtifactState.ERASED)
+    erased_template = replace(graph.nodes["template"], state=ArtifactState.ERASED)
+    updated = ErasureGraph(
+        nodes={**graph.nodes, "source": erased_source, "template": erased_template},
+        edges=graph.edges,
+    )
+    evidence = {
+        erased_source.id: absence_evidence(erased_source),
+        erased_template.id: absence_evidence(erased_template),
+    }
+    return updated, evidence

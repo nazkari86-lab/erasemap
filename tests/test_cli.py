@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 from cryptography.hazmat.primitives import serialization
@@ -7,11 +8,11 @@ from cryptography.hazmat.primitives import serialization
 from erasemap.cli import main
 from erasemap.receipts import generate_keypair
 
-CLI = Path(".venv/bin/erasemap")
+CLI = (sys.executable, "-m", "erasemap.cli")
 
 
 def run_cli(*arguments: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run([str(CLI), *arguments], capture_output=True, text=True, check=False)
+    return subprocess.run([*CLI, *arguments], capture_output=True, text=True, check=False)
 
 
 def test_audit_command_emits_machine_readable_status() -> None:

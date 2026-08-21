@@ -9,6 +9,7 @@ from erasemap.domain import (
     ErasureGraph,
     Evidence,
     EvidenceKind,
+    RemediationAction,
 )
 
 
@@ -76,3 +77,23 @@ def graph_with_orphaned_index() -> tuple[ErasureGraph, dict[str, Evidence]]:
         erased_template.id: absence_evidence(erased_template),
     }
     return updated, evidence
+
+
+def remediation_case(
+    *,
+    with_uncoverable: bool = False,
+) -> tuple[frozenset[str], tuple[RemediationAction, ...]]:
+    required = {"template", "index"}
+    if with_uncoverable:
+        required.add("unknown-copy")
+    actions = (
+        RemediationAction("purge-template", frozenset({"template"}), 4, ArtifactState.ERASED),
+        RemediationAction("purge-index", frozenset({"index"}), 3, ArtifactState.ERASED),
+        RemediationAction(
+            "purge-index-and-template",
+            frozenset({"template", "index"}),
+            5,
+            ArtifactState.ERASED,
+        ),
+    )
+    return frozenset(required), actions

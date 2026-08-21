@@ -4,6 +4,7 @@ import argparse
 import copy
 import hashlib
 import json
+import subprocess
 import time
 from itertools import combinations
 from pathlib import Path
@@ -52,6 +53,20 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return "sha256:" + digest.hexdigest()
+
+
+def revision() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, check=False, text=True
+    )
+    return result.stdout.strip() or "unknown"
+
+
+def is_dirty() -> bool:
+    result = subprocess.run(
+        ["git", "status", "--porcelain"], capture_output=True, check=False, text=True
+    )
+    return bool(result.stdout.strip())
 
 
 def encoder_embeddings(model: FaceAdapter, features: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
@@ -223,6 +238,8 @@ def evaluate_method(
 
 
 def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
+    if split == "evaluation" and is_dirty():
+        raise RuntimeError("evaluation requires a clean working tree")
     protocol = json.loads(protocol_path.read_text())
     dataset_settings = protocol["datasets"][split]
     source_protocol = json.loads(Path(dataset_settings["protocol"]).read_text())
@@ -233,6 +250,21 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
     targets = dataset.targets
     classes = np.unique(targets)
     local = protocol["local_model"]
+    output.mkdir(parents=True, exist_ok=True)
+    if split == "evaluation":
+        lock = output / "evaluation.lock.json"
+        if lock.exists():
+            raise RuntimeError("evaluation lock already exists")
+        lock.write_text(
+            canonical_json(
+                {
+                    "code_revision": revision(),
+                    "protocol_sha256": sha256_file(protocol_path),
+                    "schema_version": "erasemap-task-agnostic-evaluation-lock-v1",
+                }
+            )
+            + "\n"
+        )
     trials: list[dict[str, Any]] = []
     for seed in protocol["random_seeds"]:
         original, _ = train_adapter(
@@ -376,7 +408,6 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         "trial_count": len(trials),
         "trials": trials,
     }
-    output.mkdir(parents=True, exist_ok=True)
     (output / "result.json").write_text(canonical_json(payload) + "\n")
     return payload
 

@@ -97,6 +97,8 @@ an immutable research input outside the simulated application's registered stora
 means that the registered application model path satisfied this experiment's evidence contract,
 not that every physical copy of the public dataset vanished.
 
-The main remaining scientific step is an independently sourced schema and locked external
-holdout, ideally followed by an authorized integration with a real biometric service whose
-storage, index, backup, and training pipelines can emit evidence.
+The next phase added a face-specific recognition network, approximate-unlearning baselines,
+membership inference, a real multi-artifact storage lab, and a pre-frozen LFW holdout. See
+[`ADVANCED_UNLEARNING_REPORT.md`](ADVANCED_UNLEARNING_REPORT.md). The remaining external step is an
+authorized integration with a real biometric service whose storage, index, backup, key-management,
+and training pipelines can emit signed evidence.

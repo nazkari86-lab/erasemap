@@ -29,21 +29,34 @@ valid scientific result and therefore exits successfully.
 See [docs/CORE_PROTOCOL.md](docs/CORE_PROTOCOL.md) for the frozen experiment, baselines, evidence
 contracts, receipt boundary, and interpretation rules.
 
-## Real-face experiment
+## Real-face unlearning benchmark
 
-The repository also contains a reproducible deletion experiment on 400 public Olivetti face
-images and two actually trained identification heads: pixels → PCA → logistic regression, and a
-frozen ImageNet ResNet-18 feature extractor → PCA → logistic regression. Exact retraining without
-the requested identity is compared with the unsafe baseline of deleting its records while leaving
-the deployed model unchanged.
+The repository contains reproducible biometric-deletion experiments on Olivetti Faces and a
+locked LFW holdout. A face-specific MobileFaceNet embedding network feeds a locally trained neural
+identifier. Four post-deletion strategies are compared: leaving the model stale, retraining only
+its output head, approximate gradient-ascent unlearning, and exact retraining without the requested
+identity. The benchmark separately measures visible deletion, retained-user utility, membership
+leakage, and distance from the exact-retraining reference.
+
+![Measured comparison of four deletion strategies](docs/assets/unlearning-comparison.png)
 
 ```bash
+.venv/bin/pip install -e '.[dev,face]'
+PYTHONPATH=src python experiments/prepare_face_assets.py
 python -m erasemap.real_experiment
 TORCH_HOME=data/real/torch PYTHONPATH=src \
   python experiments/run_resnet18_face_unlearning.py
+PYTHONPATH=src python experiments/advanced_face_unlearning.py \
+  --dataset olivetti --protocol benchmark/advanced-face-unlearning-v1.json \
+  --output outputs/advanced-face-unlearning-v1
+PYTHONPATH=src python experiments/advanced_face_unlearning.py \
+  --dataset lfw --protocol benchmark/lfw-holdout-v1.json \
+  --output outputs/lfw-holdout-v1
+PYTHONPATH=src python experiments/run_registered_storage_lab.py
 ```
 
-See [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for measured results and strict
+See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for the locked results,
+and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict
 claim boundaries.
 
 ## Development

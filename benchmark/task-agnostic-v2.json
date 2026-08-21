@@ -1,0 +1,47 @@
+{
+  "bootstrap_samples": 2000,
+  "datasets": {
+    "development": {
+      "embeddings": "outputs/advanced-face-unlearning-v1/embeddings.joblib",
+      "name": "olivetti",
+      "protocol": "benchmark/advanced-face-unlearning-v1.json"
+    },
+    "evaluation": {
+      "embeddings": "outputs/lfw-holdout-v1/embeddings.joblib",
+      "name": "lfw",
+      "protocol": "benchmark/lfw-holdout-v1.json"
+    }
+  },
+  "far_target": 0.01,
+  "forget_identities_per_seed": 20,
+  "gradient_ascent": {
+    "forget_loss_weight": 0.15,
+    "learning_rate": 0.002,
+    "parameter_drift_weight": 0.0001,
+    "retain_batch_size": 256,
+    "steps": 80
+  },
+  "lineage_guided": {
+    "forget_weight": 0.04,
+    "learning_rate": 0.001,
+    "parameter_drift_weight": 0.001,
+    "retain_distillation_weight": 2.0,
+    "steps": 60,
+    "top_parameter_fraction": 0.25
+  },
+  "local_model": {
+    "epochs": 200,
+    "hidden_dimension": 128,
+    "learning_rate": 0.01,
+    "weight_decay": 0.0001
+  },
+  "methods": ["stale", "head_only", "gradient_ascent", "lineage_guided", "exact_retrain"],
+  "primary_endpoint": "functional_embedding_mse_to_exact",
+  "random_seeds": [20260821, 20260822, 20260823, 20260824, 20260825],
+  "schema_version": "erasemap-task-agnostic-v2",
+  "success_criteria": {
+    "lineage_guided_mia_auc_gap_to_exact_max": 0.05,
+    "lineage_guided_retained_auc_delta_min": -0.01,
+    "lineage_guided_speedup_min": 1.5
+  }
+}

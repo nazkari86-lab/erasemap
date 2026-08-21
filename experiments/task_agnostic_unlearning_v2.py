@@ -6,6 +6,7 @@ import hashlib
 import json
 import subprocess
 import time
+from dataclasses import dataclass
 from itertools import combinations
 from pathlib import Path
 from typing import Any
@@ -24,7 +25,14 @@ from advanced_face_unlearning import (
 )
 from torch import nn
 
-from erasemap.privacy_attacks import evaluate_attack, score_statistics
+from erasemap.privacy_attacks import (
+    balanced_shadow_membership,
+    embedding_nearest_neighbor_scores,
+    evaluate_attack,
+    gaussian_likelihood_ratio_scores,
+    score_statistics,
+    split_shadow_scores,
+)
 from erasemap.verification_metrics import (
     bootstrap_mean_interval,
     linear_cka,
@@ -48,6 +56,21 @@ METRICS = (
     "runtime_seconds",
     "speedup_vs_exact",
 )
+V22_METRICS = (
+    "privacy_embedding_nn_symmetric_auc",
+    "privacy_embedding_nn_tpr_at_fpr",
+    "privacy_lira_symmetric_auc",
+    "privacy_lira_tpr_at_fpr",
+)
+LOGIT_ATTACKS = frozenset({"confidence", "energy", "margin", "negative_entropy"})
+
+
+@dataclass(frozen=True, slots=True)
+class ShadowCalibration:
+    in_scores: np.ndarray[Any, Any]
+    out_scores: np.ndarray[Any, Any]
+    models: int
+    statistic: str
 
 
 def canonical_json(payload: Any) -> str:
@@ -85,6 +108,55 @@ def encoder_embeddings(model: FaceAdapter, features: np.ndarray[Any, Any]) -> np
 def probabilities(model: FaceAdapter, features: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
     with torch.inference_mode():
         return torch.softmax(model(torch.from_numpy(features).float()), dim=1).numpy()
+
+
+def train_shadow_calibration(
+    features: np.ndarray[Any, Any],
+    targets: np.ndarray[Any, Any],
+    classes: np.ndarray[Any, Any],
+    local_settings: dict[str, Any],
+    shadow_settings: dict[str, Any],
+    *,
+    seed: int,
+) -> ShadowCalibration:
+    shadow_count = int(shadow_settings["models"])
+    inclusions = int(shadow_settings["inclusions_per_sample"])
+    statistic = str(shadow_settings["statistic"])
+    if statistic not in LOGIT_ATTACKS:
+        raise ValueError("shadow statistic must be one of the registered logit statistics")
+    membership: np.ndarray[Any, Any] | None = None
+    for attempt in range(100):
+        candidate = balanced_shadow_membership(
+            len(features),
+            shadow_count,
+            inclusions_per_sample=inclusions,
+            seed=seed + attempt,
+        )
+        if all(
+            len(np.unique(targets[candidate[index]])) == len(classes)
+            for index in range(shadow_count)
+        ):
+            membership = candidate
+            break
+    if membership is None:
+        raise RuntimeError("could not construct class-complete balanced shadow datasets")
+    shadow_scores: list[np.ndarray[Any, Any]] = []
+    for shadow_index, selection in enumerate(membership):
+        model, _ = train_adapter(
+            features[selection],
+            targets[selection],
+            classes=classes,
+            hidden_dimension=int(local_settings["hidden_dimension"]),
+            epochs=int(shadow_settings["epochs"]),
+            learning_rate=float(local_settings["learning_rate"]),
+            weight_decay=float(local_settings["weight_decay"]),
+            seed=seed + 10_000 + shadow_index,
+        )
+        with torch.inference_mode():
+            logits = model(torch.from_numpy(features).float()).numpy()
+        shadow_scores.append(score_statistics(logits)[statistic])
+    in_scores, out_scores = split_shadow_scores(np.stack(shadow_scores), membership)
+    return ShadowCalibration(in_scores, out_scores, shadow_count, statistic)
 
 
 def pair_scores(
@@ -201,6 +273,7 @@ def evaluate_method(
     exact_runtime: float,
     far_target: float,
     privacy_attacks: tuple[str, ...],
+    shadow_calibration: ShadowCalibration | None,
     seed: int,
 ) -> dict[str, float]:
     model_embeddings = encoder_embeddings(model, features)
@@ -227,17 +300,41 @@ def evaluate_method(
         nonmember_logits = model(torch.from_numpy(features[forgotten_test]).float()).numpy()
     member_statistics = score_statistics(member_logits)
     nonmember_statistics = score_statistics(nonmember_logits)
+    logit_attacks = tuple(name for name in privacy_attacks if name in LOGIT_ATTACKS)
     attack_results = {
         name: evaluate_attack(
             member_statistics[name], nonmember_statistics[name], target_fpr=far_target
         )
-        for name in privacy_attacks
+        for name in logit_attacks
     }
+    if "task_agnostic_lira" in privacy_attacks:
+        if shadow_calibration is None:
+            raise ValueError("LiRA attack requires frozen shadow-model calibration")
+        member_lira = gaussian_likelihood_ratio_scores(
+            member_statistics[shadow_calibration.statistic],
+            shadow_calibration.in_scores[:, forgotten_train],
+            shadow_calibration.out_scores[:, forgotten_train],
+        )
+        nonmember_lira = gaussian_likelihood_ratio_scores(
+            nonmember_statistics[shadow_calibration.statistic],
+            shadow_calibration.in_scores[:, forgotten_test],
+            shadow_calibration.out_scores[:, forgotten_test],
+        )
+        attack_results["task_agnostic_lira"] = evaluate_attack(
+            member_lira, nonmember_lira, target_fpr=far_target
+        )
+    if "embedding_nn" in privacy_attacks:
+        member_nn, nonmember_nn = embedding_nearest_neighbor_scores(
+            model_embeddings, forgotten_train, forgotten_test
+        )
+        attack_results["embedding_nn"] = evaluate_attack(
+            member_nn, nonmember_nn, target_fpr=far_target
+        )
     membership_auc = attack_results["confidence"].raw_auc
     worst_advantage = max(result.advantage for result in attack_results.values())
     worst_tpr = max(result.tpr_at_fpr for result in attack_results.values())
     mse = float(np.mean((model_embeddings - exact_embeddings) ** 2))
-    return {
+    result = {
         "forgotten_verification_auc": forgotten.auc,
         "functional_embedding_mse_to_exact": mse,
         "membership_attack_auc": membership_auc,
@@ -257,6 +354,21 @@ def evaluate_method(
         "runtime_seconds": runtime,
         "speedup_vs_exact": exact_runtime / max(runtime, 1e-9),
     }
+    if "embedding_nn" in attack_results:
+        result["privacy_embedding_nn_symmetric_auc"] = attack_results[
+            "embedding_nn"
+        ].symmetric_auc
+        result["privacy_embedding_nn_tpr_at_fpr"] = attack_results[
+            "embedding_nn"
+        ].tpr_at_fpr
+    if "task_agnostic_lira" in attack_results:
+        result["privacy_lira_symmetric_auc"] = attack_results[
+            "task_agnostic_lira"
+        ].symmetric_auc
+        result["privacy_lira_tpr_at_fpr"] = attack_results[
+            "task_agnostic_lira"
+        ].tpr_at_fpr
+    return result
 
 
 def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
@@ -298,8 +410,11 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
             "privacy_attacks", ["confidence", "negative_entropy", "margin", "energy"]
         )
     )
-    if set(privacy_attacks) != {"confidence", "negative_entropy", "margin", "energy"}:
-        raise ValueError("privacy attack suite must contain all four registered attacks")
+    expected_attacks = set(LOGIT_ATTACKS)
+    if protocol["schema_version"] == "erasemap-task-agnostic-v2.2":
+        expected_attacks |= {"task_agnostic_lira", "embedding_nn"}
+    if set(privacy_attacks) != expected_attacks:
+        raise ValueError("privacy attack suite does not match the registered schema")
     output.mkdir(parents=True, exist_ok=True)
     if split != "development":
         lock = output / f"{split}.lock.json"
@@ -317,6 +432,16 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         )
     trials: list[dict[str, Any]] = []
     for seed in protocol["random_seeds"]:
+        shadow_calibration = None
+        if "task_agnostic_lira" in privacy_attacks:
+            shadow_calibration = train_shadow_calibration(
+                features,
+                targets,
+                classes,
+                local,
+                protocol["shadow_models"],
+                seed=int(seed),
+            )
         original, _ = train_adapter(
             features[train],
             targets[train],
@@ -414,6 +539,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                     exact_runtime=exact_runtime,
                     far_target=float(protocol["far_target"]),
                     privacy_attacks=privacy_attacks,
+                    shadow_calibration=shadow_calibration,
                     seed=int(seed) + forget_subject,
                 )
                 trials.append(
@@ -429,10 +555,15 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 )
     summary: dict[str, Any] = {}
     methods = tuple(str(value) for value in protocol["methods"])
+    registered_metrics = METRICS + (
+        V22_METRICS
+        if protocol["schema_version"] == "erasemap-task-agnostic-v2.2"
+        else ()
+    )
     for method in methods:
         rows = [row for row in trials if row["method"] == method]
         summary[method] = {}
-        for metric in METRICS:
+        for metric in registered_metrics:
             values = np.asarray([row[metric] for row in rows], dtype=np.float64)
             interval = bootstrap_mean_interval(
                 values,
@@ -452,7 +583,10 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
     stale = summary["stale"]
     criteria = protocol["success_criteria"]
     endpoints: dict[str, float] = {}
-    if protocol["schema_version"] == "erasemap-task-agnostic-v2.1":
+    if protocol["schema_version"] in {
+        "erasemap-task-agnostic-v2.1",
+        "erasemap-task-agnostic-v2.2",
+    }:
         stale_mse = float(stale["functional_embedding_mse_to_exact"]["mean"])
         mse_ratio = float(selective["functional_embedding_mse_to_exact"]["mean"]) / max(
             stale_mse, 1e-12
@@ -506,6 +640,14 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         "manifests": {
             "embeddings": sha256_file(embeddings_path),
             "protocol": sha256_file(protocol_path),
+        },
+        "privacy_evaluation": {
+            "attacks": list(privacy_attacks),
+            "shadow_models": (
+                int(protocol["shadow_models"]["models"])
+                if "task_agnostic_lira" in privacy_attacks
+                else 0
+            ),
         },
         "split": split,
         "success": success,

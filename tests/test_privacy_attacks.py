@@ -2,9 +2,12 @@ import numpy as np
 import pytest
 
 from erasemap.privacy_attacks import (
+    balanced_shadow_membership,
+    embedding_nearest_neighbor_scores,
     evaluate_attack,
     gaussian_likelihood_ratio_scores,
     score_statistics,
+    split_shadow_scores,
 )
 
 
@@ -33,6 +36,29 @@ def test_gaussian_likelihood_ratio_prefers_in_distribution() -> None:
     assert scores[1] < 0
 
 
+def test_balanced_shadow_membership_and_score_split() -> None:
+    membership = balanced_shadow_membership(7, 6, inclusions_per_sample=3, seed=42)
+    scores = np.arange(42, dtype=np.float64).reshape(6, 7)
+    in_scores, out_scores = split_shadow_scores(scores, membership)
+
+    assert membership.shape == (6, 7)
+    assert np.all(np.sum(membership, axis=0) == 3)
+    assert in_scores.shape == out_scores.shape == (3, 7)
+    assert set(in_scores[:, 0]) == set(scores[membership[:, 0], 0])
+
+
+def test_embedding_attack_excludes_exact_self_match() -> None:
+    embeddings = np.array(
+        [[1.0, 0.0], [0.9, 0.1], [0.0, 1.0], [-1.0, 0.0]], dtype=np.float64
+    )
+    member_scores, nonmember_scores = embedding_nearest_neighbor_scores(
+        embeddings, np.array([0, 1]), np.array([2, 3])
+    )
+
+    assert np.all(member_scores < 1.0)
+    assert member_scores.mean() > nonmember_scores.mean()
+
+
 @pytest.mark.parametrize(
     "call",
     [
@@ -40,6 +66,11 @@ def test_gaussian_likelihood_ratio_prefers_in_distribution() -> None:
         lambda: evaluate_attack(np.array([]), np.array([1.0]), target_fpr=0.1),
         lambda: gaussian_likelihood_ratio_scores(
             np.array([1.0]), np.ones((1, 2)), np.ones((1, 1))
+        ),
+        lambda: balanced_shadow_membership(1, 2, inclusions_per_sample=2, seed=1),
+        lambda: split_shadow_scores(np.ones((2, 2)), np.ones((2, 3), dtype=bool)),
+        lambda: embedding_nearest_neighbor_scores(
+            np.ones((2, 2)), np.array([0]), np.array([1])
         ),
     ],
 )

@@ -21,3 +21,22 @@ def test_external_dataset_is_revision_pinned_before_content_access() -> None:
     assert len(protocol["dataset_revision"]) == 40
     assert protocol["selection_count"] == 60
     assert protocol["split_seed"] == 20260822
+
+
+def test_v22_registers_shadow_lira_and_embedding_attacks() -> None:
+    protocol = json.loads(Path("benchmark/task-agnostic-v22.json").read_text())
+
+    assert set(protocol["privacy_attacks"]) == {
+        "confidence",
+        "embedding_nn",
+        "energy",
+        "margin",
+        "negative_entropy",
+        "task_agnostic_lira",
+    }
+    assert protocol["shadow_models"] == {
+        "epochs": 100,
+        "inclusions_per_sample": 8,
+        "models": 16,
+        "statistic": "negative_entropy",
+    }

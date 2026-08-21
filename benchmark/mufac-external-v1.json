@@ -1,0 +1,12 @@
+{
+  "dataset_repository": "Dasool/MUFAC",
+  "dataset_revision": "b643a1ff04960ace8f94dcd36006d7726049cf11",
+  "identity_key_regex": "^(?:val_images/)?(F[0-9]+)_AGE_([A-Z0-9]+)_[0-9]+_",
+  "license": "MIT",
+  "minimum_images_per_identity": 8,
+  "schema_version": "erasemap-mufac-content-unseen-v1",
+  "selection_count": 60,
+  "selection_rule": "lowest sha256('erasemap-mufac-content-unseen-v1:' || identity_key)",
+  "split_seed": 20260822,
+  "test_fraction_per_identity": 0.3
+}

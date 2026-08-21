@@ -14,15 +14,17 @@ import joblib
 import numpy as np
 import torch
 from advanced_face_unlearning import (
+    DatasetView,
     FaceAdapter,
     _load_dataset,
     _mapped_targets,
+    _split_general,
     gradient_ascent_unlearn,
     train_adapter,
 )
-from sklearn.metrics import roc_auc_score
 from torch import nn
 
+from erasemap.privacy_attacks import evaluate_attack, score_statistics
 from erasemap.verification_metrics import (
     bootstrap_mean_interval,
     linear_cka,
@@ -30,12 +32,17 @@ from erasemap.verification_metrics import (
     verification_metrics,
 )
 
-METHODS = ("stale", "head_only", "gradient_ascent", "lineage_guided", "exact_retrain")
 METRICS = (
     "retained_verification_auc",
     "retained_tar_at_far",
     "forgotten_verification_auc",
     "membership_attack_auc",
+    "privacy_confidence_symmetric_auc",
+    "privacy_energy_symmetric_auc",
+    "privacy_margin_symmetric_auc",
+    "privacy_negative_entropy_symmetric_auc",
+    "privacy_worst_case_advantage",
+    "privacy_worst_case_tpr_at_fpr",
     "functional_embedding_mse_to_exact",
     "retained_cka_to_exact",
     "runtime_seconds",
@@ -113,7 +120,7 @@ def pair_scores(
     return positive, negative
 
 
-def lineage_guided_unlearn(
+def influence_selective_unlearn(
     original: FaceAdapter,
     retain_features: np.ndarray[Any, Any],
     retain_targets: np.ndarray[Any, Any],
@@ -193,6 +200,7 @@ def evaluate_method(
     runtime: float,
     exact_runtime: float,
     far_target: float,
+    privacy_attacks: tuple[str, ...],
     seed: int,
 ) -> dict[str, float]:
     model_embeddings = encoder_embeddings(model, features)
@@ -214,19 +222,33 @@ def evaluate_method(
     )
     retained = verification_metrics(retained_positive, retained_negative, far_target=far_target)
     forgotten = verification_metrics(forgotten_positive, forgotten_negative, far_target=far_target)
-    member_confidence = np.max(probabilities(model, features[forgotten_train]), axis=1)
-    nonmember_confidence = np.max(probabilities(model, features[forgotten_test]), axis=1)
-    membership_auc = float(
-        roc_auc_score(
-            np.concatenate((np.ones(len(member_confidence)), np.zeros(len(nonmember_confidence)))),
-            np.concatenate((member_confidence, nonmember_confidence)),
+    with torch.inference_mode():
+        member_logits = model(torch.from_numpy(features[forgotten_train]).float()).numpy()
+        nonmember_logits = model(torch.from_numpy(features[forgotten_test]).float()).numpy()
+    member_statistics = score_statistics(member_logits)
+    nonmember_statistics = score_statistics(nonmember_logits)
+    attack_results = {
+        name: evaluate_attack(
+            member_statistics[name], nonmember_statistics[name], target_fpr=far_target
         )
-    )
+        for name in privacy_attacks
+    }
+    membership_auc = attack_results["confidence"].raw_auc
+    worst_advantage = max(result.advantage for result in attack_results.values())
+    worst_tpr = max(result.tpr_at_fpr for result in attack_results.values())
     mse = float(np.mean((model_embeddings - exact_embeddings) ** 2))
     return {
         "forgotten_verification_auc": forgotten.auc,
         "functional_embedding_mse_to_exact": mse,
         "membership_attack_auc": membership_auc,
+        "privacy_confidence_symmetric_auc": attack_results["confidence"].symmetric_auc,
+        "privacy_energy_symmetric_auc": attack_results["energy"].symmetric_auc,
+        "privacy_margin_symmetric_auc": attack_results["margin"].symmetric_auc,
+        "privacy_negative_entropy_symmetric_auc": attack_results[
+            "negative_entropy"
+        ].symmetric_auc,
+        "privacy_worst_case_advantage": worst_advantage,
+        "privacy_worst_case_tpr_at_fpr": worst_tpr,
         "retained_cka_to_exact": linear_cka(
             model_embeddings[retain_test], exact_embeddings[retain_test]
         ),
@@ -238,21 +260,49 @@ def evaluate_method(
 
 
 def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
-    if split == "evaluation" and is_dirty():
-        raise RuntimeError("evaluation requires a clean working tree")
+    if split != "development" and is_dirty():
+        raise RuntimeError("non-development evaluation requires a clean working tree")
     protocol = json.loads(protocol_path.read_text())
     dataset_settings = protocol["datasets"][split]
     source_protocol = json.loads(Path(dataset_settings["protocol"]).read_text())
-    dataset = _load_dataset(dataset_settings["name"], source_protocol, Path("data/real"))
-    features = np.asarray(joblib.load(dataset_settings["embeddings"]), dtype=np.float32)
+    if dataset_settings["name"] == "mufac_external":
+        bundle = joblib.load(dataset_settings["bundle"])
+        features = np.asarray(bundle["embeddings"], dtype=np.float32)
+        external_targets = np.asarray(bundle["targets"], dtype=np.int64)
+        external_train, external_test = _split_general(
+            external_targets,
+            test_fraction=float(source_protocol["test_fraction_per_identity"]),
+            seed=int(source_protocol["split_seed"]),
+        )
+        dataset = DatasetView(
+            np.empty((len(features), 0), dtype=np.float32),
+            external_targets,
+            external_train,
+            external_test,
+            -1,
+            "MUFAC content-unseen subset",
+        )
+        embeddings_path = Path(dataset_settings["bundle"])
+    else:
+        dataset = _load_dataset(dataset_settings["name"], source_protocol, Path("data/real"))
+        embeddings_path = Path(dataset_settings["embeddings"])
+        features = np.asarray(joblib.load(embeddings_path), dtype=np.float32)
     train = np.asarray(dataset.train_indices)
     test = np.asarray(dataset.test_indices)
     targets = dataset.targets
     classes = np.unique(targets)
     local = protocol["local_model"]
+    privacy_attacks = tuple(
+        str(value)
+        for value in protocol.get(
+            "privacy_attacks", ["confidence", "negative_entropy", "margin", "energy"]
+        )
+    )
+    if set(privacy_attacks) != {"confidence", "negative_entropy", "margin", "energy"}:
+        raise ValueError("privacy attack suite must contain all four registered attacks")
     output.mkdir(parents=True, exist_ok=True)
-    if split == "evaluation":
-        lock = output / "evaluation.lock.json"
+    if split != "development":
+        lock = output / f"{split}.lock.json"
         if lock.exists():
             raise RuntimeError("evaluation lock already exists")
         lock.write_text(
@@ -260,7 +310,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 {
                     "code_revision": revision(),
                     "protocol_sha256": sha256_file(protocol_path),
-                    "schema_version": "erasemap-task-agnostic-evaluation-lock-v1",
+                    "schema_version": f"erasemap-task-agnostic-{split}-lock-v1",
                 }
             )
             + "\n"
@@ -324,21 +374,31 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 protocol["gradient_ascent"],
                 int(seed),
             )
-            lineage, lineage_runtime, selected_fraction = lineage_guided_unlearn(
+            selective_settings = protocol.get(
+                "influence_selective", protocol.get("lineage_guided")
+            )
+            if not isinstance(selective_settings, dict):
+                raise ValueError("influence-selective settings are required")
+            selective, selective_runtime, selected_fraction = influence_selective_unlearn(
                 original,
                 features[retain_train],
                 targets[retain_train],
                 features[forget_train],
                 targets[forget_train],
                 classes,
-                protocol["lineage_guided"],
+                selective_settings,
                 int(seed),
+            )
+            selective_name = (
+                "influence_selective"
+                if "influence_selective" in protocol["methods"]
+                else "lineage_guided"
             )
             models = {
                 "stale": (original, 0.0),
                 "head_only": (head_only, head_runtime),
                 "gradient_ascent": (gradient, gradient_runtime),
-                "lineage_guided": (lineage, lineage_runtime),
+                selective_name: (selective, selective_runtime),
                 "exact_retrain": (exact, exact_runtime),
             }
             for method, (model, runtime) in models.items():
@@ -353,6 +413,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                     runtime=runtime,
                     exact_runtime=exact_runtime,
                     far_target=float(protocol["far_target"]),
+                    privacy_attacks=privacy_attacks,
                     seed=int(seed) + forget_subject,
                 )
                 trials.append(
@@ -361,13 +422,14 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                         "method": method,
                         "seed": int(seed),
                         "selected_parameter_fraction": (
-                            selected_fraction if method == "lineage_guided" else None
+                            selected_fraction if method == selective_name else None
                         ),
                         **metrics,
                     }
                 )
     summary: dict[str, Any] = {}
-    for method in METHODS:
+    methods = tuple(str(value) for value in protocol["methods"])
+    for method in methods:
         rows = [row for row in trials if row["method"] == method]
         summary[method] = {}
         for metric in METRICS:
@@ -382,24 +444,67 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 "mean": float(np.mean(values)),
                 "std": float(np.std(values, ddof=1)),
             }
-    lineage = summary["lineage_guided"]
-    exact = summary["exact_retrain"]
-    criteria = protocol["success_criteria"]
-    success = (
-        lineage["retained_verification_auc"]["mean"] - exact["retained_verification_auc"]["mean"]
-        >= float(criteria["lineage_guided_retained_auc_delta_min"])
-        and abs(lineage["membership_attack_auc"]["mean"] - exact["membership_attack_auc"]["mean"])
-        <= float(criteria["lineage_guided_mia_auc_gap_to_exact_max"])
-        and lineage["speedup_vs_exact"]["mean"] >= float(criteria["lineage_guided_speedup_min"])
+    selective_name = (
+        "influence_selective" if "influence_selective" in methods else "lineage_guided"
     )
+    selective = summary[selective_name]
+    exact = summary["exact_retrain"]
+    stale = summary["stale"]
+    criteria = protocol["success_criteria"]
+    endpoints: dict[str, float] = {}
+    if protocol["schema_version"] == "erasemap-task-agnostic-v2.1":
+        stale_mse = float(stale["functional_embedding_mse_to_exact"]["mean"])
+        mse_ratio = float(selective["functional_embedding_mse_to_exact"]["mean"]) / max(
+            stale_mse, 1e-12
+        )
+        privacy_gap = abs(
+            float(selective["privacy_worst_case_advantage"]["mean"])
+            - float(exact["privacy_worst_case_advantage"]["mean"])
+        )
+        endpoints = {
+            "functional_embedding_mse_ratio_to_stale": mse_ratio,
+            "worst_privacy_advantage_gap_to_exact": privacy_gap,
+        }
+        primary_endpoint = str(protocol["primary_endpoint"])
+        if primary_endpoint not in endpoints:
+            raise ValueError("registered primary endpoint was not computed")
+        success = (
+            float(endpoints[primary_endpoint])
+            <= float(criteria["primary_endpoint_max"])
+            and float(selective["retained_verification_auc"]["mean"])
+            - float(exact["retained_verification_auc"]["mean"])
+            >= float(criteria["influence_selective_retained_auc_delta_min"])
+            and privacy_gap
+            <= float(
+                criteria[
+                    "influence_selective_worst_privacy_advantage_gap_to_exact_max"
+                ]
+            )
+            and float(selective["speedup_vs_exact"]["mean"])
+            >= float(criteria["influence_selective_speedup_min"])
+        )
+    else:
+        success = (
+            float(selective["retained_verification_auc"]["mean"])
+            - float(exact["retained_verification_auc"]["mean"])
+            >= float(criteria["lineage_guided_retained_auc_delta_min"])
+            and abs(
+                float(selective["membership_attack_auc"]["mean"])
+                - float(exact["membership_attack_auc"]["mean"])
+            )
+            <= float(criteria["lineage_guided_mia_auc_gap_to_exact_max"])
+            and float(selective["speedup_vs_exact"]["mean"])
+            >= float(criteria["lineage_guided_speedup_min"])
+        )
     payload = {
         "claim_boundary": (
             "Task-agnostic verification over a trainable local embedding encoder; "
             "the pretrained MobileFaceNet input backbone remains frozen."
         ),
         "dataset": {"images": len(features), "name": dataset.name, "subjects": len(classes)},
+        "endpoints": endpoints,
         "manifests": {
-            "embeddings": sha256_file(Path(dataset_settings["embeddings"])),
+            "embeddings": sha256_file(embeddings_path),
             "protocol": sha256_file(protocol_path),
         },
         "split": split,
@@ -415,7 +520,9 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--protocol", default="benchmark/task-agnostic-v2.json")
-    parser.add_argument("--split", choices=("development", "evaluation"), required=True)
+    parser.add_argument(
+        "--split", choices=("development", "evaluation", "external"), required=True
+    )
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     payload = run_split(Path(args.protocol), args.split, Path(args.output))

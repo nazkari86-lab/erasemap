@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
+import secrets
 import sqlite3
 from contextlib import closing
 from dataclasses import dataclass
@@ -32,9 +34,22 @@ class StorageAudit:
 
 
 class RegisteredStoreLab:
-    def __init__(self, root: str | Path) -> None:
+    def __init__(self, root: str | Path, *, commitment_key: bytes | None = None) -> None:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
+        self.commitment_key_path = self.root / ".commitment-key"
+        if commitment_key is not None:
+            if len(commitment_key) < 32:
+                raise ValueError("commitment key must contain at least 256 bits")
+            self._commitment_key = commitment_key
+        elif self.commitment_key_path.exists():
+            self._commitment_key = self.commitment_key_path.read_bytes()
+        else:
+            self._commitment_key = secrets.token_bytes(32)
+            self.commitment_key_path.write_bytes(self._commitment_key)
+            self.commitment_key_path.chmod(0o600)
+        if len(self._commitment_key) < 32:
+            raise ValueError("stored commitment key must contain at least 256 bits")
         self.database_path = self.root / "identity.sqlite3"
         self.index_path = self.root / "vector-index.npz"
         self.cache_path = self.root / "cache.json"
@@ -47,21 +62,23 @@ class RegisteredStoreLab:
                 "(commitment TEXT PRIMARY KEY, embedding BLOB NOT NULL)"
             )
 
-    @staticmethod
-    def _commitment(subject_id: str) -> str:
+    def _commitment(self, subject_id: str) -> str:
         if not subject_id:
             raise ValueError("subject id is required")
-        return "sha256:" + hashlib.sha256(subject_id.encode()).hexdigest()
+        message = b"erasemap-subject-commitment-v1\x00" + subject_id.encode()
+        return "hmac-sha256:" + hmac.new(
+            self._commitment_key, message, hashlib.sha256
+        ).hexdigest()
 
     def _key_name(self, subject_id: str) -> str:
-        return self._commitment(subject_id).removeprefix("sha256:") + ".key"
+        return self._commitment(subject_id).removeprefix("hmac-sha256:") + ".key"
 
     def backup_key_path(self, subject_id: str) -> Path:
         return self.root / self._key_name(subject_id)
 
     def _backup_cipher_path(self, subject_id: str) -> Path:
         return self.backup_directory / (
-            self._commitment(subject_id).removeprefix("sha256:") + ".aesgcm"
+            self._commitment(subject_id).removeprefix("hmac-sha256:") + ".aesgcm"
         )
 
     @staticmethod
@@ -110,7 +127,9 @@ class RegisteredStoreLab:
         ).encode()
         ciphertext = AESGCM(key).encrypt(nonce, plaintext, commitment.encode())
         self._backup_cipher_path(subject_id).write_bytes(nonce + ciphertext)
-        self.backup_key_path(subject_id).write_bytes(key)
+        backup_key_path = self.backup_key_path(subject_id)
+        backup_key_path.write_bytes(key)
+        backup_key_path.chmod(0o600)
 
         model = self._read_json(self.model_path, {"training_commitments": []})
         commitments = set(model["training_commitments"])

@@ -1,0 +1,23 @@
+import json
+from pathlib import Path
+
+
+def test_v21_primary_endpoint_is_an_explicit_success_gate() -> None:
+    protocol = json.loads(Path("benchmark/task-agnostic-v21.json").read_text())
+
+    assert protocol["primary_endpoint"] == "functional_embedding_mse_ratio_to_stale"
+    assert protocol["success_criteria"]["primary_endpoint_max"] == 1.01
+    assert set(protocol["privacy_attacks"]) == {
+        "confidence",
+        "energy",
+        "margin",
+        "negative_entropy",
+    }
+
+
+def test_external_dataset_is_revision_pinned_before_content_access() -> None:
+    protocol = json.loads(Path("benchmark/mufac-external-v1.json").read_text())
+
+    assert len(protocol["dataset_revision"]) == 40
+    assert protocol["selection_count"] == 60
+    assert protocol["split_seed"] == 20260822

@@ -1,3 +1,4 @@
+import hashlib
 from pathlib import Path
 
 import numpy as np
@@ -55,3 +56,16 @@ def test_audit_is_reproducible_without_exposing_subject_in_json_files(
     assert first == second
     for path in tmp_path.glob("*.json"):
         assert "sensitive-name" not in path.read_text()
+    plain_digest = hashlib.sha256(b"sensitive-name").hexdigest()
+    assert plain_digest.encode() not in lab.database_path.read_bytes()
+    assert lab.commitment_key_path.stat().st_mode & 0o777 == 0o600
+    assert lab.backup_key_path("sensitive-name").stat().st_mode & 0o777 == 0o600
+
+
+def test_commitment_key_must_be_256_bits(tmp_path: Path) -> None:
+    try:
+        RegisteredStoreLab(tmp_path, commitment_key=b"short")
+    except ValueError as error:
+        assert "256 bits" in str(error)
+    else:
+        raise AssertionError("short commitment key was accepted")

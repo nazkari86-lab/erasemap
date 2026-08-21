@@ -21,7 +21,7 @@ internal names to the same artifact types.
 {
   "artifact_id": "vector-index-eu-1",
   "artifact_type": "SEARCH_INDEX_ENTRY",
-  "commitment": "sha256:...",
+  "commitment": "hmac-sha256:...",
   "event": "ABSENCE_CHECK",
   "issued_epoch": 1787356800,
   "observed_absent": true,
@@ -31,9 +31,10 @@ internal names to the same artifact types.
 ```
 
 Raw names, national identifiers, face images, and embeddings must not enter an EraseMap receipt.
-The integration uses a domain-separated irreversible commitment. A `COMPLETE` result applies only
-to registered components that returned valid evidence; an unreachable required probe produces
-`UNVERIFIED`, never `COMPLETE`.
+The integration uses domain-separated HMAC-SHA-256 with a secret key held in a KMS or HSM. Plain
+SHA-256 of a name or national identifier is forbidden because a small identity space can be
+searched offline. A `COMPLETE` result applies only to registered components that returned valid
+evidence; an unreachable required probe produces `UNVERIFIED`, never `COMPLETE`.
 
 ## Local production-like simulator
 

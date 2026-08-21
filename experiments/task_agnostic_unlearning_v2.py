@@ -72,6 +72,7 @@ def pair_scores(
     *,
     seed: int,
     max_pairs: int = 3000,
+    negative_pool: np.ndarray[Any, Any] | None = None,
 ) -> tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]:
     positive_pairs: list[tuple[int, int]] = []
     for label in np.unique(targets[indices]):
@@ -83,10 +84,13 @@ def pair_scores(
         positive_pairs = [positive_pairs[int(index)] for index in selected]
     if not positive_pairs:
         raise ValueError("at least one positive pair is required")
+    pool = indices if negative_pool is None else negative_pool
+    if len(np.unique(targets[pool])) < 2:
+        raise ValueError("negative pool must contain at least two identities")
     negative_pairs: list[tuple[int, int]] = []
     while len(negative_pairs) < len(positive_pairs):
         remaining = len(positive_pairs) - len(negative_pairs)
-        candidates = rng.choice(indices, size=(max(32, remaining * 2), 2), replace=True)
+        candidates = rng.choice(pool, size=(max(32, remaining * 2), 2), replace=True)
         different = candidates[targets[candidates[:, 0]] != targets[candidates[:, 1]]]
         negative_pairs.extend((int(left), int(right)) for left, right in different[:remaining])
     positive = np.asarray([np.dot(embeddings[a], embeddings[b]) for a, b in positive_pairs])
@@ -186,7 +190,12 @@ def evaluate_method(
         model_embeddings, targets, retain_test, seed=seed
     )
     forgotten_positive, forgotten_negative = pair_scores(
-        model_embeddings, targets, forget_all, seed=seed + 1, max_pairs=1000
+        model_embeddings,
+        targets,
+        forget_all,
+        seed=seed + 1,
+        max_pairs=1000,
+        negative_pool=np.arange(len(targets)),
     )
     retained = verification_metrics(retained_positive, retained_negative, far_target=far_target)
     forgotten = verification_metrics(forgotten_positive, forgotten_negative, far_target=far_target)

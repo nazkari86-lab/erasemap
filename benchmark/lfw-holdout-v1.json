@@ -1,0 +1,31 @@
+{
+  "dataset": {
+    "color": true,
+    "funneled": true,
+    "min_faces_per_person": 20,
+    "name": "Labeled Faces in the Wild",
+    "resize": 0.5
+  },
+  "embedding_model": "InsightFace buffalo_sc MobileFaceNet@WebFace600K",
+  "forget_identity_selection": "sha256(seed || sorted_anonymous_class_counts) modulo eligible classes",
+  "methods": ["stale", "head_only", "gradient_ascent", "exact_retrain"],
+  "method_contract": {
+    "approximate_forget_loss_weight": 0.15,
+    "approximate_learning_rate": 0.002,
+    "approximate_parameter_drift_weight": 0.0001,
+    "approximate_steps": 80,
+    "local_epochs": 300,
+    "local_hidden_dimension": 128,
+    "local_learning_rate": 0.01,
+    "local_weight_decay": 0.0001
+  },
+  "primary_endpoint": "membership_attack_auc_distance_to_exact",
+  "random_seed": 20260821,
+  "schema_version": "erasemap-lfw-holdout-v1",
+  "success_criteria": {
+    "exact_forgotten_label_probability_max": 0.01,
+    "exact_membership_auc_max": 0.65,
+    "minimum_exact_retained_accuracy_delta": -0.08
+  },
+  "test_fraction_per_identity": 0.3
+}

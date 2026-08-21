@@ -1,0 +1,43 @@
+{
+  "approximate_unlearning": {
+    "forget_loss_weight": 0.15,
+    "learning_rate": 0.002,
+    "parameter_drift_weight": 0.0001,
+    "retain_batch_size": 128,
+    "steps": 80
+  },
+  "dataset": "Olivetti Faces",
+  "embedding_model": {
+    "license_scope": "non-commercial research",
+    "model_pack": "InsightFace buffalo_sc",
+    "recognition_network": "MobileFaceNet@WebFace600K"
+  },
+  "forget_subject": 0,
+  "local_model": {
+    "architecture": "512-128-ReLU-linear identity adapter",
+    "epochs": 300,
+    "learning_rate": 0.01,
+    "weight_decay": 0.0001
+  },
+  "methods": ["stale", "head_only", "gradient_ascent", "exact_retrain"],
+  "metrics": [
+    "forgotten_label_probability",
+    "forgotten_label_prediction_rate",
+    "retained_accuracy",
+    "membership_attack_auc",
+    "membership_attack_tpr_at_fpr_0_10",
+    "prediction_total_variation_to_exact",
+    "encoder_parameter_l2_to_exact",
+    "update_runtime_seconds"
+  ],
+  "primary_endpoint": "membership_attack_auc_distance_to_exact",
+  "random_seed": 20260821,
+  "schema_version": "erasemap-advanced-face-unlearning-v1",
+  "success_criteria": {
+    "exact_forgotten_label_probability_max": 0.01,
+    "exact_membership_auc_max": 0.65,
+    "minimum_exact_retained_accuracy_delta": -0.05
+  },
+  "test_images_per_subject": 3,
+  "train_images_per_subject": 7
+}

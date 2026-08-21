@@ -15,7 +15,8 @@ class MethodDecision:
 
 
 class AuditMethod(Protocol):
-    name: str
+    @property
+    def name(self) -> str: ...
 
     def assess(self, case: GeneratedCase, *, now_epoch: int) -> MethodDecision: ...
 

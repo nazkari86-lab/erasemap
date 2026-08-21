@@ -147,7 +147,11 @@ def _valid_evidence(node: Artifact) -> Evidence:
         valid_signature=True,
         issued_epoch=10,
         expires_epoch=1_000,
-        metadata=(("graph_root", "root-valid"), ("nonce", node.id)),
+        metadata=(
+            ("expected_graph_root", "root-valid"),
+            ("graph_root", "root-valid"),
+            ("nonce", node.id),
+        ),
     )
 
 
@@ -195,7 +199,12 @@ def _inject_fault(
         evidence[node_id] = replace(evidence[node_id], valid_signature=False)
     elif kind is FaultKind.WRONG_GRAPH_ROOT:
         evidence[node_id] = replace(
-            evidence[node_id], metadata=(("graph_root", "root-wrong"), ("nonce", node_id))
+            evidence[node_id],
+            metadata=(
+                ("expected_graph_root", "root-valid"),
+                ("graph_root", "root-wrong"),
+                ("nonce", node_id),
+            ),
         )
     elif kind is FaultKind.MISSING_EVIDENCE:
         evidence.pop(node_id, None)

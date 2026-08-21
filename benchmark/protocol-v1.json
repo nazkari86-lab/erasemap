@@ -1,0 +1,24 @@
+{
+  "bootstrap_samples": 500,
+  "bootstrap_seed": 20260821,
+  "development_seeds": [1, 2, 3],
+  "fault_matrix": [
+    [],
+    ["ORPHANED_RECORD"],
+    ["ORPHANED_TEMPLATE"],
+    ["UNPURGED_INDEX"],
+    ["STALE_CACHE"],
+    ["EXPIRED_BACKUP"],
+    ["MODEL_FALSELY_UNLEARNED"],
+    ["REPLAYED_RECEIPT"],
+    ["MODIFIED_RECEIPT"],
+    ["WRONG_GRAPH_ROOT"],
+    ["MISSING_EVIDENCE"]
+  ],
+  "graph_sizes": [10, 100, 1000],
+  "holdout_seeds": [1001, 1002, 1003, 1004, 1005],
+  "methods": ["erasemap", "receipt-only", "flat-checklist", "untyped-traversal"],
+  "primary_endpoint": "false_complete_rate",
+  "schema_version": "erasemap-benchmark-v1",
+  "topology_families": ["government-identity", "bank-kyc", "school-access"]
+}

@@ -141,7 +141,14 @@ def validate_evidence(
     if artifact.type is ArtifactType.MODEL_INFLUENCE:
         return _validate_model(artifact, evidence)
     if artifact.type is ArtifactType.AUDIT_RECEIPT:
-        if evidence.kind is EvidenceKind.SIGNED_STATEMENT and evidence.valid_signature:
-            return _valid("receipt signature is valid", artifact.state)
-        return _failed("audit receipt requires a valid signature")
+        metadata = _metadata(evidence)
+        if evidence.kind is not EvidenceKind.SIGNED_STATEMENT or not evidence.valid_signature:
+            return _failed("audit receipt requires a valid signature")
+        if metadata.get("replayed") == "true":
+            return _failed("audit receipt nonce was replayed")
+        graph_root = metadata.get("graph_root")
+        expected_root = metadata.get("expected_graph_root")
+        if not graph_root or not expected_root or graph_root != expected_root:
+            return _failed("audit receipt graph root does not match")
+        return _valid("receipt envelope is valid", artifact.state)
     return _failed("unsupported artifact type")

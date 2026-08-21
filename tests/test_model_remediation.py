@@ -66,6 +66,7 @@ def test_lineage_selects_approximate_only_with_frozen_protocol() -> None:
     )
     assert selected.method is ModelRemediationMethod.INFLUENCE_SELECTIVE
     assert "primary endpoint equivalence to exact" in selected.required_evidence
+    assert "registered multi-attack worst-case privacy result" in selected.required_evidence
     assert blocked.method is ModelRemediationMethod.BLOCKED
 
 

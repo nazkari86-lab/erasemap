@@ -1,5 +1,8 @@
 # Task-Agnostic Identity-Unlearning v2.1
 
+> Historical record: the shadow-model and embedding attack gaps described here are addressed by
+> [v2.2](TASK_AGNOSTIC_V22_REPORT.md).
+
 ## What changed after adversarial review
 
 Version 2.1 treats the earlier v2 result as historical evidence and corrects five weaknesses rather

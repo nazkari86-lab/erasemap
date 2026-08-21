@@ -84,7 +84,7 @@ def select_model_remediation(
             model_ids,
             (
                 "primary endpoint equivalence to exact",
-                "four-attack worst-case privacy result",
+                "registered multi-attack worst-case privacy result",
                 "retained-utility confidence interval",
                 "updated checkpoint hash",
             ),

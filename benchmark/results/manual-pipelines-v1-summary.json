@@ -1,0 +1,10 @@
+{
+  "authorship": "project-authored",
+  "fixture_sha256": "b83d691738b6bd0c1cdd671fab70c752643db69d6d7609703ca981d4517f5ba2",
+  "generator_independent": true,
+  "passed": true,
+  "result_sha256": "f2bc95477437cbb08623591c51e6a08e696b7b7eeb8c11b17ef69bed65c79d7d",
+  "schema_version": "erasemap-public-manual-pipelines-v1-summary",
+  "statuses": {"COMPLETE": 1, "INCOMPLETE": 1, "UNVERIFIED": 3},
+  "total": 5
+}

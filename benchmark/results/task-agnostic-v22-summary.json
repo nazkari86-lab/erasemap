@@ -1,0 +1,10 @@
+{
+  "freeze_revision": "979865e69cd0401e28048de6b26d78ea7265d75d",
+  "protocol_sha256": "e2f31e2aff31c8aa16e545503561545a59333c69b7f096dbe81ce358c3a47bc9",
+  "schema_version": "erasemap-public-task-agnostic-v2.2-summary",
+  "splits": {
+    "development": {"embedding_auc_exact":0.7252380952,"embedding_auc_selective":0.7176190476,"exact_lira_auc":0.6528571429,"exact_lira_tpr_at_fpr_0_01":0.3785714286,"primary_ratio":1.0048275024,"result_sha256":"8c19a06fa663e039e59263f96325507e230aea81899fc9be5e49dac4b2f77e03","selective_lira_auc":0.6709523810,"selective_lira_tpr_at_fpr_0_01":0.3685714286,"speedup":3.2055106016,"success":true,"worst_privacy_gap":0.0180952381},
+    "evaluation": {"embedding_auc_exact":0.5908205770,"embedding_auc_selective":0.5950654978,"exact_lira_auc":0.5874779102,"exact_lira_tpr_at_fpr_0_01":0.1398133938,"primary_ratio":1.0046693830,"result_sha256":"8765859cb79f79f4b9a591bb7279673adf58baf51f97e85a0e34bb04cd1758f9","selective_lira_auc":0.5942991250,"selective_lira_tpr_at_fpr_0_01":0.1313649370,"speedup":7.0385058444,"success":true,"worst_privacy_gap":0.0205460100},
+    "external": {"embedding_auc_exact":0.7193085317,"embedding_auc_selective":0.7309890873,"exact_lira_auc":0.6886537698,"exact_lira_tpr_at_fpr_0_01":0.4182539683,"primary_ratio":1.0032592524,"result_sha256":"034198b5781111c273a8a58199504037a4a788c49f692e59ca9c7fc98867ff18","selective_lira_auc":0.6951855159,"selective_lira_tpr_at_fpr_0_01":0.4252341270,"speedup":3.5135138161,"success":true,"worst_privacy_gap":0.0407896825}
+  }
+}

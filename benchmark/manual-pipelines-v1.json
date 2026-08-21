@@ -1,0 +1,98 @@
+{
+  "authorship": "project-authored",
+  "generator_independent": true,
+  "schema_version": "erasemap-manual-pipeline-fixtures-v1",
+  "cases": [
+    {
+      "id": "government-regional-cache-stale",
+      "subject_id": "citizen-17",
+      "now_epoch": 1000,
+      "graph": {
+        "nodes": [
+          {"id":"source","subject_id":"citizen-17","type":"SOURCE_RECORD","state":"ERASED","active_sink":false,"purpose":"enrollment","commitment":"hmac-sha256:source","evidence_id":"ev-source"},
+          {"id":"index","subject_id":"citizen-17","type":"SEARCH_INDEX_ENTRY","state":"ERASED","active_sink":false,"purpose":"lookup","commitment":"hmac-sha256:index","evidence_id":"ev-index"},
+          {"id":"regional-cache","subject_id":"citizen-17","type":"CACHE_ENTRY","state":"ACTIVE","active_sink":true,"purpose":"regional authentication","commitment":"hmac-sha256:cache","evidence_id":null}
+        ],
+        "edges": [
+          {"source_id":"source","target_id":"index","type":"INDEXED_AS","cross_subject":false},
+          {"source_id":"index","target_id":"regional-cache","type":"COPIED_TO","cross_subject":false}
+        ]
+      },
+      "evidence": [
+        {"id":"ev-source","artifact_id":"source","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:source","observed_absent":true,"issued_epoch":990},
+        {"id":"ev-index","artifact_id":"index","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:index","observed_absent":true,"issued_epoch":990}
+      ],
+      "expected": {"status":"INCOMPLETE","residual_terminal_ids":["regional-cache"],"invalid_evidence_ids":["regional-cache"]}
+    },
+    {
+      "id": "mobile-secure-enclave-unreachable",
+      "subject_id": "device-user-4",
+      "now_epoch": 1000,
+      "graph": {
+        "nodes": [
+          {"id":"source","subject_id":"device-user-4","type":"SOURCE_RECORD","state":"ERASED","active_sink":false,"purpose":"device enrollment","commitment":"hmac-sha256:mobile-source","evidence_id":"ev-source"},
+          {"id":"secure-template","subject_id":"device-user-4","type":"BIOMETRIC_TEMPLATE","state":"UNVERIFIED","active_sink":false,"purpose":"local unlock","commitment":"hmac-sha256:template","evidence_id":null}
+        ],
+        "edges": [{"source_id":"source","target_id":"secure-template","type":"DERIVED_INTO","cross_subject":false}]
+      },
+      "evidence": [{"id":"ev-source","artifact_id":"source","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:mobile-source","observed_absent":true,"issued_epoch":995}],
+      "expected": {"status":"UNVERIFIED","residual_terminal_ids":[],"invalid_evidence_ids":["secure-template"]}
+    },
+    {
+      "id": "school-attendance-complete",
+      "subject_id": "student-8",
+      "now_epoch": 1000,
+      "graph": {
+        "nodes": [
+          {"id":"source","subject_id":"student-8","type":"SOURCE_RECORD","state":"ERASED","active_sink":false,"purpose":"registration","commitment":"hmac-sha256:school-source","evidence_id":"ev-source"},
+          {"id":"template","subject_id":"student-8","type":"BIOMETRIC_TEMPLATE","state":"ERASED","active_sink":false,"purpose":"attendance","commitment":"hmac-sha256:school-template","evidence_id":"ev-template"},
+          {"id":"cache","subject_id":"student-8","type":"CACHE_ENTRY","state":"ERASED","active_sink":false,"purpose":"classroom offline cache","commitment":"hmac-sha256:school-cache","evidence_id":"ev-cache"}
+        ],
+        "edges": [
+          {"source_id":"source","target_id":"template","type":"DERIVED_INTO","cross_subject":false},
+          {"source_id":"template","target_id":"cache","type":"COPIED_TO","cross_subject":false}
+        ]
+      },
+      "evidence": [
+        {"id":"ev-source","artifact_id":"source","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:school-source","observed_absent":true,"issued_epoch":990},
+        {"id":"ev-template","artifact_id":"template","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:school-template","observed_absent":true,"issued_epoch":990},
+        {"id":"ev-cache","artifact_id":"cache","kind":"CACHE_INVALIDATION","observed_absent":true,"issued_epoch":990,"metadata":[["propagation_deadline","995"]]}
+      ],
+      "expected": {"status":"COMPLETE","residual_terminal_ids":[],"invalid_evidence_ids":[]}
+    },
+    {
+      "id": "bank-backup-waiting-expiry",
+      "subject_id": "customer-5",
+      "now_epoch": 1000,
+      "graph": {
+        "nodes": [
+          {"id":"source","subject_id":"customer-5","type":"SOURCE_RECORD","state":"ERASED","active_sink":false,"purpose":"kyc","commitment":"hmac-sha256:bank-source","evidence_id":"ev-source"},
+          {"id":"backup","subject_id":"customer-5","type":"BACKUP_COPY","state":"WAITING_EXPIRY","active_sink":false,"purpose":"regulated recovery","commitment":"hmac-sha256:bank-backup","evidence_id":"ev-backup"}
+        ],
+        "edges": [{"source_id":"source","target_id":"backup","type":"BACKED_UP_AS","cross_subject":false}]
+      },
+      "evidence": [
+        {"id":"ev-source","artifact_id":"source","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:bank-source","observed_absent":true,"issued_epoch":990},
+        {"id":"ev-backup","artifact_id":"backup","kind":"EXPIRY_SCHEDULE","issued_epoch":990,"expires_epoch":1200}
+      ],
+      "expected": {"status":"UNVERIFIED","residual_terminal_ids":[],"invalid_evidence_ids":[]}
+    },
+    {
+      "id": "border-model-audit-failed",
+      "subject_id": "traveler-2",
+      "now_epoch": 1000,
+      "graph": {
+        "nodes": [
+          {"id":"source","subject_id":"traveler-2","type":"SOURCE_RECORD","state":"ERASED","active_sink":false,"purpose":"border enrollment","commitment":"hmac-sha256:border-source","evidence_id":"ev-source"},
+          {"id":"model","subject_id":"traveler-2","type":"MODEL_INFLUENCE","state":"ERASED","active_sink":false,"purpose":"risk model","commitment":"hmac-sha256:border-model","evidence_id":"ev-model"}
+        ],
+        "edges": [{"source_id":"source","target_id":"model","type":"USED_TO_TRAIN","cross_subject":false}]
+      },
+      "evidence": [
+        {"id":"ev-source","artifact_id":"source","kind":"ABSENCE_CHECK","commitment":"hmac-sha256:border-source","observed_absent":true,"issued_epoch":990},
+        {"id":"ev-model","artifact_id":"model","kind":"MODEL_AUDIT","issued_epoch":990,"metadata":[["pass","false"],["protocol_id","v2.2"],["reference_id","checkpoint-hash"]]}
+      ],
+      "expected": {"status":"UNVERIFIED","residual_terminal_ids":[],"invalid_evidence_ids":["model"]}
+    }
+  ]
+}

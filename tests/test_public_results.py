@@ -38,6 +38,28 @@ def test_task_agnostic_v21_external_result_meets_frozen_targets() -> None:
     assert external["influence_selective_speedup"] >= 1.5
 
 
+def test_task_agnostic_v22_shadow_attack_result_meets_frozen_targets() -> None:
+    result = load("task-agnostic-v22-summary.json")
+    splits = result["splits"]
+    assert isinstance(splits, dict)
+    for split in splits.values():
+        assert isinstance(split, dict)
+        assert split["success"] is True
+        assert split["primary_ratio"] <= 1.01
+        assert split["worst_privacy_gap"] <= 0.10
+        assert split["speedup"] >= 1.5
+        assert split["selective_lira_auc"] >= 0.5
+        assert split["exact_lira_auc"] >= 0.5
+
+
+def test_manual_pipeline_public_result_is_not_claimed_independent() -> None:
+    result = load("manual-pipelines-v1-summary.json")
+
+    assert result["passed"] is True
+    assert result["generator_independent"] is True
+    assert result["authorship"] == "project-authored"
+
+
 def test_head_only_encoder_metrics_equal_stale() -> None:
     result = load("task-agnostic-v2-summary.json")
     evaluation = result["evaluation"]

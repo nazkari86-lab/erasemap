@@ -59,23 +59,24 @@ See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict
 claim boundaries.
 
-## Task-agnostic v2.1
+## Task-agnostic v2.2
 
-Version 2.1 keeps the unchanged face-verification task, corrects the v2 primary-endpoint gate,
-renames the neural update honestly to influence-selective unlearning, and evaluates four
-orientation-invariant privacy attacks. The lineage graph now selects whether model remediation is
-exact retraining, a protocol-approved approximate update, or blocked pending evidence.
+Version 2.2 keeps the unchanged face-verification task, corrects the v2 primary-endpoint gate,
+renames the neural update honestly to influence-selective unlearning, and evaluates six attacks:
+four logit statistics, a 16-shadow-model task-agnostic LiRA variant, and an embedding nearest-
+neighbour attack. The lineage graph selects whether model remediation is exact retraining, a
+protocol-approved approximate update, or blocked pending evidence.
 
 The method passed 100 deletion trials on each of Olivetti development, locked LFW confirmation,
-and a content-unseen MUFAC subset frozen before its 572 images were accessed. On MUFAC it preserved
-retained verification AUC at 0.92624 versus 0.92565 for exact retraining, stayed within the frozen
-1% primary non-inferiority margin, and ran 3.49× faster. This is external benchmark evidence, not
-production validation or a formal privacy guarantee.
+and a content-unseen MUFAC subset frozen before its 572 images were accessed. The stronger v2.2
+privacy audit was frozen later and passed on all three datasets without changing the unlearning
+method. On MUFAC its LiRA AUC was 0.69519 versus 0.68865 for exact retraining, with 3.51× update
+speedup. This is external benchmark evidence, not production validation or a privacy guarantee.
 
-See [docs/TASK_AGNOSTIC_V21_REPORT.md](docs/TASK_AGNOSTIC_V21_REPORT.md) for the frozen endpoints,
-confidence intervals, critique response, and remaining limitations. The historical v2 result is
-preserved in [docs/TASK_AGNOSTIC_V2_REPORT.md](docs/TASK_AGNOSTIC_V2_REPORT.md). A real service can
-map its components through [docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md).
+See [docs/TASK_AGNOSTIC_V22_REPORT.md](docs/TASK_AGNOSTIC_V22_REPORT.md) for the shadow-model threat
+model, confidence intervals, critique response, and limitations. Earlier v2/v2.1 records remain
+available. A real service can map its components through
+[docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md).
 
 ## Development
 

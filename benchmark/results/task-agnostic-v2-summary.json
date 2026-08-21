@@ -1,0 +1,51 @@
+{
+  "development": {
+    "result_sha256": "1479cf8ee2f5d656bad937dc7fb89e04100733af7618c9b164962698a517e64b",
+    "success": true,
+    "trials": 500
+  },
+  "evaluation": {
+    "code_revision": "9fb62df8c3056c312b690ca096536a0b6ae6a931",
+    "methods": {
+      "exact_retrain": {
+        "membership_attack_auc": 0.4752651512,
+        "retained_cka_to_exact": 1.0,
+        "retained_tar_at_far_0_01": 0.9375133333,
+        "retained_verification_auc": 0.9942400472,
+        "speedup_vs_exact": 1.0
+      },
+      "gradient_ascent": {
+        "membership_attack_auc": 0.5490773459,
+        "retained_cka_to_exact": 0.8740420980,
+        "retained_tar_at_far_0_01": 0.7135466667,
+        "retained_verification_auc": 0.9638691456,
+        "speedup_vs_exact": 3.2420448240
+      },
+      "head_only": {
+        "membership_attack_auc": 0.4529259338,
+        "retained_cka_to_exact": 0.9905559857,
+        "retained_tar_at_far_0_01": 0.9367100000,
+        "retained_verification_auc": 0.9939545956,
+        "speedup_vs_exact": 1.6386427139
+      },
+      "lineage_guided": {
+        "membership_attack_auc": 0.5052112932,
+        "retained_cka_to_exact": 0.9868530896,
+        "retained_tar_at_far_0_01": 0.9228033333,
+        "retained_verification_auc": 0.9930079350,
+        "speedup_vs_exact": 3.7777210003
+      },
+      "stale": {
+        "membership_attack_auc": 0.6739115963,
+        "retained_cka_to_exact": 0.9905559857,
+        "retained_tar_at_far_0_01": 0.9367100000,
+        "retained_verification_auc": 0.9939545956
+      }
+    },
+    "protocol_sha256": "55e6f38fdc3edfb12004a223445511cee2f8674e786a5a6215e51051385a681e",
+    "result_sha256": "707c5628b0514079d169e173e79f44adbcea21e01989ef7daa20d18761eab188",
+    "success": true,
+    "trials": 500
+  },
+  "schema_version": "erasemap-public-task-agnostic-v2-summary"
+}

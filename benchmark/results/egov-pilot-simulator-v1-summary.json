@@ -1,0 +1,11 @@
+{
+  "claim_boundary": "Production-like local simulator, not an authorized eGov deployment.",
+  "deleted_clean": true,
+  "deletions": 5,
+  "result_sha256": "6ec04d10bad9a8d0a9c3b0e3915a2d1bc9d7edf5678df0e4c9bf00a7cb41b23e",
+  "retained_intact": true,
+  "schema_version": "erasemap-public-egov-pilot-simulator-v1-summary",
+  "subjects": 25,
+  "success": true,
+  "tampered_receipt_rejected": true
+}

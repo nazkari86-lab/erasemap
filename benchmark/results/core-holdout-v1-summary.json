@@ -1,0 +1,16 @@
+{
+  "code_revision": "9fb62df8c3056c312b690ca096536a0b6ae6a931",
+  "erasemap": {
+    "exact_node_recall": 1.0,
+    "false_complete_rate": 0.0,
+    "mean_runtime_ms": 0.8210621333,
+    "precision": 1.0,
+    "recall": 1.0,
+    "trials": 165
+  },
+  "failures": 0,
+  "method_trials": 660,
+  "protocol_sha256": "5436399094aa1f867f70c4276aeed5875565950839ce4631cbb7e00ef6099ed0",
+  "result_sha256": "5e8d29769b2d39e7622163e20b832235ddc1daa404bcdaae6762ba08fb787894",
+  "schema_version": "erasemap-public-core-holdout-v1-summary"
+}

@@ -59,6 +59,19 @@ See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict
 claim boundaries.
 
+## Task-agnostic v2
+
+Version 2 removes the trivial deleted-output-class endpoint. It evaluates an unchanged face
+verification task over 100 forgotten-identity trials per dataset. The new lineage-guided method
+preserved LFW verification AUC at 0.9930, brought confidence membership inference near chance, and
+was 3.78× faster than exact retraining under the frozen local protocol.
+
+![Task-agnostic identity-unlearning results](docs/assets/task-agnostic-v2.png)
+
+See [docs/TASK_AGNOSTIC_V2_REPORT.md](docs/TASK_AGNOSTIC_V2_REPORT.md) for confidence intervals,
+system fault-injection results, limitations, and the production-like eGov simulator. A real service
+can map its components through [docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md).
+
 ## Development
 
 ```bash

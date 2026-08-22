@@ -1,0 +1,13 @@
+{
+  "schema_version": "erasemap-mufac-safe-policy-v3",
+  "candidate": "deletion_matched_restart_v3.2_120_epochs",
+  "candidate_result": "outputs/task-agnostic-v32-adaptive-external/result.json",
+  "fallback": "exact_retrain",
+  "required_gates": {
+    "candidate_success": true,
+    "candidate_speedup_min": 1.5,
+    "retained_auc_delta_min": -0.01,
+    "privacy_advantage_upper_max": 0.10
+  },
+  "claim_boundary": "Adaptive MUFAC evidence; exact fallback remains mandatory on any failed deployment-specific gate"
+}

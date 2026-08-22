@@ -1,6 +1,6 @@
 # Machine-checked PCUG/CDC core
 
-The root [`EraSeMap`](../EraSeMap/) Lean library contains the formalization frozen in
+The root [`EraseMapFormal`](../EraseMapFormal/) Lean library contains the formalization frozen in
 [`docs/FORMAL_PCUG_V1_SPEC.md`](../docs/FORMAL_PCUG_V1_SPEC.md); this directory holds its
 reproduction guide and bounded production-conformance record.
 

@@ -62,3 +62,4 @@ jobs:
           build-args: "--wfail"
           leanchecker: true
           axiom-audit: true
+          axiom-audit-root: EraSeMap

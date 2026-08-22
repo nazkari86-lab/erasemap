@@ -110,6 +110,13 @@ cases across four external families, including 100 non-complete cases. See
 [`external_challenge/README.md`](external_challenge/README.md). This is an executable route to
 independent evidence; it is not itself an independent result.
 
+The external evidence registry additionally binds evaluator identity metadata, external repository
+commit, tested EraSeMap commit, four-family provenance, file hashes, freeze/reveal timestamps, score,
+and Ed25519 signature. CI recomputes predictions and scoring and rejects algorithm drift after the
+tested commit. Its independence status remains **7.8/10 and pending** until an externally
+identifiable evaluator submits and signs a passing run. See
+[`docs/INDEPENDENCE_EVIDENCE_RUBRIC.md`](docs/INDEPENDENCE_EVIDENCE_RUBRIC.md).
+
 An external organization can use [`docs/PRODUCTION_PILOT_PROTOCOL.md`](docs/PRODUCTION_PILOT_PROTOCOL.md)
 and the machine-validated [`pilot/manifest-template.json`](pilot/manifest-template.json) to freeze
 the algorithm commit, register two or more real persistence systems, and publish only redacted

@@ -1,0 +1,48 @@
+name: Independent hidden evaluation
+description: Volunteer to author and run a blinded external EraSeMap challenge
+title: "[External evaluation] "
+labels: ["external-evaluation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for considering an independent evaluation. Do not post hidden labels, private data, credentials, biometric samples, or private infrastructure details here.
+  - type: input
+    id: evaluator
+    attributes:
+      label: Evaluator or team
+      description: Public name or stable pseudonym with a verifiable profile.
+    validations:
+      required: true
+  - type: input
+    id: affiliation
+    attributes:
+      label: Affiliation
+      description: Organization, school, laboratory, or independent.
+    validations:
+      required: true
+  - type: input
+    id: identity
+    attributes:
+      label: Public identity URL
+      description: Organization page, ORCID, institutional profile, or established public account.
+    validations:
+      required: true
+  - type: input
+    id: repository
+    attributes:
+      label: External challenge repository
+      description: Repository controlled outside nazkari86-lab/erasemap; it may remain private until reveal.
+    validations:
+      required: true
+  - type: checkboxes
+    id: independence
+    attributes:
+      label: Independence declaration
+      options:
+        - label: I am not the EraSeMap author and will independently control case authorship and labels.
+          required: true
+        - label: I will publish the case commitment before receiving predictions.
+          required: true
+        - label: I will disclose any conflict of interest and will not use personal or sensitive data.
+          required: true

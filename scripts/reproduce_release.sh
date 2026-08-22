@@ -19,8 +19,13 @@ fi
 "$python_bin" -m pytest --cov=erasemap --cov-report=term --cov-fail-under=90
 PYTHONPATH=src "$python_bin" experiments/run_manual_pipeline_benchmark.py \
   --output outputs/release-v3/manual-pipelines.json
-PYTHONPATH=src "$python_bin" experiments/run_egov_pilot_simulator.py \
-  --output "$release_temp/egov-pilot"
+"$python_bin" -m build --outdir "$release_temp/dist"
+"$python_bin" -m erasemap.cli pcug benchmark development \
+  --protocol benchmark/pcug-protocol-v1.json \
+  --output "$release_temp/pcug-development"
+"$python_bin" -m erasemap.cli pcug verify-directory \
+  "$release_temp/pcug-development/bundles" \
+  --public-key "$release_temp/pcug-development/public-key.pem"
 
 if [[ "$profile" == "core" ]]; then
   exit 0
@@ -37,6 +42,8 @@ PYTHONPATH=src "$python_bin" experiments/advanced_face_unlearning.py \
 PYTHONPATH=src "$python_bin" experiments/advanced_face_unlearning.py \
   --dataset lfw --protocol benchmark/lfw-holdout-v1.json \
   --output outputs/lfw-holdout-v1
+PYTHONPATH=src "$python_bin" experiments/run_egov_pilot_simulator.py \
+  --output "$release_temp/egov-pilot"
 PYTHONPATH=src "$python_bin" experiments/task_agnostic_unlearning_v2.py \
   --protocol benchmark/task-agnostic-v3.json --split development \
   --output outputs/task-agnostic-v3-development

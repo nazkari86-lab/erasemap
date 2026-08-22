@@ -23,3 +23,12 @@ jobs:
       - run: python -m ruff check .
       - run: python -m mypy src/erasemap
       - run: python -m pytest --cov=erasemap --cov-report=term-missing --cov-fail-under=90
+      - run: python -m build
+      - run: >-
+          erasemap pcug benchmark development
+          --protocol benchmark/pcug-protocol-v1.json
+          --output /tmp/erasemap-pcug-development
+      - run: >-
+          erasemap pcug verify-directory
+          /tmp/erasemap-pcug-development/bundles
+          --public-key /tmp/erasemap-pcug-development/public-key.pem

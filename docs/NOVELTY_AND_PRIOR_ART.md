@@ -12,6 +12,14 @@ inference, deletion receipts, or biometric governance. Those components have sub
   guarantee.
 - [NIST SP 800-63A](https://pages.nist.gov/800-63-4/sp800-63a.html) requires documented biometric
   retention/deletion processes and operationally representative evaluation.
+- Zhang et al., [Verification of Machine Unlearning is Fragile](https://proceedings.mlr.press/v235/zhang24h.html),
+  shows that a provider can retain information while passing some verification strategies.
+- [Per-instance privacy for machine unlearning](https://openreview.net/forum?id=0A4Y9qRnu9)
+  estimates item-level deletion privacy/difficulty; PCUG does not claim to invent per-item risk.
+- [PURGE](https://arxiv.org/abs/2606.03808) includes self-regulating stopping criteria and
+  representation erasure; adaptive stopping is therefore outside the PCUG novelty claim.
+- [OriginBlame](https://arxiv.org/abs/2607.13037) connects provenance to precise forget-set
+  construction; provenance-guided record selection is also outside the PCUG novelty claim.
 
 The research contribution being tested is narrower: a fail-closed, typed residual-path auditor
 that connects operational biometric copies (source, template, index, cache, backup, model, receipt)
@@ -29,3 +37,28 @@ hidden suite, and evaluation on the actual operational population.
 Potential novelty should be presented as the combined system and evaluation contract, subject to a
 formal literature/patent search by the student. It must not be presented as proof that no similar
 system exists.
+
+## PCUG working contribution boundary
+
+Literature snapshot date: 2026-08-22. This is a targeted review, not a completed systematic or patent
+search.
+
+PCUG tests the composition of three parts:
+
+1. registered deletion completeness over typed operational paths, where active physical artifacts,
+   unknown edges, and quantitative influence claims remain distinct;
+2. minimum-cost action selection whose declared transitions must succeed under replay rather than
+   being trusted as static node coverage;
+3. a signed multi-view proof bundle whose verdict, costs, paths, commitments, and model-channel
+   decisions are independently recomputed.
+
+The working claim is limited to this tested composition. PCUG does not claim invention of
+provenance, min-cut, set cover, machine unlearning, exact retraining, per-instance privacy, hidden
+evaluation, cryptographic commitments, digital signatures, or deletion receipts. If a work is found
+that implements the same three-part input/algorithm/output contract under a comparable threat model,
+the contribution must be narrowed or redesigned before competition submission.
+
+Passing the controlled simulator can support only a statement about its registered faults and
+semantics. External generalization requires separately sourced locked evidence. FaceID/eGov claims
+require authorized production instrumentation; application-style labels are not production evidence
+and are not independent scientific datasets.

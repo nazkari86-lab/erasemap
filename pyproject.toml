@@ -13,6 +13,7 @@ dependencies = ["cryptography>=43"]
 
 [project.optional-dependencies]
 dev = [
+  "build>=1.2",
   "hypothesis>=6.112",
   "mypy>=1.11",
   "pytest>=8.3",

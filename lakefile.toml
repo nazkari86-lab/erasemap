@@ -1,6 +1,0 @@
-name = "erasemap-formal"
-version = "0.1.0"
-defaultTargets = ["EraSeMap"]
-
-[[lean_lib]]
-name = "EraSeMap"

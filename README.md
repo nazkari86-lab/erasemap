@@ -64,8 +64,27 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Deletion-matched model experiments v3 | Measured only on the named open datasets; MUFAC retained-utility gate failed |
 | PCUG/CDC deterministic core | Implemented and checked against unit, property, tamper, and replay tests |
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
-| PCUG external generalization | Not established |
+| PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
+
+## Source-locked multi-system holdout
+
+The first committed external-structure holdout derives five distinct case families from official
+NIST SP 800-63A, W3C PROV-O, OpenSearch, MLflow, and PostgreSQL documentation. It contains 125 unique
+cases rather than relabelled FaceID/eGov/KYC/School adapters. In the one-shot run PCUG recorded
+0/100 false-complete decisions on non-complete cases (Wilson 95% upper bound 0.0370), 25/25 complete
+specificity, and zero exceptions.
+
+The strongest typed-node baseline tied PCUG at 0/100. This is therefore evidence of transfer to the
+frozen source-derived structures, not evidence that PCUG outperforms every complete typed audit.
+Mappings and execution remain project-authored, and no production organization was accessed. See
+[`docs/SOURCE_LOCKED_HOLDOUT_V1_REPORT.md`](docs/SOURCE_LOCKED_HOLDOUT_V1_REPORT.md) and the raw,
+hash-verified records under `outputs/source-locked-holdout-v1/`.
+
+MUFAC's original approximate-model utility failure remains unchanged. The v2 safe policy now blocks
+that candidate and falls back to exact retraining, preserving retained CKA 1.0 at 1.0x speed rather
+than presenting a failed fast method as complete. See
+[`docs/MUFAC_SAFE_POLICY_V2_REPORT.md`](docs/MUFAC_SAFE_POLICY_V2_REPORT.md).
 
 ## Real-face unlearning benchmark
 

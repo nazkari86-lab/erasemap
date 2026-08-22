@@ -24,6 +24,14 @@ jobs:
       - run: python -m mypy src/erasemap
       - run: python -m pytest --cov=erasemap --cov-report=term-missing --cov-fail-under=90
       - run: python -m build
+      - run: python scripts/verify_source_locked_holdout.py
+      - run: >-
+          python external_evaluator/run.py
+          --sources benchmark/external-sources-v1.json
+          --output /tmp/erasemap-external-evaluator
+      - run: >-
+          python external_evaluator/verify.py
+          /tmp/erasemap-external-evaluator/evaluation-records.json
       - run: >-
           erasemap pcug benchmark development
           --protocol benchmark/pcug-protocol-v1.json

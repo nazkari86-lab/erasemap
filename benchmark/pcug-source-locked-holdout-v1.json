@@ -1,0 +1,19 @@
+{
+  "schema_version": "erasemap-source-locked-holdout-protocol-v1",
+  "source_manifest": "benchmark/external-sources-v1.json",
+  "case_builder": "source families x variants 0..24",
+  "families": ["identity", "ml", "provenance", "recovery", "search"],
+  "methods": ["pcug", "typed_node_audit", "flat_checklist", "model_only", "receipt_only"],
+  "planners": ["exact_cdc", "greedy_cdc", "delete_all"],
+  "primary_endpoint": {
+    "name": "false_complete_rate",
+    "population": "truth INCOMPLETE or UNVERIFIED",
+    "success": "observed false-complete = 0 and Wilson 95% upper bound <= 0.05"
+  },
+  "missing_exception_timeout_rule": "retain and score fail-closed",
+  "reporting": "per source family plus macro average; adapter labels prohibited as units",
+  "run_rule": "one output directory creation; overwrite forbidden",
+  "claim_if_pass": "PCUG generalized to the frozen independently sourced structures only",
+  "claim_if_fail": "PCUG did not meet the preregistered source-locked endpoint",
+  "claim_if_inconclusive": "environment or integrity failure prevented an evaluable result"
+}

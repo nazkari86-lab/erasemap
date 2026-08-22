@@ -1,0 +1,13 @@
+{
+  "schema_version": "erasemap-mufac-safe-policy-v2",
+  "input_summary": "benchmark/results/task-agnostic-v3/external-summary.json",
+  "input_protocol_hash": "sha256:e8b718115588e678dc751f9f0283b2405ac2543f73870357660dc399d271d303",
+  "candidate": "deletion_matched_restart",
+  "fallback": "exact_retrain",
+  "selection_rule": {
+    "retained_auc_loss_upper_max": 0.01,
+    "privacy_advantage_upper_max": 0.10,
+    "forgotten_mse_ratio_max": 1.0
+  },
+  "claim_boundary": "Post-hoc fail-safe policy over frozen v3 evidence; not a new model evaluation or speedup claim"
+}

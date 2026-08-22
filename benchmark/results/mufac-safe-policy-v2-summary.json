@@ -1,0 +1,23 @@
+{
+  "candidate": "deletion_matched_restart",
+  "candidate_original_success": false,
+  "claim_boundary": "Post-hoc fail-safe policy over frozen v3 evidence; not a new model evaluation or speedup claim",
+  "decision": "SAFE_FALLBACK",
+  "fallback": "exact_retrain",
+  "gates": {
+    "forgotten_mse_ratio": true,
+    "privacy_advantage_upper": true,
+    "retained_auc_loss_upper": false
+  },
+  "input_evidence_hash": "sha256:9caba2038fca03fdfc5f23eefc109142912f1010adfd6280263cec4db363d2a4",
+  "observed": {
+    "forgotten_mse_ratio": 0.08735800142925629,
+    "privacy_advantage_upper": 0.05445535714285709,
+    "retained_auc_loss_upper": 0.017108141561734125
+  },
+  "protocol_hash": "sha256:e28b40deb55a06aeb2039ee3e93dbd71c4259d7009aaa63b938defe880c31c70",
+  "selected_method": "exact_retrain",
+  "selected_retained_auc_mean": 0.925648537679378,
+  "selected_retained_cka_mean": 1.0,
+  "selected_speedup_mean": 1.0
+}

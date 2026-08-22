@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from cryptography.fernet import Fernet
 import pytest
+from cryptography.fernet import Fernet
 
 from external_challenge.seal import reveal_answers, seal_cases
 

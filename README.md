@@ -29,6 +29,44 @@ valid scientific result and therefore exits successfully.
 See [docs/CORE_PROTOCOL.md](docs/CORE_PROTOCOL.md) for the frozen experiment, baselines, evidence
 contracts, receipt boundary, and interpretation rules.
 
+## Proof-Carrying Unlearning Graph
+
+The prospective PCUG core extends the v1 node audit with a **Counterfactual Deletion Cut**. It
+replays candidate actions, treats every subject-derived physical artifact as a deletion terminal,
+keeps shared models physically active, and closes only the request-scoped influence edge when all
+mandatory model channels pass. Exact CDC is checked against a brute-force oracle; greedy CDC remains
+a named approximation baseline.
+
+A signed proof bundle includes the committed graph, protocol, selected actions, hidden-challenge
+opening, raw channel results, and declared verdict. The independent checker verifies the signature
+and commitments, replays every transition, recomputes paths and channel decisions, and rejects a
+signed but false `COMPLETE` field.
+
+```bash
+erasemap pcug demo \
+  --adapter egov_style --seed 4409 \
+  --output /tmp/pcug-demo.json \
+  --public-key-output /tmp/pcug-public-key.pem
+erasemap pcug verify /tmp/pcug-demo.json \
+  --public-key /tmp/pcug-public-key.pem
+erasemap pcug benchmark development \
+  --protocol benchmark/pcug-protocol-v1.json \
+  --output outputs/pcug-development-v1
+```
+
+`faceid_style`, `egov_style`, `kyc_style`, and `school_style` are display adapters over the same
+synthetic graph semantics. They are not integrations with Apple, eGov, a bank, or a school. See
+[docs/PCUG_PROTOCOL.md](docs/PCUG_PROTOCOL.md) for the formal decision and claim boundary.
+
+| Component | Current evidence status |
+|---|---|
+| Typed residual-path audit v1 | Measured controlled benchmark; see `docs/CORE_PROTOCOL.md` |
+| Deletion-matched model experiments v3 | Measured only on the named open datasets; MUFAC retained-utility gate failed |
+| PCUG/CDC deterministic core | Implemented and checked against unit, property, tamper, and replay tests |
+| PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
+| PCUG external generalization | Not established |
+| Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
+
 ## Real-face unlearning benchmark
 
 The repository contains reproducible biometric-deletion experiments on Olivetti Faces and a

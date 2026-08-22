@@ -1,3 +1,4 @@
+import gzip
 import json
 from pathlib import Path
 
@@ -86,3 +87,52 @@ def test_core_and_simulator_public_results_pass() -> None:
     assert simulator["success"] is True
     assert simulator["retained_intact"] is True
     assert simulator["tampered_receipt_rejected"] is True
+
+
+def test_v3_public_results_preserve_passes_and_preregistered_external_failure() -> None:
+    development = load("task-agnostic-v3/development-summary.json")
+    evaluation = load("task-agnostic-v3/evaluation-summary.json")
+    external = load("task-agnostic-v3/external-summary.json")
+
+    assert development["success"] is True
+    assert evaluation["success"] is True
+    assert external["success"] is False
+    endpoints = external["endpoints"]
+    summary = external["summary"]
+    assert isinstance(endpoints, dict) and isinstance(summary, dict)
+    assert endpoints["forgotten_embedding_mse_ratio_to_stale"] < 1.0
+    assert endpoints["max_attack_paired_advantage_upper_ci"] < 0.10
+    candidate = summary["deletion_matched_restart"]
+    exact = summary["exact_retrain"]
+    assert isinstance(candidate, dict) and isinstance(exact, dict)
+    assert (
+        candidate["retained_verification_auc"]["mean"]
+        - exact["retained_verification_auc"]["mean"]
+        < -0.01
+    )
+
+
+def test_v31_negative_ablation_and_pixel_backbone_are_public() -> None:
+    development = load("task-agnostic-v31/development-summary.json")
+    evaluation = load("task-agnostic-v31/evaluation-summary.json")
+    external = load("task-agnostic-v31/adaptive-external-summary.json")
+    pixel = load("trainable-pixel-backbone-v1/summary.json")
+
+    assert development["success"] is False
+    assert evaluation["success"] is True
+    assert external["success"] is False
+    assert pixel["success"] is True
+    assert pixel["full_gradient_coverage"] is True
+
+
+def test_v3_full_anonymous_trial_rows_are_tracked() -> None:
+    paths = (
+        RESULTS / "task-agnostic-v3/development-trials.jsonl.gz",
+        RESULTS / "task-agnostic-v3/evaluation-trials.jsonl.gz",
+        RESULTS / "task-agnostic-v3/external-trials.jsonl.gz",
+    )
+    for path in paths:
+        with gzip.open(path, "rt") as stream:
+            rows = [json.loads(line) for line in stream]
+        assert len(rows) == 500
+        assert all("anonymous_forget_subject" in row for row in rows)

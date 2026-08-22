@@ -1,0 +1,10 @@
+{
+  "freeze_revision": "fd3d3790834f5cc942c80db38e6cf2a2cb002ca4",
+  "protocol_sha256": "e8b718115588e678dc751f9f0283b2405ac2543f73870357660dc399d271d303",
+  "result_roles": {
+    "development": "development",
+    "evaluation": "locked LFW confirmation",
+    "external": "content-unseen MUFAC confirmation"
+  },
+  "schema_version": "erasemap-public-v3-provenance-v1"
+}

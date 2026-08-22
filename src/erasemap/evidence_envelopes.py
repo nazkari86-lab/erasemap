@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import secrets
+import sqlite3
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, replace
 from typing import Any
@@ -74,8 +75,58 @@ class EvidenceEnvelopeLedger:
             raise ValueError("key id and nonce are required")
         self._nonces.add((key_id, nonce))
 
+    def consume(self, key_id: str, nonce: str) -> bool:
+        if self.contains(key_id, nonce):
+            return False
+        self.record(key_id, nonce)
+        return True
+
     def entries(self) -> tuple[tuple[str, str], ...]:
         return tuple(sorted(self._nonces))
+
+
+class SqliteEvidenceEnvelopeLedger(EvidenceEnvelopeLedger):
+    """Process-safe replay ledger backed by a UNIQUE SQLite primary key."""
+
+    def __init__(self, path: str) -> None:
+        super().__init__()
+        self._connection = sqlite3.connect(path, timeout=30)
+        self._connection.execute(
+            "CREATE TABLE IF NOT EXISTS consumed_nonces ("
+            "key_id TEXT NOT NULL, nonce TEXT NOT NULL, "
+            "PRIMARY KEY (key_id, nonce))"
+        )
+        self._connection.commit()
+
+    def contains(self, key_id: str, nonce: str) -> bool:
+        row = self._connection.execute(
+            "SELECT 1 FROM consumed_nonces WHERE key_id = ? AND nonce = ?",
+            (key_id, nonce),
+        ).fetchone()
+        return row is not None
+
+    def consume(self, key_id: str, nonce: str) -> bool:
+        cursor = self._connection.execute(
+            "INSERT OR IGNORE INTO consumed_nonces(key_id, nonce) VALUES (?, ?)",
+            (key_id, nonce),
+        )
+        self._connection.commit()
+        return cursor.rowcount == 1
+
+    def entries(self) -> tuple[tuple[str, str], ...]:
+        rows = self._connection.execute(
+            "SELECT key_id, nonce FROM consumed_nonces ORDER BY key_id, nonce"
+        ).fetchall()
+        return tuple((str(key_id), str(nonce)) for key_id, nonce in rows)
+
+    def close(self) -> None:
+        self._connection.close()
+
+    def __enter__(self) -> SqliteEvidenceEnvelopeLedger:
+        return self
+
+    def __exit__(self, *_args: object) -> None:
+        self.close()
 
 
 def evidence_envelope_from_payload(payload: Any) -> EvidenceEnvelope:
@@ -83,6 +134,21 @@ def evidence_envelope_from_payload(payload: Any) -> EvidenceEnvelope:
         raise ValueError("evidence envelope must be an object")
     raw = payload["evidence"]
     metadata = raw.get("metadata", [])
+    observed_absent = raw.get("observed_absent", False)
+    issued_epoch = raw.get("issued_epoch", 0)
+    expires_epoch = raw.get("expires_epoch")
+    if not isinstance(observed_absent, bool):
+        raise ValueError("observed_absent must be a boolean")
+    if not isinstance(issued_epoch, int) or isinstance(issued_epoch, bool):
+        raise ValueError("issued_epoch must be an integer")
+    if expires_epoch is not None and (
+        not isinstance(expires_epoch, int) or isinstance(expires_epoch, bool)
+    ):
+        raise ValueError("expires_epoch must be an integer or null")
+    if not isinstance(metadata, list) or any(
+        not isinstance(item, list) or len(item) != 2 for item in metadata
+    ):
+        raise ValueError("metadata must be an array of key-value pairs")
     return EvidenceEnvelope(
         schema_version=str(payload["schema_version"]),
         key_id=str(payload["key_id"]),
@@ -92,13 +158,9 @@ def evidence_envelope_from_payload(payload: Any) -> EvidenceEnvelope:
             artifact_id=str(raw["artifact_id"]),
             kind=EvidenceKind(str(raw["kind"])),
             commitment=str(raw.get("commitment", "")),
-            observed_absent=bool(raw.get("observed_absent", False)),
-            issued_epoch=int(raw.get("issued_epoch", 0)),
-            expires_epoch=(
-                int(raw["expires_epoch"])
-                if raw.get("expires_epoch") is not None
-                else None
-            ),
+            observed_absent=observed_absent,
+            issued_epoch=issued_epoch,
+            expires_epoch=expires_epoch,
             metadata=tuple((str(key), str(value)) for key, value in metadata),
         ),
         signature=bytes.fromhex(str(payload["signature"])),
@@ -153,7 +215,8 @@ def verify_evidence_envelope(
         public_key.verify(envelope.signature, _canonical_json(envelope.payload()))
     except InvalidSignature:
         return EvidenceEnvelopeVerification(False, "invalid signature")
-    ledger.record(envelope.key_id, envelope.nonce)
+    if not ledger.consume(envelope.key_id, envelope.nonce):
+        return EvidenceEnvelopeVerification(False, "replayed nonce")
     return EvidenceEnvelopeVerification(
         True,
         "valid signature and evidence envelope",

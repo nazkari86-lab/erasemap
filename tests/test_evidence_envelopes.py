@@ -1,4 +1,5 @@
 from dataclasses import replace
+from pathlib import Path
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
@@ -13,6 +14,7 @@ from erasemap.domain import (
 )
 from erasemap.evidence_envelopes import (
     EvidenceEnvelopeLedger,
+    SqliteEvidenceEnvelopeLedger,
     audit_signed_subject,
     evidence_envelope_from_payload,
     issue_evidence_envelope,
@@ -127,3 +129,25 @@ def test_signed_audit_fails_closed_when_envelope_is_tampered() -> None:
 
     assert valid.status is AuditStatus.COMPLETE
     assert tampered.status is AuditStatus.UNVERIFIED
+
+
+def test_sqlite_ledger_consumption_is_unique_across_connections(tmp_path: Path) -> None:
+    path = tmp_path / "nonces.sqlite3"
+    with SqliteEvidenceEnvelopeLedger(str(path)) as first:
+        assert first.consume("issuer-1", "nonce-1")
+    with SqliteEvidenceEnvelopeLedger(str(path)) as second:
+        assert not second.consume("issuer-1", "nonce-1")
+
+
+def test_external_payload_requires_real_json_boolean() -> None:
+    private_key = Ed25519PrivateKey.generate()
+    envelope = issue_evidence_envelope(private_key, "issuer-1", _evidence())
+    payload = envelope.serialized()
+    payload["evidence"]["observed_absent"] = "false"
+
+    try:
+        evidence_envelope_from_payload(payload)
+    except ValueError as error:
+        assert str(error) == "observed_absent must be a boolean"
+    else:
+        raise AssertionError("string boolean must be rejected")

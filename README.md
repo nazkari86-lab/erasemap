@@ -87,9 +87,11 @@ and per attack using paired bootstrap confidence intervals, including an identit
 attack whose in-model shadows contain the whole identity and whose out-model shadows omit it.
 
 The frozen development protocol passed 100 deletion requests: forgotten embedding MSE was 0.134×
-the stale baseline, retained MSE was 0.152×, the largest paired attack 95% upper bound was 0.076,
-and mean speedup was 3.37×. Confirmation and external numbers are reported only after running the
-clean-revision locks; development success is not silently relabeled as external validation.
+the stale baseline, retained MSE was 0.152×, and the largest paired attack 95% upper bound was
+0.076. Locked LFW also passed. MUFAC passed all deletion/privacy gates but failed the retained-AUC
+gate (`−0.01324` versus the preregistered `−0.01` limit); that negative result is retained. The
+adaptive 80-epoch v3.1 ablation did not fix the cross-dataset gate and exposed a privacy trade-off.
+See [docs/TASK_AGNOSTIC_V3_REPORT.md](docs/TASK_AGNOSTIC_V3_REPORT.md) for all results and boundaries.
 
 The separate pixel-backbone benchmark trains every convolutional and classifier parameter directly
 from Olivetti images. It addresses the frozen-backbone limitation while explicitly remaining a

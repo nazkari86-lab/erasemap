@@ -23,7 +23,7 @@ from erasemap.domain import (
 )
 from erasemap.evidence_envelopes import (
     EvidenceEnvelope,
-    EvidenceEnvelopeLedger,
+    SqliteEvidenceEnvelopeLedger,
     audit_signed_subject,
     evidence_envelope_from_payload,
 )
@@ -113,9 +113,15 @@ def _generate(args: argparse.Namespace) -> int:
 def _audit(args: argparse.Namespace) -> int:
     graph = graph_from_json(Path(args.graph).read_text())
     if args.signed_evidence is not None:
-        if args.evidence is not None or args.trust_store is None or args.nonce_ledger is None:
+        if (
+            args.evidence is not None
+            or args.trust_store is None
+            or args.nonce_ledger is None
+            or args.max_evidence_age is None
+        ):
             raise ValueError(
-                "signed evidence requires --trust-store and --nonce-ledger, and excludes --evidence"
+                "signed evidence requires --trust-store, --nonce-ledger, and "
+                "--max-evidence-age, and excludes --evidence"
             )
         raw_envelopes = json.loads(Path(args.signed_evidence).read_text())
         raw_keys = json.loads(Path(args.trust_store).read_text())
@@ -124,27 +130,23 @@ def _audit(args: argparse.Namespace) -> int:
         envelopes: dict[str, EvidenceEnvelope] = {}
         for raw in raw_envelopes:
             envelope = evidence_envelope_from_payload(raw)
+            if envelope.evidence.artifact_id in envelopes:
+                raise ValueError("duplicate signed evidence for one artifact")
             envelopes[envelope.evidence.artifact_id] = envelope
         trust_store = {
             str(key_id): Ed25519PublicKey.from_public_bytes(bytes.fromhex(str(value)))
             for key_id, value in raw_keys.items()
         }
-        ledger_path = Path(args.nonce_ledger)
-        raw_ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else []
-        if not isinstance(raw_ledger, list):
-            raise ValueError("nonce ledger must be an array")
-        ledger = EvidenceEnvelopeLedger(
-            (str(item[0]), str(item[1])) for item in raw_ledger
-        )
-        result = audit_signed_subject(
-            graph,
-            envelopes,
-            trust_store,
-            args.subject,
-            now_epoch=args.now,
-            ledger=ledger,
-        )
-        ledger_path.write_text(_json([list(item) for item in ledger.entries()]) + "\n")
+        with SqliteEvidenceEnvelopeLedger(args.nonce_ledger) as ledger:
+            result = audit_signed_subject(
+                graph,
+                envelopes,
+                trust_store,
+                args.subject,
+                now_epoch=args.now,
+                ledger=ledger,
+                max_age_seconds=args.max_evidence_age,
+            )
     else:
         result = audit_subject(
             graph, _load_evidence(args.evidence), args.subject, now_epoch=args.now
@@ -274,6 +276,7 @@ def _parser() -> argparse.ArgumentParser:
     audit.add_argument("--signed-evidence")
     audit.add_argument("--trust-store")
     audit.add_argument("--nonce-ledger")
+    audit.add_argument("--max-evidence-age", type=int)
     audit.add_argument("--now", type=int, default=100)
     audit.set_defaults(handler=_audit)
 

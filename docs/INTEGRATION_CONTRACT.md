@@ -37,8 +37,11 @@ internal names to the same artifact types.
 ```
 
 The production CLI accepts these envelopes with `erasemap audit --signed-evidence envelopes.json
---trust-store keys.json --nonce-ledger consumed-nonces.json`. The trust store maps each `key_id` to
-a raw Ed25519 public key in hex; the persistent ledger makes replay detection survive CLI restarts.
+--trust-store keys.json --nonce-ledger consumed-nonces.sqlite3 --max-evidence-age 300`. The trust
+store maps each `key_id` to a raw Ed25519 public key in hex; the SQLite primary key makes nonce
+consumption atomic across concurrent CLI processes and keeps replay detection across restarts.
+The maximum age is mandatory even when an envelope omits `expires_epoch`, so an old signature
+cannot remain valid indefinitely.
 Every evidence field, the key id, schema, and nonce are signed; unknown keys, altered fields,
 future/stale timestamps, and replayed nonces fail closed. The legacy `valid_signature` JSON boolean
 is retained only for deterministic historical fixtures and must not be supplied by an external

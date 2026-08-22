@@ -1,0 +1,10 @@
+{
+  "freeze_revision": "11ad43ce4533314ef774e1f4a500d4158246f4c2",
+  "protocol_sha256": "1db1c52a95a080a8b0c2bb52cef7c16feaf70ed0b6c7e95db333dfe140905599",
+  "result_roles": {
+    "development": "development negative ablation",
+    "evaluation": "preregistered LFW confirmation",
+    "adaptive-external": "adaptive MUFAC re-evaluation; not a fresh holdout"
+  },
+  "schema_version": "erasemap-public-v3.1-provenance-v1"
+}

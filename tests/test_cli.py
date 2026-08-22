@@ -6,6 +6,16 @@ from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 
 from erasemap.cli import main
+from erasemap.codec import graph_to_json
+from erasemap.domain import (
+    Artifact,
+    ArtifactState,
+    ArtifactType,
+    ErasureGraph,
+    Evidence,
+    EvidenceKind,
+)
+from erasemap.evidence_envelopes import issue_evidence_envelope
 from erasemap.receipts import generate_keypair
 
 CLI = (sys.executable, "-m", "erasemap.cli")
@@ -54,6 +64,57 @@ def test_invalid_receipt_returns_code_three(tmp_path: Path) -> None:
     result = run_cli("receipt", "verify", "--public-key", "00" * 32, "--receipt", str(receipt))
 
     assert result.returncode == 3
+
+
+def test_signed_audit_persists_nonce_and_rejects_cross_process_replay(
+    tmp_path: Path,
+) -> None:
+    private_key, public_key = generate_keypair()
+    artifact = Artifact(
+        "blocked-cache", "subject-1", ArtifactType.CACHE_ENTRY, ArtifactState.BLOCKED
+    )
+    graph = tmp_path / "graph.json"
+    graph.write_text(graph_to_json(ErasureGraph({artifact.id: artifact}, ())))
+    evidence = Evidence(
+        "control-1",
+        artifact.id,
+        EvidenceKind.SIGNED_STATEMENT,
+        issued_epoch=100,
+        metadata=(("control_id", "deny-1"), ("enforced", "true")),
+    )
+    envelope = issue_evidence_envelope(private_key, "issuer-1", evidence, nonce="fixed")
+    envelopes = tmp_path / "envelopes.json"
+    envelopes.write_text(json.dumps([envelope.serialized()]))
+    trust_store = tmp_path / "keys.json"
+    trust_store.write_text(
+        json.dumps(
+            {
+                "issuer-1": public_key.public_bytes(
+                    serialization.Encoding.Raw, serialization.PublicFormat.Raw
+                ).hex()
+            }
+        )
+    )
+    ledger = tmp_path / "ledger.json"
+    arguments = (
+        "audit",
+        str(graph),
+        "--subject",
+        artifact.subject_id,
+        "--signed-evidence",
+        str(envelopes),
+        "--trust-store",
+        str(trust_store),
+        "--nonce-ledger",
+        str(ledger),
+        "--max-evidence-age",
+        "300",
+        "--now",
+        "100",
+    )
+
+    assert json.loads(run_cli(*arguments).stdout)["status"] == "COMPLETE"
+    assert json.loads(run_cli(*arguments).stdout)["status"] == "UNVERIFIED"
 
 
 def test_direct_generate_audit_and_plan_workflow(tmp_path: Path, capsys: object) -> None:

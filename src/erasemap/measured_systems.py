@@ -13,6 +13,7 @@ class StrategyMeasurement:
     bytes_rewritten: int
     verdict: str
     retained_count: int
+    expected_retained_count: int
     model_weight_delta: float
 
     def __post_init__(self) -> None:
@@ -20,7 +21,12 @@ class StrategyMeasurement:
             raise ValueError("unknown measured strategy")
         if self.seconds <= 0 or self.bytes_rewritten < 0:
             raise ValueError("invalid resource measurement")
-        if self.retained_count < 0 or not math.isfinite(self.model_weight_delta):
+        if (
+            self.retained_count < 0
+            or self.expected_retained_count <= 0
+            or self.retained_count > self.expected_retained_count
+            or not math.isfinite(self.model_weight_delta)
+        ):
             raise ValueError("invalid verification measurement")
 
 
@@ -66,10 +72,7 @@ def paired_summary(
         / len(records),
         "maximum_model_weight_delta": max(record.model_weight_delta for record in records),
         "maximum_retained_data_loss_rate": max(
-            1 - pair["targeted_exact_cdc"].retained_count / pair["rebuild_all"].retained_count
-            if pair["rebuild_all"].retained_count
-            else 0.0
-            for pair in ordered
+            1 - record.retained_count / record.expected_retained_count for record in records
         ),
         "paired_speedup": {
             "bootstrap_ci95": [samples[lower_index], samples[upper_index]],

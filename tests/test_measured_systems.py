@@ -6,7 +6,7 @@ from erasemap.measured_systems import StrategyMeasurement, geometric_mean, paire
 
 
 def _record(seed: int, strategy: str, seconds: float, written: int) -> StrategyMeasurement:
-    return StrategyMeasurement(seed, strategy, seconds, written, "COMPLETE", 249, 1e-12)
+    return StrategyMeasurement(seed, strategy, seconds, written, "COMPLETE", 249, 249, 1e-12)
 
 
 def test_paired_summary_uses_paired_geometric_speedup() -> None:

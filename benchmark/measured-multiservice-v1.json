@@ -1,0 +1,23 @@
+{
+  "bootstrap_samples": 10000,
+  "bootstrap_seed": 90317,
+  "calibration_seeds": [1101, 1102, 1103, 1104, 1105],
+  "claim_boundary": "Local real-process systems experiment with synthetic identities; not an organization production pilot.",
+  "gates": {
+    "complete_rate": 1.0,
+    "maximum_model_weight_delta": 1e-8,
+    "maximum_retained_data_loss_rate": 0.0,
+    "minimum_bytes_reduction": 0.5,
+    "minimum_speedup_ci95_lower": 1.25
+  },
+  "holdout_seeds": [2201, 2202, 2203, 2204, 2205, 2206, 2207, 2208, 2209, 2210, 2211, 2212, 2213, 2214, 2215, 2216, 2217, 2218, 2219, 2220],
+  "primary_endpoints": [
+    "paired_wall_clock_speedup",
+    "paired_bytes_rewritten_reduction"
+  ],
+  "qdrant_image": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1",
+  "schema_version": "erasemap-measured-multiservice-v1",
+  "strategies": ["targeted_exact_cdc", "rebuild_all"],
+  "subject_count": 250,
+  "vector_dimension": 64
+}

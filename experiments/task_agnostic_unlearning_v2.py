@@ -79,6 +79,9 @@ V3_METRICS = (
     "privacy_identity_deletion_lira_mean_log_lr",
 )
 LOGIT_ATTACKS = frozenset({"confidence", "energy", "margin", "negative_entropy"})
+V3_SCHEMAS = frozenset(
+    {"erasemap-task-agnostic-v3", "erasemap-task-agnostic-v3.1"}
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -543,7 +546,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
     expected_attacks = set(LOGIT_ATTACKS)
     if protocol["schema_version"] == "erasemap-task-agnostic-v2.2":
         expected_attacks |= {"task_agnostic_lira", "embedding_nn"}
-    if protocol["schema_version"] == "erasemap-task-agnostic-v3":
+    if protocol["schema_version"] in V3_SCHEMAS:
         expected_attacks |= {"identity_deletion_lira", "embedding_nn"}
     if set(privacy_attacks) != expected_attacks:
         raise ValueError("privacy attack suite does not match the registered schema")
@@ -721,7 +724,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         if protocol["schema_version"] == "erasemap-task-agnostic-v2.2"
         else ()
     )
-    if protocol["schema_version"] == "erasemap-task-agnostic-v3":
+    if protocol["schema_version"] in V3_SCHEMAS:
         registered_metrics += V3_METRICS
     for method in methods:
         rows = [row for row in trials if row["method"] == method]
@@ -753,7 +756,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
     criteria = protocol["success_criteria"]
     endpoints: dict[str, float] = {}
     paired_privacy: dict[str, Any] = {}
-    if protocol["schema_version"] == "erasemap-task-agnostic-v3":
+    if protocol["schema_version"] in V3_SCHEMAS:
         stale_forgotten_mse = float(stale["forgotten_embedding_mse_to_exact"]["mean"])
         stale_retained_mse = float(stale["retained_embedding_mse_to_exact"]["mean"])
         forgotten_ratio = float(selective["forgotten_embedding_mse_to_exact"]["mean"]) / max(

@@ -54,3 +54,14 @@ def test_v3_registers_deletion_matched_primary_and_paired_privacy_gate() -> None
         "paired_privacy_attacks"
     ]
     assert protocol["success_criteria"]["max_attack_paired_advantage_upper_ci_max"] == 0.10
+
+
+def test_v31_changes_only_the_preregistered_candidate_budget() -> None:
+    v3 = json.loads(Path("benchmark/task-agnostic-v3.json").read_text())
+    v31 = json.loads(Path("benchmark/task-agnostic-v31.json").read_text())
+
+    assert v31["schema_version"] == "erasemap-task-agnostic-v3.1"
+    assert v31["deletion_matched_restart"]["epochs"] == 80
+    assert v3["deletion_matched_restart"]["epochs"] == 60
+    for key in set(v3) - {"schema_version", "deletion_matched_restart"}:
+        assert v31[key] == v3[key]

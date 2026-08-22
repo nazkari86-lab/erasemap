@@ -1,0 +1,55 @@
+{
+  "schema_version": "erasemap-external-sources-v1",
+  "sources": [
+    {
+      "id": "nist-biometric-retention",
+      "family": "identity",
+      "title": "NIST SP 800-63A",
+      "url": "https://pages.nist.gov/800-63-4/sp800-63a.html",
+      "retrieved_at": "2026-08-22",
+      "excerpt": "CSPs SHALL have a documented and publicly available deletion process and default retention period for all biometric information.",
+      "excerpt_sha256": "sha256:283f4962b7c95fbcb623a3ddac85399022b7d1356e9f33de7ed02dff8d809e89",
+      "mappings": [{"id":"nist-account-biometric","relation":"IDENTITY_BOUND","source_kind":"subscriber_account","target_kind":"biometric_reference","rationale":"Biometric information is associated with an enrolled subscriber and has an explicit deletion lifecycle."}]
+    },
+    {
+      "id": "w3c-prov-derivation",
+      "family": "provenance",
+      "title": "W3C PROV-O",
+      "url": "https://www.w3.org/TR/prov-o/",
+      "retrieved_at": "2026-08-22",
+      "excerpt": "A derivation is a transformation of one entity into another.",
+      "excerpt_sha256": "sha256:fdc9e871a132dcf7d8edd241a39661b4866efaa4b9897c2ac8ae06d3c542b8ed",
+      "mappings": [{"id":"prov-derived-entity","relation":"DERIVED_FROM","source_kind":"primary_entity","target_kind":"derived_entity","rationale":"PROV-O explicitly represents derivation chains between entities."}]
+    },
+    {
+      "id": "opensearch-snapshot-delete",
+      "family": "search",
+      "title": "OpenSearch Delete snapshot",
+      "url": "https://docs.opensearch.org/docs/latest/api-reference/snapshots/delete-snapshot/",
+      "retrieved_at": "2026-08-22",
+      "excerpt": "To verify that the snapshot was deleted, use the Get snapshot API, passing the snapshot name.",
+      "excerpt_sha256": "sha256:f0bca1b0eaf265186de30b2877b35c46ce32b54304d86d1769c6eea1d1419319",
+      "mappings": [{"id":"search-index-snapshot","relation":"BACKUP_OF","source_kind":"search_index","target_kind":"snapshot","rationale":"A snapshot is independently queryable and requires its own deletion verification."}]
+    },
+    {
+      "id": "mlflow-separated-stores",
+      "family": "ml",
+      "title": "MLflow Backend Stores",
+      "url": "https://mlflow.org/docs/latest/self-hosting/architecture/backend-store/",
+      "retrieved_at": "2026-08-22",
+      "excerpt": "Run metadata and artifacts are not automatically removed from the backend store or artifact store when a Run is deleted.",
+      "excerpt_sha256": "sha256:861dec1ad501942d8bf8d1dd16f6ec2494589a9750b90b360c0c8393b5a0b4de",
+      "mappings": [{"id":"mlflow-run-artifact","relation":"ARTIFACT_OF","source_kind":"run_metadata","target_kind":"artifact_store_object","rationale":"MLflow separates metadata and artifacts and deletion of one does not automatically delete the other."}]
+    },
+    {
+      "id": "postgres-wal-recovery",
+      "family": "recovery",
+      "title": "PostgreSQL Continuous Archiving",
+      "url": "https://www.postgresql.org/docs/current/continuous-archiving.html",
+      "retrieved_at": "2026-08-22",
+      "excerpt": "You need to retain files needed to recover from at least the latest base backup.",
+      "excerpt_sha256": "sha256:bbb56461c02d6b795e9ed313033bf6f78bc6b587427175c11c7d82ba234237ab",
+      "mappings": [{"id":"postgres-record-wal","relation":"RECOVERABLE_FROM","source_kind":"database_record","target_kind":"wal_archive","rationale":"Archived WAL and a base backup can restore prior database state."}]
+    }
+  ]
+}

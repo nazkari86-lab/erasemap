@@ -114,9 +114,7 @@ def build_adapter_case(adapter: str, *, seed: int) -> AdapterCase:
             display_name=labels["backup"],
         ),
         PCUGNode("model", "SHARED_MODEL", "shared", display_name=labels["model"]),
-        PCUGNode(
-            "api", "API", "shared", active_sink=True, display_name=labels["api"]
-        ),
+        PCUGNode("api", "API", "shared", active_sink=True, display_name=labels["api"]),
     )
     edges = (
         _edge("subject", "source", request_scoped=True),
@@ -171,6 +169,31 @@ def build_adapter_case(adapter: str, *, seed: int) -> AdapterCase:
                     upper_bound=0.08,
                     threshold=0.10,
                     evidence_id="model-audit-v1",
+                ),
+            ),
+        ),
+        CDCAction(
+            "restrict-all-subject-processing",
+            30 + cost_offset,
+            (
+                *(
+                    Transition(
+                        node,
+                        EdgeState.CLOSED,
+                        f"enforced-block-{node}",
+                        TransitionTarget.NODE,
+                    )
+                    for node in ("source", "embedding", "index", "cache", "backup")
+                ),
+                Transition(model_edge.id, EdgeState.CLOSED, "enforced-model-block"),
+            ),
+            result_channels=(
+                upper_bound_channel(
+                    "identity_lira",
+                    value=0.0,
+                    upper_bound=0.0,
+                    threshold=0.10,
+                    evidence_id="enforced-model-block",
                 ),
             ),
         ),

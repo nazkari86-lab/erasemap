@@ -1,7 +1,7 @@
 import Lake
 open Lake DSL
 
-package «erasemap-formal» where
+package EraSeMap where
   version := v!"0.1.0"
 
 @[default_target]

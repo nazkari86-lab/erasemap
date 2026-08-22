@@ -58,5 +58,6 @@ jobs:
       - uses: leanprover/lean-action@v1
         with:
           build: true
-          nanoda: true
-          nanoda-allow-sorry: false
+          build-args: "--wfail"
+          leanchecker: true
+          axiom-audit: true

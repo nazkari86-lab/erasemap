@@ -62,8 +62,9 @@ python scripts/verify_formal_conformance.py \
   --output /tmp/formal-conformance.json
 ```
 
-GitHub CI pins Lean 4.33.1 and runs a separate checker with `sorry` disabled, in addition to the
-Python conformance gate.
+GitHub CI pins Lean 4.33.1, runs `leanchecker`, treats warnings as errors, and audits the compiled
+environment against an axiom allowlist that excludes `sorryAx`, in addition to the Python
+conformance gate.
 
 ## Limitations
 

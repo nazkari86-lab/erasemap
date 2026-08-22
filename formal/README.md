@@ -22,8 +22,9 @@ Build locally with the pinned Lean toolchain:
 lake build
 ```
 
-GitHub CI additionally uses an independent Lean checker with `sorry` disabled. The production
-Python branch-and-bound implementation is linked to the exhaustive optimization contract by:
+GitHub CI additionally runs `leanchecker`, treats warnings as errors, and audits the compiled
+environment against a strict axiom allowlist that excludes `sorryAx`. The production Python
+branch-and-bound implementation is linked to the exhaustive optimization contract by:
 
 ```bash
 python scripts/verify_formal_conformance.py \

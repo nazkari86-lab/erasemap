@@ -8,3 +8,5 @@ __pycache__/
 .lake/
 outputs/
 data/real/
+competition/paper/build/
+dist/

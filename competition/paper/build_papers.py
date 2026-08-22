@@ -307,7 +307,7 @@ def configure_document(doc: Document, ru: bool) -> None:
         style.paragraph_format.space_after = Pt(4)
         style.paragraph_format.line_spacing = 1.208
 
-    for name in ("Formula", "Figure Caption", "Callout", "Code Block"):
+    for name in ("Formula", "Figure Caption", "Callout", "Code Block", "Numbered Item"):
         if name not in [style.name for style in doc.styles]:
             doc.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
     formula = doc.styles["Formula"]
@@ -340,6 +340,13 @@ def configure_document(doc: Document, ru: bool) -> None:
     code.paragraph_format.left_indent = Inches(0.25)
     code.paragraph_format.space_after = Pt(2)
     code.paragraph_format.line_spacing = 1.0
+    numbered = doc.styles["Numbered Item"]
+    numbered.font.name = "Calibri"
+    numbered.font.size = Pt(11)
+    numbered.paragraph_format.left_indent = Inches(0.375)
+    numbered.paragraph_format.first_line_indent = Inches(-0.194)
+    numbered.paragraph_format.space_after = Pt(4)
+    numbered.paragraph_format.line_spacing = 1.208
 
     header = sec.header.paragraphs[0]
     header.text = "EraSeMap | " + ("Научная работа" if ru else "Research paper")
@@ -395,6 +402,9 @@ def add_cover(doc: Document, title: str, ru: bool) -> None:
         el.set(qn("w:val"), "nil")
         tbl_borders.append(el)
     table._tbl.tblPr.append(tbl_borders)
+    # The metadata grid is a layout table; mark its first row so assistive
+    # technology does not report an unlabeled table structure.
+    set_repeat_table_header(table.rows[0])
 
     # Keep the cover on one A4 page even when a Russian metadata label wraps.
     for _ in range(2):
@@ -452,11 +462,13 @@ def add_table(doc: Document, rows: list[list[str]]) -> None:
     doc.add_paragraph().paragraph_format.space_after = Pt(1)
 
 
-def add_figure(doc: Document, path: Path, caption: str) -> None:
+def add_figure(doc: Document, path: Path, caption: str, alt_text: str) -> None:
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.keep_together = True
-    p.add_run().add_picture(str(path), width=Inches(6.1))
+    shape = p.add_run().add_picture(str(path), width=Inches(6.1))
+    shape._inline.docPr.set("descr", alt_text)
+    shape._inline.docPr.set("title", caption.split(".", 1)[0])
     cap = doc.add_paragraph(caption, style="Figure Caption")
     cap.paragraph_format.keep_with_next = False
 
@@ -504,10 +516,20 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
             heading = line[3:]
             doc.add_paragraph(heading, style="Heading 1")
             if (heading in ("2. Related Work and Novelty Boundary", "2. Предшествующие работы и граница новизны")) and not inserted_system:
-                add_figure(doc, system_fig, ("Рисунок 1. От запроса субъекта к проверенному завершению через остаточные пути, CDC и replay." if ru else "Figure 1. From a subject request to verified completion through residual paths, CDC, and replay."))
+                add_figure(
+                    doc,
+                    system_fig,
+                    ("Рисунок 1. От запроса субъекта к проверенному завершению через остаточные пути, CDC и повторный аудит. Составлено автором по протоколу EraSeMap." if ru else "Figure 1. From a subject request to verified completion through residual paths, CDC, and replay. Author-generated from the EraSeMap protocol."),
+                    ("Схема: запрос удаления проходит через граф остаточных путей, проверяющие каналы, выбор CDC, исполнение действий и повторный аудит до COMPLETE." if ru else "Flow diagram: an erasure request passes through the residual-path graph, verifier channels, CDC selection, action execution, and replayed audit before COMPLETE."),
+                )
                 inserted_system = True
             if (heading in ("9. Discussion", "9. Обсуждение")) and not inserted_results:
-                add_figure(doc, result_fig, ("Рисунок 2. Результат stress test механизма и эффективность measured multi-service holdout." if ru else "Figure 2. Mechanism-stress result and measured multi-service holdout efficiency."))
+                add_figure(
+                    doc,
+                    result_fig,
+                    ("Рисунок 2. Результат стресс-теста механизма и эффективность измеренного многосервисного испытания. Составлено автором по зафиксированным результатам." if ru else "Figure 2. Mechanism-stress result and measured multi-service holdout efficiency. Author-generated from the frozen results."),
+                    ("Диаграмма: PCUG даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; многосервисный CDC достигает 17,64-кратного ускорения и сокращает записанные байты на 94,62 процента." if ru else "Results chart: PCUG has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; multi-service CDC reaches 17.64-fold speedup and 94.62 percent fewer written bytes."),
+                )
                 inserted_results = True
             i += 1
             continue
@@ -524,9 +546,12 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
             add_inline(p, line[2:])
             i += 1
             continue
-        if re.match(r"^\d+\. ", line):
-            p = doc.add_paragraph(style="List Number")
-            add_inline(p, re.sub(r"^\d+\. ", "", line))
+        numbered_match = re.match(r"^(\d+)\. (.*)", line)
+        if numbered_match:
+            p = doc.add_paragraph(style="Numbered Item")
+            prefix = p.add_run(f"{numbered_match.group(1)}. ")
+            set_run_font(prefix)
+            add_inline(p, numbered_match.group(2))
             i += 1
             continue
         if line.startswith("- "):

@@ -8,7 +8,7 @@
 
 ## Abstract
 
-Deleting a biometric record from the primary database does not necessarily remove its derived template, search index entry, cache copy, backup, audit replica, or influence on a trained model. This paper presents EraSeMap, a subject-scoped erasure auditor that represents these artifacts as a typed operational graph and refuses to report completion when a residual path, failed verifier, unknown mandatory channel, or unsuccessful action replay remains. The method produces one of three verdicts—COMPLETE, INCOMPLETE, or UNVERIFIED—together with the shortest residual counterexample and a minimum-cost corrective deletion plan (CDC). The mathematical core is intentionally compact: residual paths define what may still be usable; typed verifier channels define what evidence is required; and a finite optimization problem selects the least-cost permitted actions that cover all known residuals. Lean 4 machine-checks conditional replay soundness and finite CDC optimality. The production branch-and-bound selector matched an exhaustive oracle in 3,072 of 3,072 systematic runs. In a project-authored mechanism stress test, EraSeMap produced 0/75 false-complete verdicts while a node-state-only typed audit produced 75/75. On a source-locked benchmark derived from five official external structures, EraSeMap produced 0/100 false completes and 25/25 correct completes, but tied the strongest typed baseline. In a preregistered local multi-service experiment using real PostgreSQL, Redis, and Qdrant processes, encrypted backups, and a ridge model, targeted CDC reached verified completion in 20/20 paired trials, preserved all retained identities, reduced written bytes by 94.62%, and achieved a 17.64× geometric-mean speedup over rebuild-all (paired bootstrap 95% CI: 16.39×–18.98×). A bounded adaptive face-unlearning experiment passed its frozen utility, privacy, and speed gates, but is not independent confirmation. The results support the feasibility and internal correctness of proof-carrying erasure auditing while leaving topology completeness, independent hidden evaluation, and production deployment as explicit open obligations.
+Deleting a biometric record from the primary database does not necessarily remove its derived template, search index entry, cache copy, backup, audit replica, or influence on a trained model. This paper presents EraSeMap, a subject-scoped erasure auditor built around a Proof-Carrying Unlearning Graph (PCUG). It refuses to report completion while a residual path, failed verifier, unknown mandatory channel, or unsuccessful action replay remains. The method produces one of three verdicts—COMPLETE, INCOMPLETE, or UNVERIFIED—together with the shortest residual counterexample and a minimum-cost Counterfactual Deletion Cut (CDC). Residual paths define what may still be usable; typed verifier channels define required evidence; and a finite optimization problem selects the least-cost permitted action set whose simulated post-action state passes the same frozen audit. Lean 4 machine-checks conditional replay soundness and finite CDC optimality. The production branch-and-bound selector matched an exhaustive oracle in 3,072 of 3,072 systematic runs. In a project-authored mechanism stress test, EraSeMap produced 0/75 false-complete verdicts while a node-state-only typed audit produced 75/75. On a source-locked benchmark derived from five official external structures, EraSeMap produced 0/100 false completes and 25/25 correct completes, but tied the strongest typed baseline. In a preregistered local multi-service experiment using real PostgreSQL, Redis, and Qdrant processes, encrypted backups, and a ridge model, targeted CDC reached verified completion in 20/20 paired trials, retained all 249 non-deleted records per trial, matched rebuild-all ridge weights within 2.22 × 10⁻¹⁵, reduced written bytes by 94.62%, and achieved a 17.64× geometric-mean speedup over rebuild-all (paired bootstrap 95% CI: 16.39×–18.98×). A bounded adaptive face-unlearning experiment passed its frozen utility, privacy, and speed gates, but is not independent confirmation. The results support the feasibility and internal correctness of proof-carrying erasure auditing while leaving topology completeness, independent hidden evaluation, and production deployment as explicit open obligations.
 
 **Keywords:** biometric erasure; machine unlearning; data lineage; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
@@ -18,7 +18,7 @@ Biometric systems rarely store a person’s data in one place. An enrollment ima
 
 This problem matters beyond one application. Identity proofing, border control, banking KYC, school access, and face verification use different infrastructure, but they share the same operational question: after a subject requests erasure, which reachable artifacts can still reproduce, match, restore, or statistically reveal the subject’s information? A deletion receipt alone cannot answer that question. A valid signature proves who signed a statement and that the statement was not altered; it does not prove that every underlying deletion action succeeded.
 
-Machine unlearning addresses removal of training-data influence from models. Data provenance represents how entities and activities are connected. Proof-of-deletion research studies verifiable claims. Optimization methods can choose low-cost action sets. Each area solves part of the problem. EraSeMap studies a narrower systems question: can these components be combined into one subject-scoped, fail-closed contract that returns a reproducible verdict and an actionable correction instead of an unsupported promise?
+Machine unlearning addresses removal of training-data influence from models. Data provenance represents how entities and activities are connected. Proof-of-deletion research studies verifiable claims. Optimization methods can choose low-cost action sets. Each area solves part of the problem. EraSeMap studies a narrower systems question: can these components be combined into one subject-scoped, fail-closed contract that returns a reproducible verdict and an actionable correction instead of an unsupported promise? The core representation is the **Proof-Carrying Unlearning Graph (PCUG)**; its remediation object is the **Counterfactual Deletion Cut (CDC)**.
 
 The research question is:
 
@@ -105,23 +105,21 @@ The verdict is
 
 The order is deliberate. A known residual cannot be hidden by missing evidence elsewhere. COMPLETE requires both path closure and positive evidence. This is the fail-closed property.
 
-## 4. Minimum-Cost Corrective Deletion
+## 4. Minimum-Cost Counterfactual Deletion Cut
 
-When the verdict is not COMPLETE, the system constructs a set **A** of permitted candidate actions. An action can delete a record, invalidate a cache, erase a backup key, rebuild an index, retrain or unlearn a model, or enforce a processing block. Each action **a** has a non-negative cost **c(a)** and closes a set of residual obligations **K(a)**.
+When the verdict is not COMPLETE, the system constructs a finite catalog **A** of candidate actions. An action can delete a record, invalidate a cache, erase a backup key, rebuild an index, retrain or unlearn a model, or enforce a processing block. Each action **a** has a non-negative cost **c(a)** and a permission flag **p(a) ∈ {0,1}**.
 
-Introduce a binary decision variable **xₐ ∈ {0,1}**. For the known residual obligations **Oᵤ**, the exact CDC problem is
+For an action subset **B ⊆ A**, let **Apply(G,B)** denote the deterministically simulated post-action graph and evidence. Let **F** be the same frozen three-valued evaluator used for the original request. Feasibility is defined by replay, not by declared action coverage:
 
-**minimize  Σₐ∈A c(a)xₐ**
+**Feasible(B) ⇔ (∀a ∈ B, p(a)=1) ∧ F(Apply(G,B)) = COMPLETE.**
 
-subject to
+The exact CDC is
 
-**Σₐ:o∈K(a) xₐ ≥ 1,  for every o ∈ Oᵤ,**
+**B* ∈ arg min₍B⊆A : Feasible(B)₎ Σₐ∈B c(a).**
 
-**xₐ ≤ p(a),  for every a ∈ A,**
+Residual-coverage abstractions can help explain candidate actions, but set coverage alone is not accepted as proof: channel dependencies and interactions between actions can make nominal coverage insufficient. The frozen evaluator is therefore the authoritative feasibility predicate.
 
-where **p(a) ∈ {0,1}** records whether policy permits the action. The first constraint covers every known residual obligation. The second forbids unauthorized operations.
-
-For at most 30 permitted actions, EraSeMap uses deterministic exact branch-and-bound. Larger catalogs use a deterministic greedy fallback and are labeled non-optimal. Costs are fixtures unless a measured experiment explicitly calibrates them. Most importantly, a selected plan is not trusted merely because the optimizer predicts coverage: the actions are executed in a disposable or authorized environment, the topology and evidence are recollected, and the audit is replayed. Only replayed COMPLETE is accepted.
+For at most 30 permitted actions, EraSeMap uses deterministic exact branch-and-bound over replay feasibility. Larger catalogs use a deterministic greedy fallback and are labeled non-optimal. Costs are fixtures unless a measured experiment explicitly calibrates them. A plan remains a counterfactual recommendation until its actions are executed in a disposable or authorized environment, topology and evidence are recollected, and the same audit is replayed. Only an observed replayed COMPLETE is accepted as completed remediation.
 
 ## 5. Formal Guarantees
 
@@ -187,7 +185,7 @@ Five calibration seeds convert measured component time into integer microsecond 
 
 ### 7.5 Layer D: bounded model-unlearning channel
 
-The face experiment uses a trainable local embedding encoder over an external face dataset and compares stale, exact retraining, simple approximate baselines, and deletion-matched restart. The forgotten identity is excluded from every candidate optimization step. The adaptive MUFAC v3.2 run uses 120 candidate epochs versus 200 for exact retraining and evaluates 100 deletion requests, producing 500 method-trials on a frozen 572-image, 60-identity subset.
+The face experiment uses a trainable local embedding encoder over an external face dataset and compares stale, exact retraining, simple approximate baselines, and deletion-matched restart. The forgotten identity is excluded from every candidate optimization step. The adaptive MUFAC v3.2 run uses 120 candidate epochs versus 200 for exact retraining and evaluates 100 deletion requests, producing 500 method-trials on a frozen 572-image, 60-identity subset. Its six paired privacy statistics use confidence, negative entropy, margin, energy, identity-deletion likelihood ratio, and nearest-embedding signals; the protocol uses zero shadow models, so this is a bounded attack panel rather than a full adaptive shadow-model privacy audit.
 
 Frozen gates include retained verification AUC difference of at least −0.01, mean speedup of at least 1.5×, maximum paired privacy-advantage upper confidence bound at most 0.10, and bounded embedding-error ratios. The 120-epoch budget was selected after earlier MUFAC results were known; v3.2 is therefore a method-improvement result, not untouched confirmation. Exact retraining remains the mandatory fallback when any dataset-specific gate fails.
 
@@ -237,7 +235,7 @@ The strongest current evidence for added composition value remains internal: the
 
 **Production transfer.** No Apple Face ID, Kazakhstan eGov, bank, school, border, or government production environment was accessed. Local real-process tests use synthetic identities.
 
-**Model scope.** The adaptive face result follows exposed earlier runs. Deep-model behavior, sequential deletions, retained-user privacy, and population shift require separate preregistered experiments.
+**Model scope.** The adaptive face result follows exposed earlier runs. Its six privacy statistics use no shadow models. Deep-model behavior, adaptive shadow-model attacks, sequential deletions, retained-user privacy, and population shift require separate preregistered experiments.
 
 **Performance scope.** The 17.64× result is local wall-clock performance on one Apple M4 laptop. The byte count measures application payload and replaced files, not full storage or network I/O.
 
@@ -251,7 +249,7 @@ A production deployment should separate the topology registrar, evidence produce
 
 ## 12. Reproducibility
 
-The public repository contains code, frozen protocols, raw records, manifests, reports, Lean proofs, and CI configuration. Core reproduction commands are:
+The public repository contains code, frozen protocols, raw records, manifests, reports, Lean proofs, and CI configuration. The evidence evaluated in this paper is preserved in the public v0.3.1 history; protocol and raw-record manifests carry cryptographic hashes. Core reproduction commands are:
 
 ```bash
 python -m pytest
@@ -260,7 +258,7 @@ python scripts/verify_formal_conformance.py --expected formal/conformance-v1.jso
 python scripts/verify_measured_multiservice_v1.py
 ```
 
-The measured service experiment additionally requires pinned PostgreSQL, Redis, Qdrant, and container dependencies. Reproduction verifies the published computation; it does not create independent authorship.
+The measured service experiment additionally requires pinned PostgreSQL, Redis, Qdrant, and container dependencies. Reproduction verifies the published computation; it does not create independent authorship. No personal biometric data generated by the multi-service experiment are released because that experiment uses deterministic synthetic identities; the external face inputs remain governed by their original dataset terms.
 
 ## 13. Conclusion
 
@@ -278,7 +276,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 
 [4] J. Weng, S. Yao, Y. Du, J. Huang, J. Weng, and C. Wang, “Proof of Unlearning: Definitions and Instantiation,” arXiv:2210.11334, 2022.
 
-[5] T. Eisenhofer et al., “Verifiable and Provably Secure Machine Unlearning,” arXiv:2210.09126, 2022.
+[5] T. Eisenhofer, D. Riepel, V. Chandrasekaran, E. Ghosh, O. Ohrimenko, and N. Papernot, “Verifiable and Provably Secure Machine Unlearning,” IEEE Conference on Secure and Trustworthy Machine Learning (SaTML), 2025; arXiv:2210.09126v3.
 
 [6] R. Chourasia and N. Shah, “Forget Unlearning: Towards True Data-Deletion in Machine Learning,” Proceedings of the 40th International Conference on Machine Learning, PMLR 202:6028–6073, 2023.
 
@@ -288,15 +286,15 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 
 [9] T. Lebo, S. Sahoo, and D. McGuinness, editors, “PROV-O: The PROV Ontology,” W3C Recommendation, 30 April 2013.
 
-[10] U.S. Patent Application US20220414070A1, “Data deletion using data lineage,” 2022.
+[10] U.S. Patent Application US20220414070A1, “Tracking Data Lineage and Applying Data Removal to Enforce Data Removal Policies,” 2022.
 
-[11] U.S. Patent US11120156B2, “Auditable privacy-preserving data deletion,” 2021.
+[11] U.S. Patent US11120156B2, “Privacy Preserving Data Deletion,” 2021.
 
-[12] U.S. Patent US12456052B2 / Application US20250190784A1, staged machine unlearning and verification, 2025.
+[12] U.S. Patent US12456052B2, “Systems and Methods for Facilitating Verifiability of Machine Learning Model Unlearning,” 2025.
 
-[13] National Institute of Standards and Technology, “Digital Identity Guidelines: Enrollment and Identity Proofing Requirements,” NIST SP 800-63A, current public revision used by the source-locked protocol.
+[13] D. Temoshok et al., “Digital Identity Guidelines: Identity Proofing and Enrollment,” NIST SP 800-63A-4, July 2025. DOI: 10.6028/NIST.SP.800-63a-4.
 
-[14] EraSeMap repository, frozen protocols, raw evidence, formal proofs, and reports, 2026.
+[14] EraSeMap, public repository and evidence archive, version 0.3.1, 2026: https://github.com/nazkari86-lab/erasemap.
 
 ## Appendix A. Notation
 
@@ -307,10 +305,12 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | Rᵤ(G) | Active residual paths for subject u |
 | Cᵤ | Mandatory verifier channels |
 | q(c) | PASS, FAIL, or UNKNOWN result for channel c |
-| A | Permitted candidate remediation actions |
+| A | Finite catalog of candidate remediation actions |
 | c(a) | Non-negative action cost |
-| K(a) | Residual obligations closed by action a |
-| xₐ | Binary decision to select action a |
+| B | Selected action subset, B ⊆ A |
+| Apply(G,B) | Deterministic post-action graph and evidence |
+| F | Frozen three-valued evaluator |
+| Feasible(B) | All selected actions are permitted and replay returns COMPLETE |
 | FCR | False-complete rate |
 
 ## Appendix B. Claim–Evidence Map

@@ -55,6 +55,9 @@ class ChannelResult:
     def __post_init__(self) -> None:
         if not self.name:
             raise ValueError("channel name is required")
+        object.__setattr__(self, "value", float(self.value))
+        object.__setattr__(self, "upper_bound", float(self.upper_bound))
+        object.__setattr__(self, "threshold", float(self.threshold))
         if not all(
             math.isfinite(value) for value in (self.value, self.upper_bound, self.threshold)
         ):

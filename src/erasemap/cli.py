@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import subprocess
 import sys
+import tempfile
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (
     Ed25519PrivateKey,
     Ed25519PublicKey,
@@ -13,6 +18,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import (
 
 from erasemap.audit import audit_subject
 from erasemap.benchmark import load_protocol, run_protocol
+from erasemap.cdc import exact_cdc
 from erasemap.codec import graph_from_json, graph_to_json
 from erasemap.domain import (
     ArtifactState,
@@ -28,7 +34,14 @@ from erasemap.evidence_envelopes import (
     evidence_envelope_from_payload,
 )
 from erasemap.generator import FaultKind, generate_case
+from erasemap.pcug_adapters import adapter_names, build_adapter_case
+from erasemap.pcug_benchmark import (
+    encode_records,
+    load_pcug_protocol,
+    run_pcug_benchmark,
+)
 from erasemap.planning import exact_plan, greedy_plan
+from erasemap.proof_bundle import check_bundle, decode_bundle, encode_bundle, issue_bundle
 from erasemap.receipts import (
     ErasureReceipt,
     ReceiptLedger,
@@ -43,6 +56,24 @@ def _json(payload: Any) -> str:
 
 def _print(payload: Any) -> None:
     sys.stdout.write(_json(payload) + "\n")
+
+
+def _atomic_write(path_value: str | Path, data: bytes) -> None:
+    path = Path(path_value)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    except BaseException:
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
+        raise
 
 
 def _load_evidence(path: str | None) -> dict[str, Evidence]:
@@ -258,6 +289,114 @@ def _benchmark(args: argparse.Namespace) -> int:
     return 0
 
 
+def _revision() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, check=False, text=True
+    )
+    return result.stdout.strip() or "unknown"
+
+
+def _pcug_demo(args: argparse.Namespace) -> int:
+    case = build_adapter_case(args.adapter, seed=args.seed)
+    plan = exact_cdc(case.graph, case.protocol, case.actions)
+    if not plan.complete:
+        raise ValueError("synthetic PCUG case has no verified complete plan")
+    selected = tuple(action for action in case.actions if action.id in plan.action_ids)
+    private_key = Ed25519PrivateKey.generate()
+    bundle = issue_bundle(
+        private_key,
+        key_id="pcug-demo-key",
+        nonce=f"synthetic-{args.adapter}-{args.seed}",
+        graph=case.graph,
+        protocol=case.protocol,
+        actions=selected,
+        challenge_opening=(f"probe-{args.seed % 17:02d}", f"probe-{args.seed % 29:02d}"),
+        producer_revision=_revision(),
+    )
+    package = {
+        "adapter": case.adapter,
+        "authorized_integration": case.authorized_integration,
+        "bundle": json.loads(encode_bundle(bundle)),
+        "disclaimer": case.disclaimer,
+        "evidence_scope": case.evidence_scope,
+        "schema_version": "erasemap-pcug-demo-v1",
+        "seed": case.seed,
+    }
+    _atomic_write(args.output, (_json(package) + "\n").encode())
+    public_bytes = private_key.public_key().public_bytes(
+        serialization.Encoding.PEM,
+        serialization.PublicFormat.SubjectPublicKeyInfo,
+    )
+    _atomic_write(args.public_key_output, public_bytes)
+    _print(
+        {
+            "action_ids": list(plan.action_ids),
+            "adapter": case.adapter,
+            "evidence_scope": case.evidence_scope,
+            "output": args.output,
+            "public_key_output": args.public_key_output,
+            "total_cost": plan.total_cost,
+            "verdict": plan.verdict.value,
+        }
+    )
+    return 0
+
+
+def _proof_from_path(path: str | Path) -> Any:
+    payload = json.loads(Path(path).read_text())
+    if isinstance(payload, dict) and "bundle" in payload:
+        payload = payload["bundle"]
+    return decode_bundle(_json(payload))
+
+
+def _load_pcug_public_key(path: str | Path) -> Ed25519PublicKey:
+    key = serialization.load_pem_public_key(Path(path).read_bytes())
+    if not isinstance(key, Ed25519PublicKey):
+        raise ValueError("PCUG public key must be Ed25519")
+    return key
+
+
+def _pcug_verify(args: argparse.Namespace) -> int:
+    bundle = _proof_from_path(args.bundle)
+    result = check_bundle(bundle, {bundle.key_id: _load_pcug_public_key(args.public_key)})
+    _print({"reason": result.reason, "valid": result.valid})
+    return 0 if result.valid else 1
+
+
+def _pcug_verify_directory(args: argparse.Namespace) -> int:
+    public_key = _load_pcug_public_key(args.public_key)
+    counts = {"checked": 0, "invalid": 0, "unverifiable": 0, "valid": 0}
+    for path in sorted(Path(args.directory).glob("*.json")):
+        counts["checked"] += 1
+        try:
+            bundle = _proof_from_path(path)
+            result = check_bundle(bundle, {bundle.key_id: public_key})
+        except (KeyError, TypeError, ValueError, OSError, json.JSONDecodeError):
+            counts["unverifiable"] += 1
+            continue
+        counts["valid" if result.valid else "invalid"] += 1
+    _print(counts)
+    return 0 if counts["checked"] and counts["valid"] == counts["checked"] else 1
+
+
+def _pcug_benchmark(args: argparse.Namespace) -> int:
+    run = run_pcug_benchmark(load_pcug_protocol(args.protocol), split=args.split)
+    output = Path(args.output)
+    manifest = {
+        "evidence_scope": "SYNTHETIC_SIMULATOR",
+        "exception_count": run.exception_count,
+        "protocol_hash": run.protocol_hash,
+        "record_count": len(run.records),
+        "split": run.split,
+    }
+    metrics = {name: asdict(metric) for name, metric in run.metrics.items()}
+    _atomic_write(output / "manifest.json", (_json(manifest) + "\n").encode())
+    _atomic_write(output / "records.jsonl", encode_records(run.records).encode())
+    _atomic_write(output / "metrics.json", (_json(metrics) + "\n").encode())
+    _print(manifest)
+    return 0 if run.exception_count == 0 else 1
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="erasemap")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -314,6 +453,31 @@ def _parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--protocol", required=True)
     benchmark.add_argument("--output", required=True)
     benchmark.set_defaults(handler=_benchmark)
+
+    pcug = commands.add_parser("pcug")
+    pcug_commands = pcug.add_subparsers(dest="pcug_command", required=True)
+    pcug_demo = pcug_commands.add_parser("demo")
+    pcug_demo.add_argument("--adapter", choices=adapter_names(), default="faceid_style")
+    pcug_demo.add_argument("--seed", type=int, default=4409)
+    pcug_demo.add_argument("--output", required=True)
+    pcug_demo.add_argument("--public-key-output", required=True)
+    pcug_demo.set_defaults(handler=_pcug_demo)
+
+    pcug_verify = pcug_commands.add_parser("verify")
+    pcug_verify.add_argument("bundle")
+    pcug_verify.add_argument("--public-key", required=True)
+    pcug_verify.set_defaults(handler=_pcug_verify)
+
+    pcug_verify_directory = pcug_commands.add_parser("verify-directory")
+    pcug_verify_directory.add_argument("directory")
+    pcug_verify_directory.add_argument("--public-key", required=True)
+    pcug_verify_directory.set_defaults(handler=_pcug_verify_directory)
+
+    pcug_benchmark = pcug_commands.add_parser("benchmark")
+    pcug_benchmark.add_argument("split", choices=("development", "holdout"))
+    pcug_benchmark.add_argument("--protocol", required=True)
+    pcug_benchmark.add_argument("--output", required=True)
+    pcug_benchmark.set_defaults(handler=_pcug_benchmark)
     return parser
 
 

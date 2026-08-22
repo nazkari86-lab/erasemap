@@ -3,6 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 from cryptography.hazmat.primitives import serialization
 
 from erasemap.cli import main
@@ -270,3 +271,127 @@ def test_direct_development_benchmark(tmp_path: Path, capsys: object) -> None:
 def test_direct_invalid_input_is_reported(capsys: object) -> None:
     assert main(["generate", "--seed", "-1", "--nodes", "10", "--output", "unused"]) == 2
     assert "seed cannot be negative" in capsys.readouterr().err
+
+
+def test_pcug_demo_and_independent_verify(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    bundle = tmp_path / "bundle.json"
+    public_key = tmp_path / "public-key.pem"
+    assert (
+        main(
+            [
+                "pcug",
+                "demo",
+                "--adapter",
+                "egov_style",
+                "--seed",
+                "4409",
+                "--output",
+                str(bundle),
+                "--public-key-output",
+                str(public_key),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    payload = json.loads(bundle.read_text())
+    assert payload["evidence_scope"] == "SYNTHETIC_SIMULATOR"
+    assert payload["authorized_integration"] is False
+    assert main(["pcug", "verify", str(bundle), "--public-key", str(public_key)]) == 0
+    assert json.loads(capsys.readouterr().out)["valid"] is True
+
+
+def test_pcug_verify_rejects_tampered_bundle(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    bundle = tmp_path / "bundle.json"
+    public_key = tmp_path / "public-key.pem"
+    assert (
+        main(
+            [
+                "pcug",
+                "demo",
+                "--output",
+                str(bundle),
+                "--public-key-output",
+                str(public_key),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    payload = json.loads(bundle.read_text())
+    payload["bundle"]["declared_total_cost"] += 1
+    bundle.write_text(json.dumps(payload))
+    assert main(["pcug", "verify", str(bundle), "--public-key", str(public_key)]) == 1
+    assert json.loads(capsys.readouterr().out)["reason"] == "invalid signature"
+
+
+def test_pcug_verify_directory_reports_every_bundle(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    directory = tmp_path / "bundles"
+    directory.mkdir()
+    public_key = tmp_path / "public-key.pem"
+    valid = directory / "valid.json"
+    invalid = directory / "invalid.json"
+    assert (
+        main(
+            [
+                "pcug",
+                "demo",
+                "--output",
+                str(valid),
+                "--public-key-output",
+                str(public_key),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    invalid.write_text(valid.read_text().replace('"signature":"', '"signature":"00'))
+    assert (
+        main(
+            [
+                "pcug",
+                "verify-directory",
+                str(directory),
+                "--public-key",
+                str(public_key),
+            ]
+        )
+        == 1
+    )
+    assert json.loads(capsys.readouterr().out) == {
+        "checked": 2,
+        "invalid": 1,
+        "unverifiable": 0,
+        "valid": 1,
+    }
+
+
+def test_pcug_development_benchmark_exports_complete_records(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    output = tmp_path / "pcug"
+    assert (
+        main(
+            [
+                "pcug",
+                "benchmark",
+                "development",
+                "--protocol",
+                "benchmark/pcug-protocol-v1.json",
+                "--output",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["record_count"] == 516
+    assert payload["exception_count"] == 0
+    assert (output / "manifest.json").exists()
+    assert len((output / "records.jsonl").read_text().splitlines()) == 516

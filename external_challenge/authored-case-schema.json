@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["case", "expected_path", "truth_verdict"],
+    "properties": {
+      "case": {"type": "object"},
+      "expected_path": {"type": ["array", "null"], "items": {"type": "string"}},
+      "truth_verdict": {"enum": ["COMPLETE", "INCOMPLETE", "UNVERIFIED"]}
+    }
+  }
+}

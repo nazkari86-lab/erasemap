@@ -4,7 +4,6 @@ import argparse
 import json
 from pathlib import Path
 
-
 REQUIRED = {
     "case_commitment",
     "case_id",

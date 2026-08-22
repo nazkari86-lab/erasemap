@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import asdict
-from pathlib import Path
 
 from erasemap.external_cases import build_source_cases
 from erasemap.external_evaluator import evaluate_public_cases

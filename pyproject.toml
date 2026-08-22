@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "erasemap"
-version = "0.3.0"
+version = "0.3.1"
 description = "Typed residual-path auditing for controlled biometric data erasure"
 readme = "README.md"
 license = "MIT"

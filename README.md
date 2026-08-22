@@ -66,6 +66,8 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
+| Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
+| Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
 ## Source-locked multi-system holdout
@@ -99,6 +101,19 @@ declared all 75 complete. A real isolated PostgreSQL pilot also detected a survi
 physical dump after source deletion. See
 [`docs/PCUG_STRESS_AND_POSTGRES_PILOT.md`](docs/PCUG_STRESS_AND_POSTGRES_PILOT.md). These are
 development and local-pilot results, not replacements for an independently authored hidden suite.
+
+The external challenge kit now rejects incomplete prediction sets, freezes every prediction with a
+SHA-256 commitment, reveals labels only after the freeze, and automatically applies preregistered
+Wilson, accuracy, case-count, and independently authored family-count gates. The minimum is 120
+cases across four external families, including 100 non-complete cases. See
+[`external_challenge/README.md`](external_challenge/README.md). This is an executable route to
+independent evidence; it is not itself an independent result.
+
+An external organization can use [`docs/PRODUCTION_PILOT_PROTOCOL.md`](docs/PRODUCTION_PILOT_PROTOCOL.md)
+and the machine-validated [`pilot/manifest-template.json`](pilot/manifest-template.json) to freeze
+the algorithm commit, register two or more real persistence systems, and publish only redacted
+artifact hashes. Until an external evaluator completes and signs that record, production validation
+remains explicitly unclaimed.
 
 The novelty claim has been narrowed after a structured literature and patent search; lineage-aware
 deletion graphs and proof-of-deletion are prior art. See

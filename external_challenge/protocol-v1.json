@@ -1,0 +1,9 @@
+{
+  "maximum_false_complete_wilson95_upper": 0.05,
+  "minimum_cases": 120,
+  "minimum_distinct_families": 4,
+  "minimum_exact_path_rate": 0.8,
+  "minimum_noncomplete_cases": 100,
+  "minimum_verdict_accuracy": 0.9,
+  "schema_version": "erasemap-external-challenge-protocol-v1"
+}

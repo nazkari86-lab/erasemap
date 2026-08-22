@@ -21,6 +21,8 @@ PYTHONPATH=src "$python_bin" experiments/run_manual_pipeline_benchmark.py \
   --output outputs/release-v3/manual-pipelines.json
 "$python_bin" -m build --outdir "$release_temp/dist"
 "$python_bin" scripts/verify_source_locked_holdout.py
+PYTHONPATH=src "$python_bin" experiments/run_pcug_mechanism_stress.py \
+  --output "$release_temp/pcug-stress.json"
 PYTHONPATH=src "$python_bin" external_evaluator/run.py \
   --sources benchmark/external-sources-v1.json \
   --output "$release_temp/external-evaluator"

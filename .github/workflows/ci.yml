@@ -21,8 +21,11 @@ jobs:
           cache: pip
       - run: python -m pip install -e '.[dev,real]'
       - run: python -m ruff check .
-      - run: python -m mypy src/erasemap
-      - run: python -m pytest --cov=erasemap --cov-report=term-missing --cov-fail-under=90
+      - run: python -m mypy --strict src pilot external_challenge
+      - run: >-
+          python -m pytest
+          --cov=erasemap --cov=external_challenge --cov=pilot
+          --cov-report=term-missing --cov-fail-under=90
       - run: python -m build
       - run: python scripts/verify_source_locked_holdout.py
       - run: python experiments/run_pcug_mechanism_stress.py --output /tmp/pcug-stress.json

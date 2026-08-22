@@ -1,0 +1,33 @@
+{
+  "algorithm_commit": "REPLACE_WITH_40_CHARACTER_GIT_COMMIT",
+  "attestation": {
+    "algorithm_unchanged_after_reveal": false,
+    "no_project_author_label_access_before_freeze": false,
+    "signed_by": ""
+  },
+  "evidence": [],
+  "independent_evaluator": {
+    "affiliation": "REPLACE_WITH_ORGANIZATION",
+    "controlled_case_authorship": true,
+    "controlled_labels": true,
+    "name_or_pseudonym": "REPLACE_WITH_EVALUATOR"
+  },
+  "organization_alias": "REPLACE_WITH_PUBLIC_ALIAS",
+  "pilot_id": "REPLACE_WITH_PILOT_ID",
+  "preregistered_at": "REPLACE_WITH_ISO_8601_TIMESTAMP",
+  "schema_version": "erasemap-production-pilot-v1",
+  "systems": [
+    {
+      "connector": "read-only SQL/API/export adapter",
+      "data_class": "source record",
+      "id": "source-system",
+      "synthetic_or_consented": "synthetic"
+    },
+    {
+      "connector": "read-only SQL/API/export adapter",
+      "data_class": "derived record or physical artifact",
+      "id": "derived-system",
+      "synthetic_or_consented": "synthetic"
+    }
+  ]
+}

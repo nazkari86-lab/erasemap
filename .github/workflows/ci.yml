@@ -29,6 +29,10 @@ jobs:
       - run: python -m build
       - run: python scripts/verify_source_locked_holdout.py
       - run: PYTHONPATH=src python scripts/verify_measured_multiservice_v1.py
+      - run: >-
+          python scripts/verify_formal_conformance.py
+          --expected formal/conformance-v1.json
+          --output /tmp/formal-conformance.json
       - run: python experiments/run_pcug_mechanism_stress.py --output /tmp/pcug-stress.json
       - run: >-
           python external_evaluator/run.py
@@ -45,3 +49,15 @@ jobs:
           erasemap pcug verify-directory
           /tmp/erasemap-pcug-development/bundles
           --public-key /tmp/erasemap-pcug-development/public-key.pem
+
+  formal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: leanprover/lean-action@v1
+        with:
+          build: true
+          build-args: "--wfail"
+          leanchecker: true
+          axiom-audit: true

@@ -62,7 +62,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 |---|---|
 | Typed residual-path audit v1 | Measured controlled benchmark; see `docs/CORE_PROTOCOL.md` |
 | Deletion-matched model experiments v3 | Measured only on the named open datasets; MUFAC retained-utility gate failed |
-| PCUG/CDC deterministic core | Implemented and checked against unit, property, tamper, and replay tests |
+| PCUG/CDC deterministic core | Lean-checked conditional soundness and finite optimality; bounded Python conformance PASS |
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
@@ -123,6 +123,15 @@ geometric-mean speedup (paired bootstrap 95% CI `[16.39x, 18.98x]`) and `94.62%`
 application/filesystem bytes than rebuild-all. See
 [`docs/MEASURED_MULTISERVICE_V1_REPORT.md`](docs/MEASURED_MULTISERVICE_V1_REPORT.md). This remains a
 local synthetic systems experiment, not external production evidence.
+
+The formal PCUG v1 contribution is machine-checked in Lean 4. Under explicit complete-topology and
+sound-verifier assumptions, replayed `COMPLETE` rules out represented real residual paths and
+discharges all mandatory channels. A separate executable theorem proves feasibility and global
+minimum cost for finite exhaustive CDC selection. Production `exact_cdc` matched its exhaustive
+oracle in all 3,072 preregistered cost/permission/order conformance runs. See
+[`formal/README.md`](formal/README.md) and
+[`docs/FORMAL_PCUG_V1_REPORT.md`](docs/FORMAL_PCUG_V1_REPORT.md). This does not prove discovery of
+unregistered infrastructure or correctness of an external deployment.
 
 The novelty claim has been narrowed after a structured literature and patent search; lineage-aware
 deletion graphs and proof-of-deletion are prior art. See

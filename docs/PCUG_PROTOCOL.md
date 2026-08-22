@@ -63,10 +63,18 @@ and lexicographic action IDs.
 
 - `brute_force_cdc` enumerates every permitted subset and acts as the small-case oracle.
 - `exact_cdc` uses deterministic branch-and-bound and is property-tested against that oracle,
-  including zero-cost and tied plans.
+  including zero-cost and tied plans. The Lean v1 finite-selector theorem proves feasibility and
+  minimum natural-number cost for the exhaustive contract; the bounded production conformance
+  suite matched `exact_cdc` to that oracle in 3,072/3,072 action-order runs.
 - `greedy_cdc` selects measured constraint reduction per unit cost and never claims optimality.
 - a solver that cannot establish feasibility returns a non-complete plan rather than an optimistic
   result.
+
+The conditional Lean soundness theorem separates two obligations that the software cannot infer:
+every real active residual must be represented in the registered topology, and local path/channel
+verifiers must be sound. Given those obligations, replayed `COMPLETE` implies absence of represented
+real residuals and success of every mandatory obligation. It makes the claim boundary explicit; it
+does not turn an incomplete inventory into global proof of erasure.
 
 Cycles are handled as finite simple paths; revisiting a node within one candidate path is forbidden,
 while alternate simple paths remain visible. Unknown edges are treated as potentially active.

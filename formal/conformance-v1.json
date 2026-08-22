@@ -1,0 +1,12 @@
+{
+  "action_orderings_per_catalog": 6,
+  "catalogs": 512,
+  "claim": "production exact_cdc equals exhaustive brute_force_cdc on every listed run",
+  "complete_catalogs": 320,
+  "cost_levels": 4,
+  "incomplete_catalogs": 192,
+  "mismatches": 0,
+  "ordering_runs": 3072,
+  "records_sha256": "29009b11fc3228f7458ab7e8f66fb58e4247c0b4bdfea9195e4d7f5e4fbe30fe",
+  "schema": "erasemap-formal-conformance-v1"
+}

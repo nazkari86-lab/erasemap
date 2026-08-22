@@ -28,6 +28,7 @@ before competition submission because 2025–2026 unlearning work is moving quic
 | Bourtoule et al., *Machine Unlearning* (2021) | SISA partitioning and efficient retraining | Prevents claiming invention of structured retraining |
 | Sommer et al., *Towards Probabilistic Verification of Machine Unlearning* (2020) | Formal hypothesis-testing view and backdoor verification | Prevents claiming invention of probabilistic unlearning verification |
 | Eisenhofer et al., *Verifiable and Provably Secure Machine Unlearning* (2022/2025) | Cryptographic definition, SNARK/hash-chain proofs of update and unlearning | Prevents claiming invention of cryptographic proof-carrying unlearning |
+| Weng et al., *Proof of Unlearning: Definitions and Instantiation* (2022) | Algorithm-level proof of unlearning with authenticated lineage and SGX-backed verification | Prevents claiming invention of lineage-authenticated proof of unlearning |
 | Chourasia & Shah, *Forget Unlearning* (ICML 2023) | Sound deletion/privacy guarantees and release-history risks | Prevents treating retraining similarity as a complete privacy guarantee |
 | Zhang et al., *Verification of Machine Unlearning is Fragile* (ICML 2024) | Provider can retain information while passing verification strategies | Requires an explicit malicious-provider limitation |
 | Wang et al., *Machine Unlearning: A Comprehensive Survey* (2024) | Taxonomy including verification, privacy, and security | Confirms the breadth of established unlearning work |
@@ -46,6 +47,7 @@ before competition submission because 2025–2026 unlearning work is moving quic
 | US11108559B2 | Signed provenance attestations and proofs of object deletion |
 | US20230350843A1 | Transaction-level retention inheritance through data lineage |
 | US20260087104A1 | AI training/deployment data removal and an unlearning verification network |
+| US20250190784A1 / US12456052B2 | DAG-like staged unlearning, hashes or zero-knowledge proofs for intermediate model instances, and verification that the resulting model reached production |
 
 ## Corrected novelty boundary
 
@@ -82,6 +84,7 @@ patent filing.
 - <https://www.yinzhicao.org/unlearning/UnlearningOakland15.pdf>
 - <https://arxiv.org/abs/2003.04247>
 - <https://arxiv.org/abs/2210.09126>
+- <https://arxiv.org/abs/2210.11334>
 - <https://proceedings.mlr.press/v202/chourasia23a.html>
 - <https://openreview.net/forum?id=OkChMnjF6s>
 - <https://proceedings.mlr.press/v267/koloskova25a.html>
@@ -91,4 +94,4 @@ patent filing.
 - <https://patents.google.com/patent/US11120156B2/en>
 - <https://patents.google.com/patent/US20200387625A1/en>
 - <https://patents.google.com/patent/WO2021174104A1/en>
-
+- <https://patents.google.com/patent/US12456052B2/en>

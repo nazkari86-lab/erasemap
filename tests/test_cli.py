@@ -393,5 +393,24 @@ def test_pcug_development_benchmark_exports_complete_records(
     payload = json.loads(capsys.readouterr().out)
     assert payload["record_count"] == 516
     assert payload["exception_count"] == 0
+    assert payload["bundle_count"] == 12
     assert (output / "manifest.json").exists()
     assert len((output / "records.jsonl").read_text().splitlines()) == 516
+    assert (
+        main(
+            [
+                "pcug",
+                "verify-directory",
+                str(output / "bundles"),
+                "--public-key",
+                str(output / "public-key.pem"),
+            ]
+        )
+        == 0
+    )
+    assert json.loads(capsys.readouterr().out) == {
+        "checked": 12,
+        "invalid": 0,
+        "unverifiable": 0,
+        "valid": 12,
+    }

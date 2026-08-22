@@ -380,9 +380,41 @@ def _pcug_verify_directory(args: argparse.Namespace) -> int:
 
 
 def _pcug_benchmark(args: argparse.Namespace) -> int:
-    run = run_pcug_benchmark(load_pcug_protocol(args.protocol), split=args.split)
+    protocol = load_pcug_protocol(args.protocol)
+    run = run_pcug_benchmark(protocol, split=args.split)
     output = Path(args.output)
+    private_key = Ed25519PrivateKey.generate()
+    bundle_count = 0
+    seeds = protocol.development_seeds if args.split == "development" else protocol.holdout_seeds
+    for seed in seeds:
+        for adapter in protocol.adapters:
+            case = build_adapter_case(adapter, seed=seed)
+            plan = exact_cdc(case.graph, case.protocol, case.actions)
+            if not plan.complete:
+                raise ValueError("registered benchmark planner did not produce a complete bundle")
+            selected = tuple(action for action in case.actions if action.id in plan.action_ids)
+            bundle = issue_bundle(
+                private_key,
+                key_id="pcug-development-key",
+                nonce=f"{args.split}-{seed}-{adapter}",
+                graph=case.graph,
+                protocol=case.protocol,
+                actions=selected,
+                challenge_opening=(f"hidden-{seed % 31:02d}", f"hidden-{seed % 47:02d}"),
+                producer_revision=_revision(),
+            )
+            _atomic_write(
+                output / "bundles" / f"{seed}-{adapter}.json",
+                (encode_bundle(bundle) + "\n").encode(),
+            )
+            bundle_count += 1
+    public_bytes = private_key.public_key().public_bytes(
+        serialization.Encoding.PEM,
+        serialization.PublicFormat.SubjectPublicKeyInfo,
+    )
+    _atomic_write(output / "public-key.pem", public_bytes)
     manifest = {
+        "bundle_count": bundle_count,
         "evidence_scope": "SYNTHETIC_SIMULATOR",
         "exception_count": run.exception_count,
         "protocol_hash": run.protocol_hash,

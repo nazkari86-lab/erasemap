@@ -22,8 +22,8 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 | Problem clarity | 9.5/10 | `examples/five_branch_system.json` gives a two-node counterexample: `source -> template` | Usability test with judges or operators who can explain the result unaided |
 | Practical relevance | 9.6/10 | Contracts cover source, template, cache, vector store, backup, and model influence | Authorized organization pilot on actual deletion workflow |
 | Narrow scientific novelty | 9.5/10 | Fail-closed composition plus PCUG/CDC; formal and stress evidence; prior-art exclusions are explicit | Untouched external interaction cases outperform a strong typed-node/replay baseline |
-| Experimental methodology | 9.5/10 | Frozen protocols, one-shot holdouts, paired bootstrap, negative MUFAC result retained | Independently authored preregistered holdout |
-| Scientific claim completion | 9.3/10 | Formal conditional soundness, finite optimality, local measured systems result | External hidden challenge plus materially different system replication |
+| Experimental methodology | 9.6/10 | Frozen protocols, one-shot holdouts, paired bootstrap, negative MUFAC result retained, first-run sequential protocol | Independently authored preregistered holdout |
+| Scientific claim completion | 9.5/10 | Formal conditional soundness, finite optimality, measured systems and sequential-release results | External hidden challenge plus materially different system replication |
 | Real inputs and transfer | 9.0/10 | Open face datasets, official source structures, real PostgreSQL/Redis/Qdrant processes | Authorized real records or redacted production instrumentation |
 | Independence of evidence | 7.8/10 | Executable signed challenge exists, but `external_results/` has no accepted external result | One verified evaluator passes all 9.5 rubric gates |
 | Formal justification | 9.6/10 | Lean proof, axiom audit, 3,072/3,072 production/oracle conformance runs | Independent proof review or stronger implementation-refinement theorem |
@@ -50,7 +50,10 @@ above 7.8.
    declared application/filesystem bytes than rebuild-all.
 4. **Model layer:** adaptive MUFAC v3.2 passed the unchanged bounded utility/privacy gates at 1.59x
    speedup, but it is a post-exposure improvement rather than fresh confirmation.
-5. **External boundary:** the independent score remains 7.8 until an identifiable evaluator authors,
+5. **Sequential privacy:** a first-run preregistered Olivetti study passed six frozen gates across
+   25 release transitions; the largest paired upper 95% CI for additional membership advantage was
+   0.00624 against the 0.05 limit. The attacks use no shadow models and are not a privacy guarantee.
+6. **External boundary:** the independent score remains 7.8 until an identifiable evaluator authors,
    freezes, reveals, signs, and submits the challenge.
 
 ## Reproduce the jury artifact

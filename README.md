@@ -78,7 +78,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
 | Measured multi-service optimization | 20-pair real-process holdout PASS; local synthetic records |
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
-| Sequential deletion privacy v1 | Preregistered 5-sequence × 5-deletion release-difference experiment; result not yet run |
+| Sequential deletion privacy v1 | Preregistered first run PASS: 25 transitions, all six frozen gates; project-authored |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
@@ -150,6 +150,15 @@ oracle in all 3,072 preregistered cost/permission/order conformance runs. See
 [`formal/README.md`](formal/README.md) and
 [`docs/FORMAL_PCUG_V1_REPORT.md`](docs/FORMAL_PCUG_V1_REPORT.md). This does not prove discovery of
 unregistered infrastructure or correctness of an external deployment.
+
+The preregistered sequential-deletion privacy v1 experiment passed all six frozen gates on its
+first run: 25/25 deleted classifier classes were absent, the worst retained-accuracy difference
+from exact retraining was −0.00952, the worst forgotten-verification AUC gap was 0.00395, and the
+largest paired upper 95% confidence bound for additional release-difference membership advantage
+was 0.00624 against the 0.05 limit. The candidate used a 60/100 epoch budget (1.667×). This is a
+project-authored Olivetti result using four no-shadow-model attacks, not independent validation or
+a general privacy guarantee. See
+[`docs/SEQUENTIAL_DELETION_PRIVACY_V1_REPORT.md`](docs/SEQUENTIAL_DELETION_PRIVACY_V1_REPORT.md).
 
 The novelty claim has been narrowed after a structured literature and patent search; lineage-aware
 deletion graphs and proof-of-deletion are prior art. See

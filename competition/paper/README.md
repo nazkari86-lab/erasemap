@@ -28,6 +28,7 @@ checked page by page.
 ## Claim boundary
 
 The paper reports project-authored mechanism evidence, independently sourced but project-mapped
-structures, formal Lean results, local real-process measurements, and a post-exposure adaptive model
-result as separate evidence layers. It does not claim an independently authored hidden challenge or
-a production FaceID/eGov/government deployment.
+structures, formal Lean results, local real-process measurements, a post-exposure adaptive model
+result, and a first-run preregistered sequential-release result as separate evidence layers. It does
+not claim certified privacy, an independently authored hidden challenge, or a production
+FaceID/eGov/government deployment.

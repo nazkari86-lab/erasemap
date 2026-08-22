@@ -1,0 +1,61 @@
+{
+  "claim_boundary": "Project-authored preregistered sequential-release experiment on external Olivetti inputs; release-difference attacks use no shadow models and are not independent evidence.",
+  "code_revision": "5086151af0e59f4dd8ed34a15b09dde510cee039",
+  "dataset": {
+    "images": 400,
+    "name": "Olivetti Faces"
+  },
+  "decision": "PASS",
+  "endpoints": {
+    "max_forgotten_verification_auc_gap": 0.00395061728395063,
+    "max_privacy_advantage_paired_upper_ci": 0.006239555531586588,
+    "max_retained_embedding_mse_to_exact": 8.230383622458663e-06,
+    "min_retained_accuracy_delta": -0.00952380952380949
+  },
+  "gates": {
+    "all_deleted_classes_absent": true,
+    "candidate_epoch_budget_speedup": true,
+    "candidate_retained_accuracy_delta": true,
+    "forgotten_verification_auc_gap": true,
+    "max_privacy_advantage_paired_upper_ci": true,
+    "retained_embedding_mse_to_exact": true
+  },
+  "paired_privacy": {
+    "confidence_change": {
+      "ci95": [
+        -0.11262942504147282,
+        -0.05977210178048689
+      ],
+      "mean_difference": -0.08370360067652062,
+      "transitions": 25
+    },
+    "energy_change": {
+      "ci95": [
+        -0.007812660004394945,
+        0.006239555531586588
+      ],
+      "mean_difference": -0.001437862726787298,
+      "transitions": 25
+    },
+    "margin_change": {
+      "ci95": [
+        -0.10252239213064912,
+        -0.05514856450012241
+      ],
+      "mean_difference": -0.07687024323275503,
+      "transitions": 25
+    },
+    "negative_entropy_change": {
+      "ci95": [
+        -0.11802346350704342,
+        -0.05614171798306223
+      ],
+      "mean_difference": -0.08512432717384869,
+      "transitions": 25
+    }
+  },
+  "protocol_sha256": "sha256:275cfbd77b3a6e625d469423ac2e4a4656f93014a8999c219f0a538768dee351",
+  "schema_version": "erasemap-sequential-deletion-privacy-result-v1",
+  "sequences": 5,
+  "transitions": 25
+}

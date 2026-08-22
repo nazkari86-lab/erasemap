@@ -10,6 +10,8 @@
 
 Deleting a biometric record from the primary database does not necessarily remove its derived template, search index entry, cache copy, backup, audit replica, or influence on a trained model. This paper presents EraSeMap, a subject-scoped erasure auditor built around a Proof-Carrying Unlearning Graph (PCUG). It refuses to report completion while a residual path, failed verifier, unknown mandatory channel, or unsuccessful action replay remains. The method produces one of three verdicts—COMPLETE, INCOMPLETE, or UNVERIFIED—together with the shortest residual counterexample and a minimum-cost Counterfactual Deletion Cut (CDC). Residual paths define what may still be usable; typed verifier channels define required evidence; and a finite optimization problem selects the least-cost permitted action set whose simulated post-action state passes the same frozen audit. Lean 4 machine-checks conditional replay soundness and finite CDC optimality. The production branch-and-bound selector matched an exhaustive oracle in 3,072 of 3,072 systematic runs. In a project-authored mechanism stress test, EraSeMap produced 0/75 false-complete verdicts while a node-state-only typed audit produced 75/75. On a source-locked benchmark derived from five official external structures, EraSeMap produced 0/100 false completes and 25/25 correct completes, but tied the strongest typed baseline. In a preregistered local multi-service experiment using real PostgreSQL, Redis, and Qdrant processes, encrypted backups, and a ridge model, targeted CDC reached verified completion in 20/20 paired trials, retained all 249 non-deleted records per trial, matched rebuild-all ridge weights within 2.22 × 10⁻¹⁵, reduced written bytes by 94.62%, and achieved a 17.64× geometric-mean speedup over rebuild-all (paired bootstrap 95% CI: 16.39×–18.98×). A bounded adaptive face-unlearning experiment passed its frozen utility, privacy, and speed gates, but is not independent confirmation. The results support the feasibility and internal correctness of proof-carrying erasure auditing while leaving topology completeness, independent hidden evaluation, and production deployment as explicit open obligations.
 
+A separately preregistered first-run sequential study passed all six frozen gates over 25 release transitions; the largest upper 95% confidence bound for additional retained-user membership advantage relative to exact retraining was 0.00624 against a 0.05 limit. This bounded result is not independent confirmation or certified privacy.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -152,7 +154,7 @@ EraSeMap is implemented as a reproducible Python package with canonical JSON inp
 
 The output proof bundle includes the request and protocol identifiers, registered graph commitment, three-valued verdict, shortest residual path, verifier-channel decisions, selected actions and costs, replay result, evidence hashes, and an Ed25519 receipt chain. The signature covers a minimal envelope and intentionally excludes subject identifiers, biometric values, raw paths, and free text. The evaluator recomputes the verdict and plan from the evidence rather than trusting cached labels.
 
-The repository includes 233 tests with 90.30% measured coverage in the full CI-equivalent test command, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
+The repository includes 240 tests with 90.30% measured coverage in the full CI-equivalent test command, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
 
 ## 7. Experimental Methodology
 
@@ -189,6 +191,12 @@ The face experiment uses a trainable local embedding encoder over an external fa
 
 Frozen gates include retained verification AUC difference of at least −0.01, mean speedup of at least 1.5×, maximum paired privacy-advantage upper confidence bound at most 0.10, and bounded embedding-error ratios. The 120-epoch budget was selected after earlier MUFAC results were known; v3.2 is therefore a method-improvement result, not untouched confirmation. Exact retraining remains the mandatory fallback when any dataset-specific gate fails.
 
+### 7.6 Layer E: preregistered sequential-release privacy
+
+Before the first confirmatory run, the repository froze five seeded deletion orders with five consecutive identity deletions each on Olivetti Faces. At every transition, exact retraining uses 100 epochs and a deletion-matched candidate restarts from the registered seed for 60 epochs using retained identities only. An observer compares two consecutive releases and attacks retained-user membership using absolute changes in confidence, energy, margin, and negative entropy. Candidate-minus-exact advantage is paired across all 25 transitions with deterministic bootstrap 95% intervals.
+
+All six gates were frozen before execution: deleted classes absent; epoch-budget ratio at least 1.5×; retained-accuracy difference at least −0.02 on every transition; retained embedding MSE to exact at most 0.001; forgotten-verification AUC gap at most 0.05; and the largest upper confidence bound for additional privacy advantage at most 0.05. The run refuses a dirty worktree and records the pre-result commit, raw transitions, and artifact hashes.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -215,6 +223,12 @@ These measurements show that minimum-cost targeted remediation can substantially
 
 MUFAC v3.2 passed all unchanged gates. Retained verification AUC was 0.91912, compared with 0.92565 for exact retraining, a difference of **−0.00653**. Mean speedup was **1.593×**. The maximum paired privacy-advantage upper confidence bound was **0.04091**. Forgotten and retained embedding-MSE ratios to stale were 0.03064 and 0.03348. These numbers support the bounded policy on the exposed subset, not general equivalence to exact retraining or a production privacy guarantee.
 
+### 8.5 Sequential-release privacy
+
+The first confirmatory run at the preregistration commit passed all six gates. Across 25 transitions, every deleted classifier class was absent. The worst retained-accuracy difference was **−0.00952**, retained embedding MSE to exact was at most **0.00000823**, and the forgotten-verification AUC gap was at most **0.00395**. The 60/100 epoch-budget ratio was **1.667×**.
+
+The largest paired privacy upper 95% confidence bound was **0.00624**, below the frozen 0.05 limit. Paired candidate-minus-exact mean advantages and intervals were confidence −0.08370 [−0.11263, −0.05977], energy −0.00144 [−0.00781, 0.00624], margin −0.07687 [−0.10252, −0.05515], and negative entropy −0.08512 [−0.11802, −0.05614]. Absolute membership advantages remained substantial for several attacks. Thus the result bounds additional exposure relative to exact retraining under the registered panel; it does not establish that either release is private.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -235,7 +249,7 @@ The strongest current evidence for added composition value remains internal: the
 
 **Production transfer.** No Apple Face ID, Kazakhstan eGov, bank, school, border, or government production environment was accessed. Local real-process tests use synthetic identities.
 
-**Model scope.** The adaptive face result follows exposed earlier runs. Its six privacy statistics use no shadow models. Deep-model behavior, adaptive shadow-model attacks, sequential deletions, retained-user privacy, and population shift require separate preregistered experiments.
+**Model scope.** The adaptive MUFAC result follows exposed earlier runs. The sequential Olivetti result was preregistered and first-run, but uses a shallow classifier over frozen embeddings and four no-shadow-model release-difference attacks. Deep end-to-end models, adaptive shadow-model attacks, reconstruction, longer deletion sequences, population shift, and production threat models remain untested.
 
 **Performance scope.** The 17.64× result is local wall-clock performance on one Apple M4 laptop. The byte count measures application payload and replaced files, not full storage or network I/O.
 
@@ -256,6 +270,7 @@ python -m pytest
 lake build
 python scripts/verify_formal_conformance.py --expected formal/conformance-v1.json --output /tmp/formal-conformance.json
 python scripts/verify_measured_multiservice_v1.py
+python scripts/verify_sequential_deletion_privacy_v1.py
 ```
 
 The measured service experiment additionally requires pinned PostgreSQL, Redis, Qdrant, and container dependencies. Reproduction verifies the published computation; it does not create independent authorship. No personal biometric data generated by the multi-service experiment are released because that experiment uses deterministic synthetic identities; the external face inputs remain governed by their original dataset terms.
@@ -324,3 +339,4 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | PCUG transfers to official external structures | 0/100 false complete; 25/25 complete | Strongest typed baseline tied; mappings are internal |
 | Targeted remediation can be cheaper than rebuild-all | 17.64× speedup; 94.62% fewer bytes; 20/20 complete | One local machine and synthetic identities |
 | Adaptive face candidate meets frozen bounded gates | −0.00653 AUC difference; 1.593×; privacy upper CI 0.04091 | Post-exposure adaptive result; exact fallback remains required |
+| Sequential deletion candidate meets six frozen gates | 25 transitions; worst retained accuracy −0.00952; privacy upper CI 0.00624 | First-run preregistered, but project-authored and no-shadow-model |

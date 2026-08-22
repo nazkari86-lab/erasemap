@@ -55,7 +55,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-      - uses: leanprover/lean-action@v1
+      # Pinned after v1.5.0 so the declared axiom-audit input is actually executed.
+      - uses: leanprover/lean-action@6835ef47e8423fa9e9eacfcbb8fdf83fae42c820
         with:
           build: true
           build-args: "--wfail"

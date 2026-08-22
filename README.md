@@ -66,6 +66,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
+| Measured multi-service optimization | 20-pair real-process holdout PASS; local synthetic records |
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
@@ -114,6 +115,14 @@ and the machine-validated [`pilot/manifest-template.json`](pilot/manifest-templa
 the algorithm commit, register two or more real persistence systems, and publish only redacted
 artifact hashes. Until an external evaluator completes and signs that record, production validation
 remains explicitly unclaimed.
+
+The preregistered measured multi-service v1 experiment used real PostgreSQL, Redis, and Qdrant
+processes plus AES-GCM backups and an exactly updatable ridge model. Across 20 one-shot paired
+holdout seeds, exact CDC preserved `COMPLETE` and all retained identities while achieving a `17.64x`
+geometric-mean speedup (paired bootstrap 95% CI `[16.39x, 18.98x]`) and `94.62%` fewer declared
+application/filesystem bytes than rebuild-all. See
+[`docs/MEASURED_MULTISERVICE_V1_REPORT.md`](docs/MEASURED_MULTISERVICE_V1_REPORT.md). This remains a
+local synthetic systems experiment, not external production evidence.
 
 The novelty claim has been narrowed after a structured literature and patent search; lineage-aware
 deletion graphs and proof-of-deletion are prior art. See

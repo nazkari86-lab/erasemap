@@ -4,4 +4,3 @@ defaultTargets = ["EraSeMap"]
 
 [[lean_lib]]
 name = "EraSeMap"
-srcDir = "formal"

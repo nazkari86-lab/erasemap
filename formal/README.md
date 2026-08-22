@@ -1,7 +1,8 @@
 # Machine-checked PCUG/CDC core
 
-This directory contains the Lean 4 formalization frozen in
-[`docs/FORMAL_PCUG_V1_SPEC.md`](../docs/FORMAL_PCUG_V1_SPEC.md).
+The root [`EraSeMap`](../EraSeMap/) Lean library contains the formalization frozen in
+[`docs/FORMAL_PCUG_V1_SPEC.md`](../docs/FORMAL_PCUG_V1_SPEC.md); this directory holds its
+reproduction guide and bounded production-conformance record.
 
 The machine-checked contribution has two parts:
 

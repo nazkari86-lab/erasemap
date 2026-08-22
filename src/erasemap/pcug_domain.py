@@ -146,6 +146,7 @@ class Transition:
     result_state: EdgeState
     evidence_id: str
     target: TransitionTarget = TransitionTarget.EDGE
+    verified: bool = True
 
     def __post_init__(self) -> None:
         if not self.target_id or not self.evidence_id:
@@ -158,6 +159,7 @@ class CDCAction:
     cost: int
     transitions: tuple[Transition, ...]
     permitted: bool = True
+    result_channels: tuple[ChannelResult, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.id:
@@ -169,6 +171,9 @@ class CDCAction:
         targets = [(transition.target, transition.target_id) for transition in self.transitions]
         if len(targets) != len(set(targets)):
             raise ValueError("duplicate transition target")
+        channel_keys = [(channel.name, channel.stratum) for channel in self.result_channels]
+        if len(channel_keys) != len(set(channel_keys)):
+            raise ValueError("duplicate action result channel")
 
 
 @dataclass(frozen=True, slots=True)
@@ -228,4 +233,3 @@ class CDCPlan:
     @property
     def complete(self) -> bool:
         return self.verdict is PCUGVerdict.COMPLETE
-

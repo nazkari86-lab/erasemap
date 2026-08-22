@@ -1,0 +1,41 @@
+{
+  "bootstrap_samples": 2000,
+  "candidate": {
+    "epochs": 60,
+    "guarantee": "Every release restarts from the registered seed using only identities retained after that deletion step."
+  },
+  "dataset": {
+    "embeddings": "outputs/advanced-face-unlearning-v1/embeddings.joblib",
+    "name": "Olivetti Faces",
+    "source": "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_olivetti_faces.html",
+    "targets_protocol": "benchmark/advanced-face-unlearning-v1.json"
+  },
+  "exact_retraining": {
+    "epochs": 100
+  },
+  "far_target": 0.1,
+  "local_model": {
+    "hidden_dimension": 64,
+    "learning_rate": 0.01,
+    "weight_decay": 0.0001
+  },
+  "privacy_attacks": [
+    "confidence_change",
+    "energy_change",
+    "margin_change",
+    "negative_entropy_change"
+  ],
+  "random_seeds": [20260831, 20260901, 20260902, 20260903, 20260904],
+  "schema_version": "erasemap-sequential-deletion-privacy-v1",
+  "sequence_length": 5,
+  "success_criteria": {
+    "all_deleted_classes_absent": true,
+    "candidate_epoch_budget_speedup_min": 1.5,
+    "candidate_retained_accuracy_delta_min": -0.02,
+    "forgotten_verification_auc_gap_max": 0.05,
+    "max_privacy_advantage_paired_upper_ci_max": 0.05,
+    "retained_embedding_mse_to_exact_max": 0.001
+  },
+  "test_images_per_subject": 3,
+  "train_images_per_subject": 7
+}

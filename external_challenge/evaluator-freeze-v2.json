@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "external_challenge/attest.py": "sha256:b0a8449792485bcad6be0396a05a62df71b5af737e5558cb45a53a9a137721ae",
+    "external_challenge/protocol-v1.json": "sha256:66b5fc105fba73d6d9642c6c5e4d7daa8075cb883620161c294078b6c99d761c",
+    "external_challenge/runner.py": "sha256:3b8c87b232892e16466c41274b5c8e4bacf13b854f14b064598120fd93834007",
+    "external_challenge/seal.py": "sha256:a6a7456ba58b4806ece69e5b6ad3c18b194c3a167599475aa36a02d984f4edee",
+    "external_challenge/submission.py": "sha256:3e74d0f6ea3db45f70aa1ff2ec3e2bae6be384c996bdcfe695c4c78d6eee71eb"
+  },
+  "claim_boundary": "Immutable evaluator handoff readiness only; no external cases, identity, or result are claimed.",
+  "erasemap_commit": "39a3a7797d4d25b67675cd6ed0c90eb0526b32f5",
+  "repository": "https://github.com/nazkari86-lab/erasemap",
+  "schema_version": "erasemap-external-evaluator-freeze-v2",
+  "status": "READY_NOT_EXECUTED"
+}

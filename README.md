@@ -78,6 +78,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
 | Measured multi-service optimization | 20-pair real-process holdout PASS; local synthetic records |
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
+| Sequential deletion privacy v1 | Preregistered 5-sequence × 5-deletion release-difference experiment; result not yet run |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 

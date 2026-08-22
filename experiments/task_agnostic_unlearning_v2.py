@@ -25,6 +25,11 @@ from advanced_face_unlearning import (
 )
 from torch import nn
 
+from erasemap.paired_evaluation import (
+    identity_cohesion_scores,
+    paired_attack_differences,
+    split_embedding_mse,
+)
 from erasemap.privacy_attacks import (
     balanced_shadow_membership,
     embedding_nearest_neighbor_scores,
@@ -62,6 +67,17 @@ V22_METRICS = (
     "privacy_lira_symmetric_auc",
     "privacy_lira_tpr_at_fpr",
 )
+V3_METRICS = (
+    "forgotten_embedding_mse_to_exact",
+    "retained_embedding_mse_to_exact",
+    "privacy_confidence_advantage",
+    "privacy_energy_advantage",
+    "privacy_margin_advantage",
+    "privacy_negative_entropy_advantage",
+    "privacy_embedding_nn_advantage",
+    "privacy_identity_deletion_lira_in_probability",
+    "privacy_identity_deletion_lira_mean_log_lr",
+)
 LOGIT_ATTACKS = frozenset({"confidence", "energy", "margin", "negative_entropy"})
 
 
@@ -71,6 +87,13 @@ class ShadowCalibration:
     out_scores: np.ndarray[Any, Any]
     models: int
     statistic: str
+
+
+@dataclass(frozen=True, slots=True)
+class IdentityShadowCalibration:
+    in_scores: np.ndarray[Any, Any]
+    out_scores: np.ndarray[Any, Any]
+    models: int
 
 
 def canonical_json(payload: Any) -> str:
@@ -157,6 +180,53 @@ def train_shadow_calibration(
         shadow_scores.append(score_statistics(logits)[statistic])
     in_scores, out_scores = split_shadow_scores(np.stack(shadow_scores), membership)
     return ShadowCalibration(in_scores, out_scores, shadow_count, statistic)
+
+
+def train_identity_shadow_calibration(
+    features: np.ndarray[Any, Any],
+    targets: np.ndarray[Any, Any],
+    train: np.ndarray[Any, Any],
+    forget_subject: int,
+    local_settings: dict[str, Any],
+    shadow_settings: dict[str, Any],
+    *,
+    seed: int,
+) -> IdentityShadowCalibration:
+    shadow_count = int(shadow_settings["models"])
+    if shadow_count < 4 or shadow_count % 2:
+        raise ValueError("identity shadow model count must be even and at least four")
+    forget_all = np.flatnonzero(targets == forget_subject)
+    forgotten_train = train[targets[train] == forget_subject]
+    retained_train = train[targets[train] != forget_subject]
+    all_classes = np.unique(targets[train])
+    retained_classes = all_classes[all_classes != forget_subject]
+    in_scores: list[np.ndarray[Any, Any]] = []
+    out_scores: list[np.ndarray[Any, Any]] = []
+    for shadow_index in range(shadow_count):
+        include_identity = shadow_index < shadow_count // 2
+        selection = (
+            np.concatenate((retained_train, forgotten_train))
+            if include_identity
+            else retained_train
+        )
+        classes = all_classes if include_identity else retained_classes
+        model, _ = train_adapter(
+            features[selection],
+            targets[selection],
+            classes=classes,
+            hidden_dimension=int(local_settings["hidden_dimension"]),
+            epochs=int(shadow_settings["epochs"]),
+            learning_rate=float(local_settings["learning_rate"]),
+            weight_decay=float(local_settings["weight_decay"]),
+            seed=seed + 20_000 + shadow_index,
+        )
+        scores = identity_cohesion_scores(
+            encoder_embeddings(model, features), forget_all
+        )
+        (in_scores if include_identity else out_scores).append(scores)
+    return IdentityShadowCalibration(
+        np.stack(in_scores), np.stack(out_scores), shadow_count
+    )
 
 
 def pair_scores(
@@ -260,6 +330,31 @@ def influence_selective_unlearn(
     return model.eval(), time.perf_counter() - started, selected / total
 
 
+def deletion_matched_restart(
+    retain_features: np.ndarray[Any, Any],
+    retain_targets: np.ndarray[Any, Any],
+    retained_classes: np.ndarray[Any, Any],
+    local_settings: dict[str, Any],
+    settings: dict[str, Any],
+    seed: int,
+) -> tuple[FaceAdapter, float]:
+    """Train a fresh, bounded-cost model on retained data only.
+
+    Sharing initialization and optimizer settings with exact retraining makes the
+    approximation auditable: its only approximation is the frozen epoch budget.
+    """
+    return train_adapter(
+        retain_features,
+        retain_targets,
+        classes=retained_classes,
+        hidden_dimension=int(local_settings["hidden_dimension"]),
+        epochs=int(settings["epochs"]),
+        learning_rate=float(local_settings["learning_rate"]),
+        weight_decay=float(local_settings["weight_decay"]),
+        seed=seed,
+    )
+
+
 def evaluate_method(
     model: FaceAdapter,
     exact: FaceAdapter,
@@ -274,6 +369,7 @@ def evaluate_method(
     far_target: float,
     privacy_attacks: tuple[str, ...],
     shadow_calibration: ShadowCalibration | None,
+    identity_shadow_calibration: IdentityShadowCalibration | None,
     seed: int,
 ) -> dict[str, float]:
     model_embeddings = encoder_embeddings(model, features)
@@ -334,6 +430,12 @@ def evaluate_method(
     worst_advantage = max(result.advantage for result in attack_results.values())
     worst_tpr = max(result.tpr_at_fpr for result in attack_results.values())
     mse = float(np.mean((model_embeddings - exact_embeddings) ** 2))
+    forgotten_mse, retained_mse = split_embedding_mse(
+        model_embeddings,
+        exact_embeddings,
+        forget_all,
+        retain_test,
+    )
     result = {
         "forgotten_verification_auc": forgotten.auc,
         "functional_embedding_mse_to_exact": mse,
@@ -354,6 +456,34 @@ def evaluate_method(
         "runtime_seconds": runtime,
         "speedup_vs_exact": exact_runtime / max(runtime, 1e-9),
     }
+    if "identity_deletion_lira" in privacy_attacks:
+        if identity_shadow_calibration is None:
+            raise ValueError("identity deletion LiRA requires identity-level shadow calibration")
+        target_cohesion = identity_cohesion_scores(model_embeddings, forget_all)
+        log_lr = gaussian_likelihood_ratio_scores(
+            target_cohesion,
+            identity_shadow_calibration.in_scores,
+            identity_shadow_calibration.out_scores,
+        )
+        clipped = np.clip(log_lr, -60, 60)
+        result["privacy_identity_deletion_lira_in_probability"] = float(
+            np.mean(1 / (1 + np.exp(-clipped)))
+        )
+        result["privacy_identity_deletion_lira_mean_log_lr"] = float(np.mean(log_lr))
+    if "embedding_nn" in attack_results:
+        result["privacy_embedding_nn_advantage"] = attack_results[
+            "embedding_nn"
+        ].advantage
+    result.update(
+        {
+            "forgotten_embedding_mse_to_exact": forgotten_mse,
+            "retained_embedding_mse_to_exact": retained_mse,
+            **{
+                f"privacy_{name}_advantage": attack_results[name].advantage
+                for name in LOGIT_ATTACKS
+            },
+        }
+    )
     if "embedding_nn" in attack_results:
         result["privacy_embedding_nn_symmetric_auc"] = attack_results[
             "embedding_nn"
@@ -413,6 +543,8 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
     expected_attacks = set(LOGIT_ATTACKS)
     if protocol["schema_version"] == "erasemap-task-agnostic-v2.2":
         expected_attacks |= {"task_agnostic_lira", "embedding_nn"}
+    if protocol["schema_version"] == "erasemap-task-agnostic-v3":
+        expected_attacks |= {"identity_deletion_lira", "embedding_nn"}
     if set(privacy_attacks) != expected_attacks:
         raise ValueError("privacy attack suite does not match the registered schema")
     output.mkdir(parents=True, exist_ok=True)
@@ -473,6 +605,17 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 weight_decay=float(local["weight_decay"]),
                 seed=int(seed),
             )
+            identity_shadow_calibration = None
+            if "identity_deletion_lira" in privacy_attacks:
+                identity_shadow_calibration = train_identity_shadow_calibration(
+                    features,
+                    targets,
+                    train,
+                    forget_subject,
+                    local,
+                    protocol["identity_shadow_models"],
+                    seed=int(seed) + forget_subject * 100,
+                )
             encoder_state = {
                 name: value.detach().clone()
                 for name, value in original.encoder.state_dict().items()
@@ -499,26 +642,43 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 protocol["gradient_ascent"],
                 int(seed),
             )
-            selective_settings = protocol.get(
-                "influence_selective", protocol.get("lineage_guided")
-            )
-            if not isinstance(selective_settings, dict):
-                raise ValueError("influence-selective settings are required")
-            selective, selective_runtime, selected_fraction = influence_selective_unlearn(
-                original,
-                features[retain_train],
-                targets[retain_train],
-                features[forget_train],
-                targets[forget_train],
-                classes,
-                selective_settings,
-                int(seed),
-            )
-            selective_name = (
-                "influence_selective"
-                if "influence_selective" in protocol["methods"]
-                else "lineage_guided"
-            )
+            if "deletion_matched_restart" in protocol["methods"]:
+                restart_settings = protocol.get("deletion_matched_restart")
+                if not isinstance(restart_settings, dict):
+                    raise ValueError("deletion-matched restart settings are required")
+                selective, selective_runtime = deletion_matched_restart(
+                    features[retain_train],
+                    targets[retain_train],
+                    retained_classes,
+                    local,
+                    restart_settings,
+                    int(seed),
+                )
+                selective_name = "deletion_matched_restart"
+                selected_fraction = 1.0
+            else:
+                selective_settings = protocol.get(
+                    "influence_selective", protocol.get("lineage_guided")
+                )
+                if not isinstance(selective_settings, dict):
+                    raise ValueError("influence-selective settings are required")
+                selective, selective_runtime, selected_fraction = (
+                    influence_selective_unlearn(
+                        original,
+                        features[retain_train],
+                        targets[retain_train],
+                        features[forget_train],
+                        targets[forget_train],
+                        classes,
+                        selective_settings,
+                        int(seed),
+                    )
+                )
+                selective_name = (
+                    "influence_selective"
+                    if "influence_selective" in protocol["methods"]
+                    else "lineage_guided"
+                )
             models = {
                 "stale": (original, 0.0),
                 "head_only": (head_only, head_runtime),
@@ -540,6 +700,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                     far_target=float(protocol["far_target"]),
                     privacy_attacks=privacy_attacks,
                     shadow_calibration=shadow_calibration,
+                    identity_shadow_calibration=identity_shadow_calibration,
                     seed=int(seed) + forget_subject,
                 )
                 trials.append(
@@ -560,6 +721,8 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         if protocol["schema_version"] == "erasemap-task-agnostic-v2.2"
         else ()
     )
+    if protocol["schema_version"] == "erasemap-task-agnostic-v3":
+        registered_metrics += V3_METRICS
     for method in methods:
         rows = [row for row in trials if row["method"] == method]
         summary[method] = {}
@@ -575,15 +738,74 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 "mean": float(np.mean(values)),
                 "std": float(np.std(values, ddof=1)),
             }
-    selective_name = (
-        "influence_selective" if "influence_selective" in methods else "lineage_guided"
+    selective_name = next(
+        name
+        for name in (
+            "deletion_matched_restart",
+            "influence_selective",
+            "lineage_guided",
+        )
+        if name in methods
     )
     selective = summary[selective_name]
     exact = summary["exact_retrain"]
     stale = summary["stale"]
     criteria = protocol["success_criteria"]
     endpoints: dict[str, float] = {}
-    if protocol["schema_version"] in {
+    paired_privacy: dict[str, Any] = {}
+    if protocol["schema_version"] == "erasemap-task-agnostic-v3":
+        stale_forgotten_mse = float(stale["forgotten_embedding_mse_to_exact"]["mean"])
+        stale_retained_mse = float(stale["retained_embedding_mse_to_exact"]["mean"])
+        forgotten_ratio = float(selective["forgotten_embedding_mse_to_exact"]["mean"]) / max(
+            stale_forgotten_mse, 1e-12
+        )
+        retained_ratio = float(selective["retained_embedding_mse_to_exact"]["mean"]) / max(
+            stale_retained_mse, 1e-12
+        )
+        gated_attacks = tuple(str(value) for value in protocol["paired_privacy_attacks"])
+        paired_results = paired_attack_differences(
+            trials,
+            gated_attacks,
+            selective_method=selective_name,
+            exact_method="exact_retrain",
+            bootstrap_seed=int(protocol["random_seeds"][0]),
+            bootstrap_samples=int(protocol["bootstrap_samples"]),
+        )
+        paired_privacy = {
+            result.attack: {
+                "ci95": list(result.ci95),
+                "mean_difference": result.mean_difference,
+                "trials": result.trials,
+            }
+            for result in paired_results
+        }
+        max_attack_upper_ci = max(result.ci95[1] for result in paired_results)
+        stale_exact_lira_separation = float(
+            stale["privacy_identity_deletion_lira_in_probability"]["mean"]
+        ) - float(exact["privacy_identity_deletion_lira_in_probability"]["mean"])
+        endpoints = {
+            "forgotten_embedding_mse_ratio_to_stale": forgotten_ratio,
+            "retained_embedding_mse_ratio_to_stale": retained_ratio,
+            "max_attack_paired_advantage_upper_ci": max_attack_upper_ci,
+            "identity_lira_stale_minus_exact": stale_exact_lira_separation,
+        }
+        primary_endpoint = str(protocol["primary_endpoint"])
+        if primary_endpoint not in endpoints:
+            raise ValueError("registered primary endpoint was not computed")
+        success = (
+            float(endpoints[primary_endpoint]) <= float(criteria["primary_endpoint_max"])
+            and retained_ratio <= float(criteria["retained_embedding_mse_ratio_to_stale_max"])
+            and max_attack_upper_ci
+            <= float(criteria["max_attack_paired_advantage_upper_ci_max"])
+            and stale_exact_lira_separation
+            >= float(criteria["identity_lira_stale_minus_exact_min"])
+            and float(selective["retained_verification_auc"]["mean"])
+            - float(exact["retained_verification_auc"]["mean"])
+            >= float(criteria["candidate_retained_auc_delta_min"])
+            and float(selective["speedup_vs_exact"]["mean"])
+            >= float(criteria["candidate_speedup_min"])
+        )
+    elif protocol["schema_version"] in {
         "erasemap-task-agnostic-v2.1",
         "erasemap-task-agnostic-v2.2",
     }:
@@ -649,6 +871,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 else 0
             ),
         },
+        "paired_privacy": paired_privacy,
         "split": split,
         "success": success,
         "summary": summary,

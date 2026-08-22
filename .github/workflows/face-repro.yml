@@ -1,0 +1,38 @@
+name: face-repro
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 1 * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: face-repro-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  trainable-pixel-backbone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -e '.[dev,face]'
+      - run: python -m ruff check experiments/trainable_pixel_backbone.py
+      - name: Run frozen end-to-end pixel-backbone benchmark
+        run: >-
+          python experiments/trainable_pixel_backbone.py
+          --download
+          --output outputs/trainable-pixel-backbone-v1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trainable-pixel-backbone-v1
+          path: outputs/trainable-pixel-backbone-v1/result.json
+          if-no-files-found: error
+          retention-days: 30

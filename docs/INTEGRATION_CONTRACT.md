@@ -15,20 +15,34 @@ internal names to the same artifact types.
 | Model registry | Training-lineage lookup | Frozen unlearning benchmark reference | Retrain or approved unlearning method |
 | Receipt ledger | Nonce and chain lookup | Ed25519 signature, graph root, previous hash | Reject replay or tampering |
 
-## Minimal event envelope
+## Cryptographically verified event envelope
 
 ```json
 {
-  "artifact_id": "vector-index-eu-1",
-  "artifact_type": "SEARCH_INDEX_ENTRY",
-  "commitment": "hmac-sha256:...",
-  "event": "ABSENCE_CHECK",
-  "issued_epoch": 1787356800,
-  "observed_absent": true,
-  "store_revision": "index-generation-481",
-  "signature": "ed25519:..."
+  "schema_version": "erasemap-evidence-envelope-v1",
+  "key_id": "vector-index-eu-1-signing-key",
+  "nonce": "9c0f...",
+  "evidence": {
+    "id": "absence-481",
+    "artifact_id": "vector-index-eu-1",
+    "kind": "ABSENCE_CHECK",
+    "commitment": "hmac-sha256:...",
+    "observed_absent": true,
+    "issued_epoch": 1787356800,
+    "expires_epoch": 1787357100,
+    "metadata": [["store_revision", "index-generation-481"]]
+  },
+  "signature": "<Ed25519 signature in hex>"
 }
 ```
+
+The production CLI accepts these envelopes with `erasemap audit --signed-evidence envelopes.json
+--trust-store keys.json --nonce-ledger consumed-nonces.json`. The trust store maps each `key_id` to
+a raw Ed25519 public key in hex; the persistent ledger makes replay detection survive CLI restarts.
+Every evidence field, the key id, schema, and nonce are signed; unknown keys, altered fields,
+future/stale timestamps, and replayed nonces fail closed. The legacy `valid_signature` JSON boolean
+is retained only for deterministic historical fixtures and must not be supplied by an external
+production integration.
 
 Raw names, national identifiers, face images, and embeddings must not enter an EraseMap receipt.
 The integration uses domain-separated HMAC-SHA-256 with a secret key held in a KMS or HSM. Plain

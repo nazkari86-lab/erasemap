@@ -78,6 +78,30 @@ model, confidence intervals, critique response, and limitations. Earlier v2/v2.1
 available. A real service can map its components through
 [docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md).
 
+## Registered v3 deletion-matched evaluation
+
+Version 3 replaces the weak global-MSE/non-inferiority claim with separate forgotten and retained
+endpoints. Its primary candidate is a fresh 60-epoch restart on retained identities only, compared
+with a 200-epoch exact retrain using the same initialization. Privacy is gated per deletion request
+and per attack using paired bootstrap confidence intervals, including an identity-level shadow
+attack whose in-model shadows contain the whole identity and whose out-model shadows omit it.
+
+The frozen development protocol passed 100 deletion requests: forgotten embedding MSE was 0.134×
+the stale baseline, retained MSE was 0.152×, the largest paired attack 95% upper bound was 0.076,
+and mean speedup was 3.37×. Confirmation and external numbers are reported only after running the
+clean-revision locks; development success is not silently relabeled as external validation.
+
+The separate pixel-backbone benchmark trains every convolutional and classifier parameter directly
+from Olivetti images. It addresses the frozen-backbone limitation while explicitly remaining a
+small-dataset research result, not a production FaceID claim. See
+[docs/NOVELTY_AND_PRIOR_ART.md](docs/NOVELTY_AND_PRIOR_ART.md) for the narrow novelty boundary and
+[docs/EXTERNAL_EVALUATOR_PROTOCOL.md](docs/EXTERNAL_EVALUATOR_PROTOCOL.md) for a precommitted hidden
+suite interface.
+
+Production evidence can be supplied as Ed25519-signed envelopes with trusted key identifiers,
+freshness checks, and replay protection. A caller-supplied `valid_signature: true` boolean is a
+legacy fixture mechanism, not a production trust boundary.
+
 ## Development
 
 ```bash
@@ -87,3 +111,8 @@ python3 -m venv .venv
 .venv/bin/ruff check .
 .venv/bin/mypy src/erasemap
 ```
+
+One-command release checks are available as `scripts/reproduce_release.sh core`; the `face-open`
+profile additionally rebuilds the open face assets and registered face experiments. EraseMap code
+is MIT licensed; third-party datasets and weights retain their own terms as documented in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

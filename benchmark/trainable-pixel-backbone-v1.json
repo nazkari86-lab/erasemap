@@ -1,0 +1,23 @@
+{
+  "bootstrap_samples": 2000,
+  "candidate_epochs": 56,
+  "candidate_learning_rate": 0.01,
+  "dataset": "Olivetti Faces",
+  "embedding_dimension": 32,
+  "exact_epochs": 80,
+  "forget_identities_per_seed": 5,
+  "learning_rate": 0.01,
+  "primary_endpoint": "forgotten_embedding_mse_ratio_to_stale",
+  "random_seeds": [20260821, 20260822, 20260823],
+  "schema_version": "erasemap-trainable-pixel-backbone-v1",
+  "split_seed": 20260821,
+  "success_criteria": {
+    "all_parameters_receive_gradient": true,
+    "forgotten_embedding_mse_ratio_to_stale_max": 0.50,
+    "retained_embedding_mse_ratio_to_stale_max": 0.50,
+    "retained_verification_auc_delta_min": -0.03,
+    "speedup_min": 1.30
+  },
+  "train_images_per_subject": 7,
+  "weight_decay": 0.0001
+}

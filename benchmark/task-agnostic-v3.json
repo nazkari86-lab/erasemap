@@ -1,0 +1,73 @@
+{
+  "bootstrap_samples": 2000,
+  "datasets": {
+    "development": {
+      "embeddings": "outputs/advanced-face-unlearning-v1/embeddings.joblib",
+      "name": "olivetti",
+      "protocol": "benchmark/advanced-face-unlearning-v1.json"
+    },
+    "evaluation": {
+      "embeddings": "outputs/lfw-holdout-v1/embeddings.joblib",
+      "name": "lfw",
+      "protocol": "benchmark/lfw-holdout-v1.json"
+    },
+    "external": {
+      "bundle": "data/real/mufac-external-v1/bundle.joblib",
+      "name": "mufac_external",
+      "protocol": "benchmark/mufac-external-v1.json"
+    }
+  },
+  "far_target": 0.01,
+  "forget_identities_per_seed": 20,
+  "gradient_ascent": {
+    "forget_loss_weight": 0.15,
+    "learning_rate": 0.002,
+    "parameter_drift_weight": 0.0001,
+    "retain_batch_size": 256,
+    "steps": 80
+  },
+  "identity_shadow_models": {
+    "epochs": 50,
+    "models": 16,
+    "statistic": "within_identity_embedding_cohesion"
+  },
+  "deletion_matched_restart": {
+    "epochs": 60,
+    "guarantee": "forgotten identity samples are absent from every optimization step",
+    "initialization": "same deterministic seed as exact retraining"
+  },
+  "local_model": {
+    "epochs": 200,
+    "hidden_dimension": 128,
+    "learning_rate": 0.01,
+    "weight_decay": 0.0001
+  },
+  "methods": ["stale", "head_only", "gradient_ascent", "deletion_matched_restart", "exact_retrain"],
+  "paired_privacy_attacks": [
+    "privacy_confidence_advantage",
+    "privacy_energy_advantage",
+    "privacy_margin_advantage",
+    "privacy_negative_entropy_advantage",
+    "privacy_embedding_nn_advantage",
+    "privacy_identity_deletion_lira_in_probability"
+  ],
+  "primary_endpoint": "forgotten_embedding_mse_ratio_to_stale",
+  "privacy_attacks": [
+    "confidence",
+    "negative_entropy",
+    "margin",
+    "energy",
+    "identity_deletion_lira",
+    "embedding_nn"
+  ],
+  "random_seeds": [20260821, 20260822, 20260823, 20260824, 20260825],
+  "schema_version": "erasemap-task-agnostic-v3",
+  "success_criteria": {
+    "identity_lira_stale_minus_exact_min": 0.05,
+    "candidate_retained_auc_delta_min": -0.01,
+    "candidate_speedup_min": 1.5,
+    "max_attack_paired_advantage_upper_ci_max": 0.10,
+    "primary_endpoint_max": 1.0,
+    "retained_embedding_mse_ratio_to_stale_max": 1.01
+  }
+}

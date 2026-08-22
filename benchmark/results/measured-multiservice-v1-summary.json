@@ -1,0 +1,21 @@
+{
+  "bytes_reduction": 0.9461611259327516,
+  "complete_rate": 1.0,
+  "decision": "PASS",
+  "holdout_pairs": 20,
+  "maximum_model_weight_delta": 2.220446049250313e-15,
+  "maximum_retained_data_loss_rate": 0.0,
+  "paired_speedup_bootstrap_ci95": [16.39349274088169, 18.98260132369597],
+  "paired_speedup_geometric_mean": 17.636218654343274,
+  "planner_selected_actions": [
+    "target-backup",
+    "target-cache",
+    "target-model",
+    "target-vector"
+  ],
+  "protocol_commitment": "sha256:1d88dc7c2ddd4686892b4a2fea92da1a943d794787da814673a7069df4cb5c37",
+  "raw_result_sha256": "sha256:788bc877da9b40951498b3e3a06e255d42649aeb2b139c3218c567d9fe52baaa",
+  "rebuild_bytes": 12849080,
+  "schema_version": "erasemap-measured-multiservice-summary-v1",
+  "targeted_bytes": 691780
+}

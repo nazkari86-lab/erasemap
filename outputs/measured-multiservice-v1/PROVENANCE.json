@@ -1,0 +1,19 @@
+{
+  "analysis_freeze_commit": "facfe5a",
+  "claim_boundary": "Hardware metadata recorded immediately after the one-shot run; no rerun was performed.",
+  "docker": "29.5.3",
+  "hardware": {
+    "chip": "Apple M4",
+    "cores": 10,
+    "memory_gb": 16,
+    "model": "MacBook Air Mac16,13"
+  },
+  "implementation_commit": "3b13689",
+  "macos": "26.2 build 25C56",
+  "postgres": "15.18",
+  "preregistration_commit": "5d74ae2",
+  "qdrant_image": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1",
+  "redis": "8.8.0",
+  "result_sha256": "sha256:788bc877da9b40951498b3e3a06e255d42649aeb2b139c3218c567d9fe52baaa",
+  "schema_version": "erasemap-measured-multiservice-provenance-v1"
+}

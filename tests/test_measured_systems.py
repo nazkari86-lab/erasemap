@@ -29,3 +29,20 @@ def test_paired_summary_rejects_incomplete_pairs() -> None:
             bootstrap_seed=1,
             bootstrap_samples=10,
         )
+
+
+def test_measured_systems_reject_invalid_inputs() -> None:
+    with pytest.raises(ValueError, match="unknown measured strategy"):
+        _record(1, "unknown", 1.0, 1)
+    with pytest.raises(ValueError, match="resource measurement"):
+        _record(1, "rebuild_all", 0.0, 1)
+    with pytest.raises(ValueError, match="positive finite"):
+        geometric_mean([])
+    records = [
+        _record(1, "targeted_exact_cdc", 1.0, 1),
+        _record(1, "rebuild_all", 2.0, 2),
+    ]
+    with pytest.raises(ValueError, match="bootstrap_samples"):
+        paired_summary(records, bootstrap_seed=1, bootstrap_samples=0)
+    with pytest.raises(ValueError, match="duplicate strategy"):
+        paired_summary([*records, records[0]], bootstrap_seed=1, bootstrap_samples=10)

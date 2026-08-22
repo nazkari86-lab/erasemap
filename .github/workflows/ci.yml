@@ -15,6 +15,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
@@ -57,6 +59,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       # Pinned after v1.5.0 so the declared axiom-audit input is actually executed.
       - uses: leanprover/lean-action@6835ef47e8423fa9e9eacfcbb8fdf83fae42c820
         with:

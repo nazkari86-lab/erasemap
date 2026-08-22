@@ -7,7 +7,14 @@
     "additionalProperties": false,
     "required": ["case", "expected_path", "truth_verdict"],
     "properties": {
-      "case": {"type": "object"},
+      "case": {
+        "type": "object",
+        "required": ["family", "id"],
+        "properties": {
+          "family": {"type": "string", "minLength": 1},
+          "id": {"type": "string", "minLength": 1}
+        }
+      },
       "expected_path": {"type": ["array", "null"], "items": {"type": "string"}},
       "truth_verdict": {"enum": ["COMPLETE", "INCOMPLETE", "UNVERIFIED"]}
     }

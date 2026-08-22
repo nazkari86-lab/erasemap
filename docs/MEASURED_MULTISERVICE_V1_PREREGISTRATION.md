@@ -31,6 +31,10 @@ holdout seeds are the sole confirmatory split. The primary paired endpoints are 
 and bytes-rewritten reduction. A paired bootstrap with 10,000 resamples and seed 90317 estimates the
 95% speedup interval.
 
+Speedup is computed per paired seed as `rebuild_all_seconds / targeted_seconds`; the primary
+aggregate is its geometric mean. The bootstrap resamples paired seeds and recomputes that geometric
+mean. Bytes reduction is `1 - sum(targeted bytes) / sum(rebuild bytes)`.
+
 Success requires all of the following on holdout:
 
 - both strategies reach PCUG `COMPLETE` on every trial;

@@ -12,7 +12,7 @@
   },
   "holdout_seeds": [2201, 2202, 2203, 2204, 2205, 2206, 2207, 2208, 2209, 2210, 2211, 2212, 2213, 2214, 2215, 2216, 2217, 2218, 2219, 2220],
   "primary_endpoints": [
-    "paired_wall_clock_speedup",
+    "paired_geometric_mean_wall_clock_speedup",
     "paired_bytes_rewritten_reduction"
   ],
   "qdrant_image": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1",

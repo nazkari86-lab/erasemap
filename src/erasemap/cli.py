@@ -49,6 +49,7 @@ from erasemap.receipts import (
     issue_receipt,
     verify_receipt,
 )
+from erasemap.showcase import write_showcase
 
 
 def _json(payload: Any) -> str:
@@ -434,6 +435,19 @@ def _pcug_benchmark(args: argparse.Namespace) -> int:
     return 0 if run.exception_count == 0 else 1
 
 
+def _showcase(args: argparse.Namespace) -> int:
+    report = write_showcase(args.repo_root, args.output)
+    _print(
+        {
+            "html": str(Path(args.output) / "index.html"),
+            "independence_score": report["claim_boundary"]["independence_score"],
+            "report": str(Path(args.output) / "report.json"),
+            "status": report["live_audit"]["status"],
+        }
+    )
+    return 0
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="erasemap")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -490,6 +504,11 @@ def _parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--protocol", required=True)
     benchmark.add_argument("--output", required=True)
     benchmark.set_defaults(handler=_benchmark)
+
+    showcase = commands.add_parser("showcase")
+    showcase.add_argument("--repo-root", default=".")
+    showcase.add_argument("--output", default="outputs/jury-showcase-v1")
+    showcase.set_defaults(handler=_showcase)
 
     pcug = commands.add_parser("pcug")
     pcug_commands = pcug.add_subparsers(dest="pcug_command", required=True)

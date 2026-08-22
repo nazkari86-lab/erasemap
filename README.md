@@ -20,6 +20,7 @@ eGov, Face ID, or another production identity system.
 erasemap audit examples/five_branch_system.json --subject subject-1
 erasemap generate --seed 7 --nodes 100 --fault STALE_CACHE --output /tmp/case.json
 erasemap benchmark dev --protocol benchmark/protocol-v1.json --output outputs/dev-v1
+erasemap showcase --repo-root . --output outputs/jury-showcase-v1
 ```
 
 The fixed example contains an erased enrollment record with one still-active face template, so
@@ -28,6 +29,15 @@ valid scientific result and therefore exits successfully.
 
 See [docs/CORE_PROTOCOL.md](docs/CORE_PROTOCOL.md) for the frozen experiment, baselines, evidence
 contracts, receipt boundary, and interpretation rules.
+
+For a judge-facing demonstration, open `outputs/jury-showcase-v1/index.html` after the final
+command. It recomputes the live counterexample, validates the frozen headline results, embeds source
+hashes, and keeps the external-independence limitation visible. The evidence-anchored scorecard,
+Russian defense script, and adversarial Q&A are in
+[`docs/COMPETITION_EVIDENCE_SCORECARD.md`](docs/COMPETITION_EVIDENCE_SCORECARD.md),
+[`docs/JURY_DEFENSE_RU.md`](docs/JURY_DEFENSE_RU.md), and
+[`docs/JUDGE_QA_RU.md`](docs/JUDGE_QA_RU.md). The editable 11-slide PowerPoint with speaker notes is
+[`competition/EraSeMap_RKNP_ISEF_RU.pptx`](competition/EraSeMap_RKNP_ISEF_RU.pptx).
 
 ## Proof-Carrying Unlearning Graph
 

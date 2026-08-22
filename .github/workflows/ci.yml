@@ -25,6 +25,7 @@ jobs:
       - run: python -m pytest --cov=erasemap --cov-report=term-missing --cov-fail-under=90
       - run: python -m build
       - run: python scripts/verify_source_locked_holdout.py
+      - run: python experiments/run_pcug_mechanism_stress.py --output /tmp/pcug-stress.json
       - run: >-
           python external_evaluator/run.py
           --sources benchmark/external-sources-v1.json

@@ -65,6 +65,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | PCUG/CDC deterministic core | Implemented and checked against unit, property, tamper, and replay tests |
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
+| Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
 ## Source-locked multi-system holdout
@@ -85,6 +86,23 @@ MUFAC's original approximate-model utility failure remains unchanged. The v2 saf
 that candidate and falls back to exact retraining, preserving retained CKA 1.0 at 1.0x speed rather
 than presenting a failed fast method as complete. See
 [`docs/MUFAC_SAFE_POLICY_V2_REPORT.md`](docs/MUFAC_SAFE_POLICY_V2_REPORT.md).
+
+The adaptive v3.2 follow-up increased deletion-matched restart from 80 to 120 epochs while exact
+retraining remained 200 epochs. On the frozen MUFAC subset it passed the unchanged utility and
+privacy gates with retained-AUC difference −0.00653 and 1.59× mean speedup. MUFAC had already been
+exposed, so this is method-improvement evidence rather than a new independent confirmation. See
+[`docs/TASK_AGNOSTIC_V32_REPORT.md`](docs/TASK_AGNOSTIC_V32_REPORT.md).
+
+A separate mechanism stress test demonstrates the reason for PCUG beyond typed node coverage:
+PCUG caught 75/75 failed or unknown mandatory channel/replay cases while a node-only typed audit
+declared all 75 complete. A real isolated PostgreSQL pilot also detected a surviving derived row and
+physical dump after source deletion. See
+[`docs/PCUG_STRESS_AND_POSTGRES_PILOT.md`](docs/PCUG_STRESS_AND_POSTGRES_PILOT.md). These are
+development and local-pilot results, not replacements for an independently authored hidden suite.
+
+The novelty claim has been narrowed after a structured literature and patent search; lineage-aware
+deletion graphs and proof-of-deletion are prior art. See
+[`docs/STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md`](docs/STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md).
 
 ## Real-face unlearning benchmark
 

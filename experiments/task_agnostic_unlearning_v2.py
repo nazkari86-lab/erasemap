@@ -81,10 +81,8 @@ V3_METRICS = (
 )
 LOGIT_ATTACKS = frozenset({"confidence", "energy", "margin", "negative_entropy"})
 V3_SCHEMAS = frozenset(
-    {"erasemap-task-agnostic-v3", "erasemap-task-agnostic-v3.1"}
+    {"erasemap-task-agnostic-v3", "erasemap-task-agnostic-v3.1", "erasemap-task-agnostic-v3.2"}
 )
-
-
 
 
 def canonical_json(payload: Any) -> str:
@@ -111,8 +109,6 @@ def is_dirty() -> bool:
         ["git", "status", "--porcelain"], capture_output=True, check=False, text=True
     )
     return bool(result.stdout.strip())
-
-
 
 
 def evaluate_method(
@@ -203,9 +199,7 @@ def evaluate_method(
         "privacy_confidence_symmetric_auc": attack_results["confidence"].symmetric_auc,
         "privacy_energy_symmetric_auc": attack_results["energy"].symmetric_auc,
         "privacy_margin_symmetric_auc": attack_results["margin"].symmetric_auc,
-        "privacy_negative_entropy_symmetric_auc": attack_results[
-            "negative_entropy"
-        ].symmetric_auc,
+        "privacy_negative_entropy_symmetric_auc": attack_results["negative_entropy"].symmetric_auc,
         "privacy_worst_case_advantage": worst_advantage,
         "privacy_worst_case_tpr_at_fpr": worst_tpr,
         "retained_cka_to_exact": linear_cka(
@@ -231,9 +225,7 @@ def evaluate_method(
         )
         result["privacy_identity_deletion_lira_mean_log_lr"] = float(np.mean(log_lr))
     if "embedding_nn" in attack_results:
-        result["privacy_embedding_nn_advantage"] = attack_results[
-            "embedding_nn"
-        ].advantage
+        result["privacy_embedding_nn_advantage"] = attack_results["embedding_nn"].advantage
     result.update(
         {
             "forgotten_embedding_mse_to_exact": forgotten_mse,
@@ -245,19 +237,11 @@ def evaluate_method(
         }
     )
     if "embedding_nn" in attack_results:
-        result["privacy_embedding_nn_symmetric_auc"] = attack_results[
-            "embedding_nn"
-        ].symmetric_auc
-        result["privacy_embedding_nn_tpr_at_fpr"] = attack_results[
-            "embedding_nn"
-        ].tpr_at_fpr
+        result["privacy_embedding_nn_symmetric_auc"] = attack_results["embedding_nn"].symmetric_auc
+        result["privacy_embedding_nn_tpr_at_fpr"] = attack_results["embedding_nn"].tpr_at_fpr
     if "task_agnostic_lira" in attack_results:
-        result["privacy_lira_symmetric_auc"] = attack_results[
-            "task_agnostic_lira"
-        ].symmetric_auc
-        result["privacy_lira_tpr_at_fpr"] = attack_results[
-            "task_agnostic_lira"
-        ].tpr_at_fpr
+        result["privacy_lira_symmetric_auc"] = attack_results["task_agnostic_lira"].symmetric_auc
+        result["privacy_lira_tpr_at_fpr"] = attack_results["task_agnostic_lira"].tpr_at_fpr
     return result
 
 
@@ -422,17 +406,15 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
                 )
                 if not isinstance(selective_settings, dict):
                     raise ValueError("influence-selective settings are required")
-                selective, selective_runtime, selected_fraction = (
-                    influence_selective_unlearn(
-                        original,
-                        features[retain_train],
-                        targets[retain_train],
-                        features[forget_train],
-                        targets[forget_train],
-                        classes,
-                        selective_settings,
-                        int(seed),
-                    )
+                selective, selective_runtime, selected_fraction = influence_selective_unlearn(
+                    original,
+                    features[retain_train],
+                    targets[retain_train],
+                    features[forget_train],
+                    targets[forget_train],
+                    classes,
+                    selective_settings,
+                    int(seed),
                 )
                 selective_name = (
                     "influence_selective"
@@ -477,9 +459,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
     summary: dict[str, Any] = {}
     methods = tuple(str(value) for value in protocol["methods"])
     registered_metrics = METRICS + (
-        V22_METRICS
-        if protocol["schema_version"] == "erasemap-task-agnostic-v2.2"
-        else ()
+        V22_METRICS if protocol["schema_version"] == "erasemap-task-agnostic-v2.2" else ()
     )
     if protocol["schema_version"] in V3_SCHEMAS:
         registered_metrics += V3_METRICS
@@ -555,8 +535,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         success = (
             float(endpoints[primary_endpoint]) <= float(criteria["primary_endpoint_max"])
             and retained_ratio <= float(criteria["retained_embedding_mse_ratio_to_stale_max"])
-            and max_attack_upper_ci
-            <= float(criteria["max_attack_paired_advantage_upper_ci_max"])
+            and max_attack_upper_ci <= float(criteria["max_attack_paired_advantage_upper_ci_max"])
             and stale_exact_lira_separation
             >= float(criteria["identity_lira_stale_minus_exact_min"])
             and float(selective["retained_verification_auc"]["mean"])
@@ -585,17 +564,12 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
         if primary_endpoint not in endpoints:
             raise ValueError("registered primary endpoint was not computed")
         success = (
-            float(endpoints[primary_endpoint])
-            <= float(criteria["primary_endpoint_max"])
+            float(endpoints[primary_endpoint]) <= float(criteria["primary_endpoint_max"])
             and float(selective["retained_verification_auc"]["mean"])
             - float(exact["retained_verification_auc"]["mean"])
             >= float(criteria["influence_selective_retained_auc_delta_min"])
             and privacy_gap
-            <= float(
-                criteria[
-                    "influence_selective_worst_privacy_advantage_gap_to_exact_max"
-                ]
-            )
+            <= float(criteria["influence_selective_worst_privacy_advantage_gap_to_exact_max"])
             and float(selective["speedup_vs_exact"]["mean"])
             >= float(criteria["influence_selective_speedup_min"])
         )
@@ -645,9 +619,7 @@ def run_split(protocol_path: Path, split: str, output: Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--protocol", default="benchmark/task-agnostic-v2.json")
-    parser.add_argument(
-        "--split", choices=("development", "evaluation", "external"), required=True
-    )
+    parser.add_argument("--split", choices=("development", "evaluation", "external"), required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     payload = run_split(Path(args.protocol), args.split, Path(args.output))

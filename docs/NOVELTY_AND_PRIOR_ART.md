@@ -38,6 +38,12 @@ Potential novelty should be presented as the combined system and evaluation cont
 formal literature/patent search by the student. It must not be presented as proof that no similar
 system exists.
 
+The expanded 2026-08-22 search found close patent prior art for lineage graphs that traverse derived
+data and apply deletion policies (US20220414070A1 and US20240012797A1), plus auditable proof of
+deletion across data stores (US11120156B2). Accordingly, lineage-aware deletion and deletion proof
+are explicitly outside the novelty claim. See `docs/STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md` for
+the search protocol, closest works, patent publications, and corrected contribution boundary.
+
 ## PCUG working contribution boundary
 
 Literature snapshot date: 2026-08-22. This is a targeted review, not a completed systematic or patent

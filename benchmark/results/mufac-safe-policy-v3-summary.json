@@ -1,0 +1,18 @@
+{
+  "claim_boundary": "Adaptive MUFAC evidence; exact fallback remains mandatory on any failed deployment-specific gate",
+  "decision": "CANDIDATE_ACCEPTED",
+  "gates": {
+    "candidate_speedup": true,
+    "candidate_success": true,
+    "privacy_advantage_upper": true,
+    "retained_auc_delta": true
+  },
+  "input_result_hash": "sha256:7a4116df3fb81a71a2d23a64faffd7f937e826c485f463a99e3f1f52a2a1e06c",
+  "observed": {
+    "privacy_advantage_upper": 0.04091369047619045,
+    "retained_auc_delta": -0.006529688291657676,
+    "speedup": 1.5931926612759397
+  },
+  "protocol_hash": "sha256:59e12f072924ead5c9973d2666943e37639f53ce878cf6a198eebd8c1a4b2072",
+  "selected_method": "deletion_matched_restart_v3.2_120_epochs"
+}

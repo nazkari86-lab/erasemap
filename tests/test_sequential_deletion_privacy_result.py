@@ -11,6 +11,7 @@ RESULT = Path("benchmark/results/sequential-deletion-privacy-v1")
 def test_committed_sequential_result_independently_verifies() -> None:
     verified = verify_result(RESULT)
     assert verified["decision"] == "PASS"
+    assert verified["embedding_artifact"] in {"VERIFIED", "NOT_PRESENT_HASH_DECLARED"}
     assert verified["transitions_checked"] == 25
 
 

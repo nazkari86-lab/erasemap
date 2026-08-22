@@ -50,9 +50,11 @@ adaptive-query, reconstruction, population-shift, or production attacks.
 
 The raw records, summary, and SHA-256 manifest are committed under
 `benchmark/results/sequential-deletion-privacy-v1/`. A separate verifier reloads all 25 records,
-checks the protocol and embedding hashes, confirms the preregistration commit exists, reconstructs
-the registered units, recomputes all bootstrap intervals, endpoints, gates, and the final decision,
-and rejects changed records.
+checks the protocol and result hashes, confirms the preregistration commit exists, reconstructs the
+registered units, recomputes all bootstrap intervals, endpoints, gates, and the final decision, and
+rejects changed records. The derived face-embedding file is intentionally not stored in Git. Its
+committed hash is checked against the local artifact when present; a clean checkout reports
+`NOT_PRESENT_HASH_DECLARED` rather than claiming byte-level verification.
 
 ```bash
 python scripts/verify_sequential_deletion_privacy_v1.py

@@ -62,8 +62,17 @@ def verify_result(
     manifest = cast(dict[str, str], json.loads(manifest_path.read_text()))
     trials = [json.loads(line) for line in trials_path.read_text().splitlines() if line]
 
+    embeddings_path = Path(protocol["dataset"]["embeddings"])
+    embedding_status = "VERIFIED" if embeddings_path.is_file() else "NOT_PRESENT_HASH_DECLARED"
+    embeddings_sha256 = manifest.get("embeddings_sha256")
+    if not isinstance(embeddings_sha256, str) or not re.fullmatch(
+        r"sha256:[0-9a-f]{64}", embeddings_sha256
+    ):
+        raise ValueError("embedding commitment must be sha256-prefixed")
+    if embeddings_path.is_file() and _sha256(embeddings_path) != embeddings_sha256:
+        raise ValueError("local embedding artifact does not match its result commitment")
     expected_manifest = {
-        "embeddings_sha256": _sha256(Path(protocol["dataset"]["embeddings"])),
+        "embeddings_sha256": embeddings_sha256,
         "protocol_sha256": _sha256(protocol_path),
         "summary_sha256": _sha256(summary_path),
         "trials_sha256": _sha256(trials_path),
@@ -161,6 +170,7 @@ def verify_result(
     return {
         "code_revision": commit,
         "decision": decision,
+        "embedding_artifact": embedding_status,
         "manifest": "PASS",
         "schema_version": "erasemap-sequential-deletion-privacy-verification-v1",
         "transitions_checked": len(trials),

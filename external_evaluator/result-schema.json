@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["case_commitment", "case_id", "exception", "family", "method", "shortest_path", "verdict"],
+    "properties": {
+      "case_commitment": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+      "case_id": {"type": "string"},
+      "exception": {"type": "string"},
+      "family": {"type": "string"},
+      "method": {"type": "string"},
+      "shortest_path": {"type": ["array", "null"], "items": {"type": "string"}},
+      "verdict": {"enum": ["COMPLETE", "INCOMPLETE", "UNVERIFIED"]}
+    }
+  }
+}

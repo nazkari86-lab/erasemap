@@ -1,0 +1,17 @@
+{
+  "after": {
+    "shortest_path": null,
+    "verdict": "COMPLETE"
+  },
+  "before": {
+    "backup_hash": "sha256:3d9dcb2033aa32644ffd8675d363025c8c2560560bc1290d7e82a04c8160b4ba",
+    "derived_rows": 1,
+    "shortest_path": [
+      "postgres-derived"
+    ],
+    "verdict": "INCOMPLETE"
+  },
+  "claim_boundary": "Real isolated PostgreSQL process; synthetic records; no organization infrastructure.",
+  "database": "temporary PostgreSQL cluster",
+  "schema_version": "erasemap-postgres-physical-pilot-v1"
+}

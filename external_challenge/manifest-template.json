@@ -1,0 +1,27 @@
+{
+  "affiliation": "ORGANIZATION_OR_INDEPENDENT",
+  "authorship_started_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "challenge_commit": "FULL_EXTERNAL_REPOSITORY_COMMIT",
+  "challenge_repository_url": "https://github.com/EXTERNAL_OWNER/EXTERNAL_CHALLENGE_REPOSITORY",
+  "conflict_of_interest": "none_declared",
+  "erasemap_commit": "FULL_TESTED_ERASEMAP_COMMIT",
+  "evaluation_id": "UNIQUE_EVALUATION_ID",
+  "evaluator": "PUBLIC_EVALUATOR_NAME",
+  "family_provenance": [
+    {"family": "FAMILY_1", "source_url": "https://EXTERNAL_PROVENANCE_1"},
+    {"family": "FAMILY_2", "source_url": "https://EXTERNAL_PROVENANCE_2"},
+    {"family": "FAMILY_3", "source_url": "https://EXTERNAL_PROVENANCE_3"},
+    {"family": "FAMILY_4", "source_url": "https://EXTERNAL_PROVENANCE_4"}
+  ],
+  "file_sha256": {
+    "frozen_predictions": "sha256:HASH",
+    "public_package": "sha256:HASH",
+    "reveal_key": "sha256:HASH",
+    "score": "sha256:HASH"
+  },
+  "identity_url": "https://PUBLIC_PROFILE_OR_ORGANIZATION_PAGE",
+  "independence_statement": "The evaluator controlled case authorship, hidden labels, freeze timing, reveal timing, and scoring without access by the EraSeMap author before prediction freeze.",
+  "labels_revealed_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "predictions_frozen_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "schema_version": "erasemap-independent-submission-v1"
+}

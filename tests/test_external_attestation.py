@@ -3,7 +3,14 @@ from __future__ import annotations
 import json
 import sys
 
-from external_challenge.attest import generate_keypair, main, sign_score, verify_attestation
+from external_challenge.attest import (
+    generate_keypair,
+    main,
+    sign_score,
+    sign_submission,
+    verify_attestation,
+    verify_submission_attestation,
+)
 
 
 def test_external_score_attestation_detects_tampering() -> None:
@@ -66,3 +73,14 @@ def test_external_attestation_cli_round_trip(tmp_path, monkeypatch, capsys) -> N
     )
     assert main() == 0
     assert "attestation verified" in capsys.readouterr().out
+
+
+def test_submission_attestation_binds_manifest_and_score() -> None:
+    private, _ = generate_keypair()
+    score = {"decision": "PASS", "false_complete": 0}
+    manifest = {"evaluation_id": "external-1", "erasemap_commit": "a" * 40}
+    attestation = sign_submission(score, private, manifest)
+    assert verify_submission_attestation(score, manifest, attestation)
+    assert not verify_submission_attestation(
+        score, {**manifest, "erasemap_commit": "b" * 40}, attestation
+    )

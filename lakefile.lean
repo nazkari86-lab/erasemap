@@ -1,8 +1,8 @@
 import Lake
 open Lake DSL
 
-package EraSeMap where
+package EraseMapFormal where
   version := v!"0.1.0"
 
 @[default_target]
-lean_lib EraSeMap
+lean_lib EraseMapFormal

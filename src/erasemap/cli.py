@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -383,7 +384,10 @@ def _pcug_benchmark(args: argparse.Namespace) -> int:
     protocol = load_pcug_protocol(args.protocol)
     run = run_pcug_benchmark(protocol, split=args.split)
     output = Path(args.output)
-    private_key = Ed25519PrivateKey.generate()
+    simulator_key_seed = hashlib.sha256(
+        f"erasemap-public-pcug-simulator-key-v1:{run.protocol_hash}".encode()
+    ).digest()
+    private_key = Ed25519PrivateKey.from_private_bytes(simulator_key_seed)
     bundle_count = 0
     seeds = protocol.development_seeds if args.split == "development" else protocol.holdout_seeds
     for seed in seeds:
@@ -417,6 +421,7 @@ def _pcug_benchmark(args: argparse.Namespace) -> int:
         "bundle_count": bundle_count,
         "evidence_scope": "SYNTHETIC_SIMULATOR",
         "exception_count": run.exception_count,
+        "key_scope": "PUBLIC_DETERMINISTIC_SIMULATOR_KEY",
         "protocol_hash": run.protocol_hash,
         "record_count": len(run.records),
         "split": run.split,

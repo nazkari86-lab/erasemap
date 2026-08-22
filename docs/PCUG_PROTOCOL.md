@@ -92,6 +92,10 @@ The demonstration wrapper is labelled `SYNTHETIC_SIMULATOR`. The controlled bund
 pseudonymous request scope, but raw images, embeddings, or unrestricted model outputs are not placed
 in the public package.
 
+Development benchmark bundles use a deliberately public deterministic simulator key derived from a
+domain-separated protocol hash. This makes benchmark signatures reproducible and is not a production
+trust anchor. Interactive demo bundles use an ephemeral key written separately from the bundle.
+
 ## Verifier-aware faults
 
 Development protocol `benchmark/pcug-protocol-v1.json` freezes three seeds, four display adapters,
@@ -154,4 +158,3 @@ can establish results only for registered simulator semantics. Existing v3 impor
 the named models, datasets, splits, and metrics. None of these establishes global deletion,
 production security, legal compliance, demographic coverage, or applicability to Apple FaceID,
 eGov, a bank, a school, or another operational system.
-

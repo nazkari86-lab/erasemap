@@ -141,7 +141,7 @@ def build_adapter_case(adapter: str, *, seed: int) -> AdapterCase:
         request_id=f"synthetic-{seed}",
         subject_id="person-1",
         source_ids=frozenset({"subject"}),
-        sink_ids=frozenset({"backup", "api"}),
+        sink_ids=frozenset({"source", "embedding", "index", "cache", "backup", "api"}),
         mandatory_channels=frozenset({"storage", "identity_lira"}),
     )
     model_edge = next(edge for edge in edges if edge.kind is EdgeKind.INFLUENCE)
@@ -188,4 +188,3 @@ def build_adapter_case(adapter: str, *, seed: int) -> AdapterCase:
             "a school, or any production integration."
         ),
     )
-

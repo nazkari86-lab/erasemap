@@ -24,7 +24,11 @@ def _complete_bundle() -> tuple[object, object]:
         nonce="nonce-1",
         graph=graph,
         protocol=protocol,
-        actions=(actions["purge-derived"], actions["unlearn-model"]),
+        actions=(
+            actions["erase-source"],
+            actions["purge-derived"],
+            actions["unlearn-model"],
+        ),
         challenge_opening=("probe-03", "probe-08"),
         producer_revision="8c48a3a",
     )

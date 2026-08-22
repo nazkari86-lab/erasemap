@@ -81,7 +81,7 @@ def forked_pcug_case(
         "delete-1",
         "person-1",
         frozenset({"subject"}),
-        frozenset({"backup", "api"}),
+        frozenset({"source", "embedding", "index", "cache", "backup", "api"}),
         frozenset({"storage", "identity_lira"}),
     )
 
@@ -139,6 +139,7 @@ def forked_pcug_case(
 
 def complete_action_set() -> PCUGCase:
     graph, protocol, action_map = forked_pcug_case()
-    actions = tuple(action_map[name] for name in ("purge-derived", "unlearn-model"))
+    actions = tuple(
+        action_map[name] for name in ("erase-source", "purge-derived", "unlearn-model")
+    )
     return PCUGCase(graph, protocol, actions)
-

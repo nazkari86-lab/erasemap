@@ -19,17 +19,25 @@ def test_deleting_parent_does_not_close_materialized_child() -> None:
 
 def test_unknown_influence_edge_prevents_complete() -> None:
     graph, protocol, actions = forked_pcug_case(model_edge_state=EdgeState.UNKNOWN)
-    report = evaluate_actions(graph, protocol, (actions["purge-derived"],))
+    report = evaluate_actions(
+        graph,
+        protocol,
+        (actions["erase-source"], actions["purge-derived"]),
+    )
     assert report.verdict is PCUGVerdict.UNVERIFIED
     assert report.unknown_paths
 
 
-def test_purge_and_unlearn_produce_complete_registered_state() -> None:
+def test_source_purge_and_unlearn_produce_complete_registered_state() -> None:
     graph, protocol, actions = forked_pcug_case()
     report = evaluate_actions(
         graph,
         protocol,
-        (actions["purge-derived"], actions["unlearn-model"]),
+        (
+            actions["erase-source"],
+            actions["purge-derived"],
+            actions["unlearn-model"],
+        ),
     )
     assert report.verdict is PCUGVerdict.COMPLETE
     assert not report.active_paths
@@ -54,7 +62,11 @@ def test_unverified_transition_cannot_close_edge() -> None:
         ),
         result_channels=action.result_channels,
     )
-    report = evaluate_actions(graph, protocol, (actions["purge-derived"], unverified))
+    report = evaluate_actions(
+        graph,
+        protocol,
+        (actions["erase-source"], actions["purge-derived"], unverified),
+    )
     assert report.verdict is PCUGVerdict.UNVERIFIED
 
 
@@ -79,8 +91,8 @@ def test_exact_cdc_matches_brute_force() -> None:
 def test_exact_cdc_selects_lowest_cost_complete_actions() -> None:
     graph, protocol, action_map = forked_pcug_case()
     plan = exact_cdc(graph, protocol, tuple(action_map.values()))
-    assert plan.action_ids == ("purge-derived", "unlearn-model")
-    assert plan.total_cost == 11
+    assert plan.action_ids == ("erase-source", "purge-derived", "unlearn-model")
+    assert plan.total_cost == 12
     assert plan.solver_status is SolverStatus.OPTIMAL
 
 
@@ -102,4 +114,3 @@ def test_greedy_is_deterministic_and_fail_closed() -> None:
     assert forward == reverse
     assert forward.verdict is PCUGVerdict.COMPLETE
     assert forward.solver_status is SolverStatus.APPROXIMATE
-

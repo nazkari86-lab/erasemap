@@ -211,19 +211,23 @@ def _start_keycloak(
         nonce=nonce,
     )
     service.inspect_digest()
-    service.start(
-        env={
-            "KC_BOOTSTRAP_ADMIN_USERNAME": "admin",
-            "KC_BOOTSTRAP_ADMIN_PASSWORD": password,
-        },
-        mounts=((data, "/opt/keycloak/data", False),),
-        args=("start-dev",),
-    )
-    client = EvidenceHttpClient(ledger, secret_values=(password,))
-    wait_for_http(client, f"{service.base_url}/realms/master", timeout=120)
-    adapter = KeycloakIdentityAdapter(client, service.base_url)
-    token = adapter.admin_token("admin", password)
-    return service, client, adapter, token
+    try:
+        service.start(
+            env={
+                "KC_BOOTSTRAP_ADMIN_USERNAME": "admin",
+                "KC_BOOTSTRAP_ADMIN_PASSWORD": password,
+            },
+            mounts=((data, "/opt/keycloak/data", False),),
+            args=("start-dev",),
+        )
+        client = EvidenceHttpClient(ledger, secret_values=(password,))
+        wait_for_http(client, f"{service.base_url}/realms/master", timeout=120)
+        adapter = KeycloakIdentityAdapter(client, service.base_url)
+        token = adapter.admin_token("admin", password)
+        return service, client, adapter, token
+    except BaseException:
+        service.stop()
+        raise
 
 
 def _keycloak_case(
@@ -460,8 +464,8 @@ def _mlflow_gc(service: DockerService, run_id: str) -> None:
             require_transfer_container_name(service.container_name),
             "mlflow",
             "gc",
-            "--backend-store-uri",
-            "sqlite:////mlflow/db/mlflow.db",
+            "--tracking-uri",
+            "http://127.0.0.1:5000",
             "--run-ids",
             run_id,
         ],

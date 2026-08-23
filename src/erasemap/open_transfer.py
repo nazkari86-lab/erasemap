@@ -214,10 +214,10 @@ class TransferCaseRecord:
             raise ValueError("truth does not match the frozen fault state")
         if self.erasemap_verdict not in VERDICTS:
             raise ValueError(f"unknown EraSeMap verdict: {self.erasemap_verdict}")
-        if self.truth == "INCOMPLETE" and not self.shortest_witness:
-            raise ValueError("incomplete truth requires a shortest witness")
-        if self.truth != "INCOMPLETE" and self.shortest_witness is not None:
-            raise ValueError("only incomplete truth may carry a shortest witness")
+        if self.erasemap_verdict == "INCOMPLETE" and not self.shortest_witness:
+            raise ValueError("incomplete EraSeMap verdict requires a shortest witness")
+        if self.erasemap_verdict != "INCOMPLETE" and self.shortest_witness is not None:
+            raise ValueError("only an incomplete EraSeMap verdict may carry a shortest witness")
         if len(self.selected_control_ids) != len(set(self.selected_control_ids)):
             raise ValueError("selected control ids must be unique")
         if len(self.oracle_control_ids) != len(set(self.oracle_control_ids)):
@@ -251,6 +251,77 @@ class TransferCaseRecord:
 
     def payload(self) -> dict[str, Any]:
         return asdict(self)
+
+
+def transfer_record_from_payload(payload: Mapping[str, Any]) -> TransferCaseRecord:
+    expected_fields = frozenset(TransferCaseRecord.__dataclass_fields__)
+    if set(payload) != expected_fields:
+        missing = sorted(expected_fields - set(payload))
+        extra = sorted(set(payload) - expected_fields)
+        raise ValueError(f"transfer record fields mismatch: missing={missing}, extra={extra}")
+    string_fields = (
+        "case_id",
+        "family",
+        "fault_state",
+        "truth",
+        "erasemap_verdict",
+        "core_sha256",
+        "service_image",
+        "service_version",
+        "evidence_sha256",
+    )
+    boolean_fields = (
+        "native_complete",
+        "typed_complete",
+        "post_control_recurrence",
+        "retained_loss",
+        "process_observed",
+    )
+    integer_fields = ("seed", "selected_cost", "oracle_cost", "bytes_rewritten")
+    if any(type(payload[field]) is not str for field in string_fields):
+        raise ValueError("transfer record string field has the wrong type")
+    if any(type(payload[field]) is not bool for field in boolean_fields):
+        raise ValueError("transfer record boolean field has the wrong type")
+    if any(type(payload[field]) is not int for field in integer_fields):
+        raise ValueError("transfer record integer field has the wrong type")
+    remediation_raw = payload["remediation_milliseconds"]
+    if type(remediation_raw) not in {int, float}:
+        raise ValueError("remediation milliseconds must be numeric")
+    witness_raw = payload["shortest_witness"]
+    if witness_raw is not None and not isinstance(witness_raw, list):
+        raise ValueError("shortest witness must be a list or null")
+    if witness_raw is not None and not all(type(item) is str for item in witness_raw):
+        raise ValueError("shortest witness entries must be strings")
+    selected_raw = payload["selected_control_ids"]
+    oracle_raw = payload["oracle_control_ids"]
+    if not isinstance(selected_raw, list) or not all(type(item) is str for item in selected_raw):
+        raise ValueError("selected control ids must be a list of strings")
+    if not isinstance(oracle_raw, list) or not all(type(item) is str for item in oracle_raw):
+        raise ValueError("oracle control ids must be a list of strings")
+    return TransferCaseRecord(
+        case_id=payload["case_id"],
+        family=payload["family"],
+        seed=payload["seed"],
+        fault_state=payload["fault_state"],
+        truth=payload["truth"],
+        native_complete=payload["native_complete"],
+        typed_complete=payload["typed_complete"],
+        erasemap_verdict=payload["erasemap_verdict"],
+        shortest_witness=(tuple(witness_raw) if witness_raw is not None else None),
+        selected_control_ids=tuple(selected_raw),
+        selected_cost=payload["selected_cost"],
+        oracle_control_ids=tuple(oracle_raw),
+        oracle_cost=payload["oracle_cost"],
+        post_control_recurrence=payload["post_control_recurrence"],
+        retained_loss=payload["retained_loss"],
+        core_sha256=payload["core_sha256"],
+        service_image=payload["service_image"],
+        service_version=payload["service_version"],
+        evidence_sha256=payload["evidence_sha256"],
+        process_observed=payload["process_observed"],
+        remediation_milliseconds=float(remediation_raw),
+        bytes_rewritten=payload["bytes_rewritten"],
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -319,9 +390,7 @@ def summarize_transfer(
         raise ValueError("observed case matrix does not equal the frozen protocol")
 
     configured_images = {str(item["id"]): str(item["image"]) for item in protocol["families"]}
-    configured_versions = {
-        str(item["id"]): str(item["version"]) for item in protocol["families"]
-    }
+    configured_versions = {str(item["id"]): str(item["version"]) for item in protocol["families"]}
     if any(item.service_image != configured_images[item.family] for item in records):
         raise ValueError("recorded service image differs from the frozen protocol")
     if any(item.service_version != configured_versions[item.family] for item in records):

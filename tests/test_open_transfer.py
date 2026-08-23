@@ -80,7 +80,9 @@ def test_transfer_summary_passes_only_all_frozen_gates() -> None:
 
 def test_one_false_complete_fails_the_entire_result() -> None:
     records = list(frozen_passing_records())
-    records[1] = replace(records[1], erasemap_verdict="COMPLETE")
+    records[1] = replace(
+        records[1], erasemap_verdict="COMPLETE", shortest_witness=None
+    )
     summary = summarize_transfer(tuple(records), PROTOCOL, CORE_HASH)
     assert summary.decision == "FAIL"
     assert summary.erasemap_false_complete_count == 1

@@ -1,0 +1,151 @@
+{
+  "schema_version": "erasemap-open-transfer-v1",
+  "registered_at": "2026-08-23",
+  "protocol_status": "FROZEN_BEFORE_IMPLEMENTATION_AND_FIRST_COMPLETE_RUN",
+  "research_question": "Can one frozen subject-erasure decision contract avoid false-complete deletion decisions across stock identity, ML-lineage, and biometric-vector service families under equal registered evidence budgets?",
+  "families": [
+    {
+      "id": "keycloak-identity",
+      "display_name": "Keycloak identity lifecycle",
+      "version": "26.7.1",
+      "tag_at_registration": "quay.io/keycloak/keycloak:26.7.1",
+      "image": "quay.io/keycloak/keycloak@sha256:f1f1f01e472c8a78df40d8f2a49a925274eda4d3d80d5f6edbb5c880ee3c01c6",
+      "input_scope": "deterministic synthetic user identities",
+      "native_delete_signal": "Admin REST user deletion HTTP 204",
+      "registered_recovery": "stopped-server realm export followed by import into a fresh runner-owned store",
+      "official_sources": [
+        "https://www.keycloak.org/server/containers",
+        "https://www.keycloak.org/server/importExport"
+      ]
+    },
+    {
+      "id": "mlflow-lineage",
+      "display_name": "MLflow run and artifact lineage",
+      "version": "3.15.1-full",
+      "tag_at_registration": "ghcr.io/mlflow/mlflow:v3.15.1-full",
+      "image": "ghcr.io/mlflow/mlflow@sha256:9f9276e57cda1593cfa0fe8519145cd49328e119e85951851b9244e82e3769be",
+      "input_scope": "Olivetti-derived run artifact with a subject commitment",
+      "native_delete_signal": "MLflow REST runs/delete success",
+      "registered_recovery": "documented run restore with separately observed artifact state",
+      "official_sources": [
+        "https://mlflow.org/docs/latest/self-hosting/architecture/tracking-server/",
+        "https://mlflow.org/docs/latest/api_reference/rest-api.html"
+      ]
+    },
+    {
+      "id": "qdrant-biometric",
+      "display_name": "Qdrant biometric-vector retrieval",
+      "version": "1.15.4",
+      "tag_at_registration": "qdrant/qdrant:v1.15.4",
+      "image": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1",
+      "input_scope": "unmodified 64 by 64 Olivetti face samples flattened to 4096 dimensions",
+      "native_delete_signal": "Qdrant points delete response with wait=true",
+      "registered_recovery": "collection snapshot recovery with snapshot priority",
+      "official_sources": [
+        "https://qdrant.tech/documentation/operations/snapshots/",
+        "https://api.qdrant.tech/master/api-reference/snapshots/recover-from-snapshot"
+      ]
+    }
+  ],
+  "public_inputs": [
+    {
+      "id": "olivetti-faces",
+      "source_url": "https://ndownloader.figshare.com/files/5976027",
+      "documentation_url": "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_olivetti_faces.html",
+      "source_filename": "olivettifaces.mat",
+      "source_sha256": "sha256:b612fb967f2dc77c9c62d3e1266e0c73d5fca46a4b8906c18e454d41af987794",
+      "terms_pointer": "https://scikit-learn.org/stable/datasets/real_world.html#the-olivetti-faces-dataset",
+      "development_subject_ids": [35, 36, 37, 38, 39],
+      "confirmatory_subject_ids": [0, 1, 2, 3, 4],
+      "sample_offset_within_subject": 0,
+      "preprocessing": "preserve sklearn normalized float sample and flatten row-major without a trained transform",
+      "vector_dimension": 4096
+    }
+  ],
+  "seeds": [3101, 3109, 3119, 3121, 3137],
+  "fault_states": [
+    "safe_native",
+    "surviving_derivative",
+    "recovery_regeneration",
+    "coverage_fault"
+  ],
+  "truth_by_fault_state": {
+    "safe_native": "COMPLETE",
+    "surviving_derivative": "INCOMPLETE",
+    "recovery_regeneration": "INCOMPLETE",
+    "coverage_fault": "UNVERIFIED"
+  },
+  "rotations": [
+    {
+      "id": "hold-keycloak",
+      "calibration_families": ["mlflow-lineage", "qdrant-biometric"],
+      "held_out_family": "keycloak-identity"
+    },
+    {
+      "id": "hold-mlflow",
+      "calibration_families": ["keycloak-identity", "qdrant-biometric"],
+      "held_out_family": "mlflow-lineage"
+    },
+    {
+      "id": "hold-qdrant",
+      "calibration_families": ["keycloak-identity", "mlflow-lineage"],
+      "held_out_family": "qdrant-biometric"
+    }
+  ],
+  "core_files": [
+    "src/erasemap/audit.py",
+    "src/erasemap/cdc.py",
+    "src/erasemap/pcug_domain.py",
+    "src/erasemap/temporal.py",
+    "src/erasemap/temporal_robust.py",
+    "src/erasemap/open_transfer.py"
+  ],
+  "comparators": [
+    {
+      "id": "native-success",
+      "rule": "complete when the documented native delete operation succeeds and the primary object is absent"
+    },
+    {
+      "id": "typed-node-audit",
+      "rule": "complete when every registered observed node is absent; transitions are not replayed"
+    },
+    {
+      "id": "erasemap",
+      "rule": "PCUG plus temporal replay; missing mandatory coverage returns UNVERIFIED"
+    }
+  ],
+  "gates": {
+    "case_count": 60,
+    "family_count": 3,
+    "erasemap_false_complete_max": 0,
+    "coverage_fault_unverified_count": 15,
+    "post_control_recurrence_max": 0,
+    "retained_loss_max": 0,
+    "native_false_complete_min_per_family": 1,
+    "specificity_drop_max": 0.0,
+    "oracle_mismatch_max": 0,
+    "core_diff_max": 0,
+    "rotation_count": 3
+  },
+  "analysis": {
+    "primary": "all gates are conjunctive and secondary outcomes cannot rescue a failed gate",
+    "secondary": [
+      "service_startup_milliseconds",
+      "remediation_milliseconds",
+      "bytes_rewritten",
+      "shortest_witness_length",
+      "robustness_premium",
+      "adapter_non_comment_lines"
+    ],
+    "first_complete_run_rule": "The first complete v1 result remains in project history whether PASS or FAIL. Threshold or case changes require v2."
+  },
+  "claim_boundary": {
+    "evidence_scope": "PROJECT_AUTHORED_STOCK_SERVICE_TRANSFER",
+    "independent": false,
+    "organization_pilot": false,
+    "production_records": false,
+    "faceid_egov_validation": false,
+    "arbitrary_unknown_topology_coverage": false,
+    "supported_claim": "A frozen EraSeMap contract was tested across the listed stock service families, declared mappings, public or synthetic inputs, and finite project-authored faults."
+  }
+}

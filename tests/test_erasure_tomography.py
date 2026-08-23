@@ -57,6 +57,10 @@ def test_missing_execution_evidence_is_unverified() -> None:
         subjects_isolated=True,
         recurrence_observable=True,
         observations_complete=True,
+        sparsity_bound_verified=True,
+        noise_bound_verified=True,
+        stable_behavior=True,
+        synthetic_subjects_only=True,
     )
 
     report = decode(design, (True,), evidence)

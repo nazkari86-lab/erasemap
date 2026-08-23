@@ -55,7 +55,7 @@ def run_erasure_tomography_conformance() -> dict[str, object]:
     configurations = 0
     evidence_catalogue = (
         TomographyEvidence.complete(),
-        TomographyEvidence(True, False, True, True, True),
+        TomographyEvidence(True, False, True, True, True, True, True, True, True),
     )
     for design in _designs():
         row_orders = (design.rows, tuple(reversed(design.rows)))

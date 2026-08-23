@@ -44,10 +44,14 @@ class TomographyEvidence:
     subjects_isolated: bool
     recurrence_observable: bool
     observations_complete: bool
+    sparsity_bound_verified: bool
+    noise_bound_verified: bool
+    stable_behavior: bool
+    synthetic_subjects_only: bool
 
     @classmethod
     def complete(cls) -> TomographyEvidence:
-        return cls(True, True, True, True, True)
+        return cls(True, True, True, True, True, True, True, True, True)
 
     @property
     def valid(self) -> bool:
@@ -58,6 +62,10 @@ class TomographyEvidence:
                 self.subjects_isolated,
                 self.recurrence_observable,
                 self.observations_complete,
+                self.sparsity_bound_verified,
+                self.noise_bound_verified,
+                self.stable_behavior,
+                self.synthetic_subjects_only,
             )
         )
 

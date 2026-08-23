@@ -31,6 +31,10 @@ def oracle_decode(
         evidence.subjects_isolated,
         evidence.recurrence_observable,
         evidence.observations_complete,
+        evidence.sparsity_bound_verified,
+        evidence.noise_bound_verified,
+        evidence.stable_behavior,
+        evidence.synthetic_subjects_only,
     )
     if not all(evidence_bits):
         return OracleReport(TomographyVerdict.UNVERIFIED, (), (), None)

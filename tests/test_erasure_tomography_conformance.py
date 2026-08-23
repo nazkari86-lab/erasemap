@@ -41,7 +41,9 @@ def test_oracle_matches_production_on_complete_small_domain() -> None:
 
 def test_oracle_matches_unverified_evidence_boundary() -> None:
     design = ProbeDesign(("a",), ((True,),), 1, 0)
-    evidence = TomographyEvidence(True, True, False, True, True)
+    evidence = TomographyEvidence(
+        True, True, False, True, True, True, True, True, True
+    )
 
     actual = decode(design, (True,), evidence)
     expected = oracle_decode(design, (True,), evidence)

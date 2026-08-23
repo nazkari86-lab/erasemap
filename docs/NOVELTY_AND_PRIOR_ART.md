@@ -103,3 +103,34 @@ faults, and execution remain project-authored, so the result cannot establish in
 production relevance, world priority, or coverage of arbitrary unknown infrastructures. Those
 claims still require external authorship, an authorized pilot, and a broader professional patent
 review.
+
+## Erasure Tomography working contribution boundary
+
+Erasure Tomography does not claim invention of group testing, disjunct matrices, Boolean network
+tomography, active probes, deletion canaries, synthetic users, data-flow discovery, or coded test
+design. Relevant close foundations include:
+
+- Galesi and Ranjbar,
+  [Counting and localizing defective nodes by Boolean network tomography](https://arxiv.org/abs/2101.04403),
+  localizes network failures from Boolean path outcomes;
+- D'yachkov et al.,
+  [Error-correcting nonadaptive group testing with disjunct matrices](https://doi.org/10.1016/S0166-218X(97)80002-9),
+  provides the error-correcting coding foundation;
+- Chakraborty et al.,
+  [Meaningful Data Erasure in the Presence of Dependencies](https://www.vldb.org/pvldb/vol18/p3435-chakraborty.pdf),
+  computes principled minimal dependent deletion when dependency rules are supplied;
+- [Chava: A Verification-Aware Data Model](https://openreview.net/attachment?id=uB2AIgYgym&name=pdf)
+  carries verification obligations and evidence with processed data; and
+- OneTrust's cited deletion-testing patent already covers synthetic test subjects and tokens.
+
+The targeted search did not find the same tested input/algorithm/output contract: coded
+synthetic-subject deletion/recovery workflows, an exact fail-closed bounded-support certificate,
+localization of a recurrence mechanism, translation into PCUG/TRE, and physical post-control replay.
+That absence supports a high working novelty score but is not proof of world priority or
+patentability.
+
+The first result is deliberately narrow. Its catalogue has four project-authored mechanisms,
+`k=1`, and `e=0`; three probes are only one fewer than four individual checks, and random/greedy
+coded baselines also succeed at three in this small domain. The contribution claim is therefore the
+erasure-specific fail-closed composition and demonstrated topology-acquisition layer, not a better
+general group-testing code.

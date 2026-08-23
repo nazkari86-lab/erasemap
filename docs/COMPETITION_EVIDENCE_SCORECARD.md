@@ -19,20 +19,20 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 
 | Dimension | Current | Observable evidence | Next score-changing event |
 |---|---:|---|---|
-| Problem clarity | 9.6/10 | Seven-step showcase plus 12 aligned EN/RU one-minute cards; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
+| Problem clarity | 9.8/10 | Erasure Tomography adds an intuitive coded-test story to the seven-step showcase; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
 | Practical relevance | 9.7/10 | Frozen failures and remediation now execute on stock identity, ML-lineage, and biometric-vector services | Authorized organization pilot on actual deletion workflow |
-| Narrow scientific novelty | 9.7/10 | One frozen fail-closed PCUG/CDC contract transfers across Keycloak, MLflow, and Qdrant while preserving explicit prior-art exclusions | Untouched external topology shifts outperform frozen strong baselines |
+| Narrow scientific novelty | 9.9/10 | New bounded ET layer turns coded deletion/recovery outcomes into fail-closed mechanism localization and PCUG/TRE repair; formal boundary plus local and Redis prospective PASS | Systematic/patent review plus independently authored ET topology |
 | Experimental methodology | 9.9/10 | Frozen one-shot 60-case stock-service run, raw process evidence, oracle controls, prior prospective studies, and finite conformance audits | Independently authored preregistered holdout |
-| Scientific claim completion | 9.8/10 | Formal PCUG/RSE/TRE results plus measured optimization and frozen three-family transfer PASS | External hidden challenge plus materially different system replication |
+| Scientific claim completion | 9.9/10 | Formal PCUG/RSE/TRE/ET boundaries, measured optimization, frozen local ET and digest-pinned Redis transfer PASS | External hidden challenge plus materially different system replication |
 | Real inputs and transfer | 9.4/10 | Public Olivetti vectors and real stock Keycloak/MLflow/Qdrant processes; identities/commitments and faults remain project-authored | Authorized real records or redacted production instrumentation |
 | Independence of evidence | 7.8/10 | Executable signed challenge exists, but `external_results/` has no accepted external result | One verified evaluator passes all 9.5 rubric gates |
-| Formal justification | 9.8/10 | Lean PCUG/RSE/TRE soundness and exact CDC/MSC/TRE results; axiom audit; 3,072 CDC, 16,384 MSC, and 4,096 TRE production/oracle runs | Independent proof review or machine-checked implementation refinement |
+| Formal justification | 9.9/10 | Lean PCUG/RSE/TRE plus ET zero-error separation/composition boundary; axiom audit; ET production/oracle 3,584/3,584 | Independent proof review or machine-checked noisy-decoding refinement |
 | Engineering | 9.9/10 | Strict typing, digest-pinned stock lifecycle, redacted ledgers, offline tamper checks, signed external handoff, and fail-safe teardown | Reproducible external deployment or release audit |
 | Reproducibility | 9.9/10 | Committed protocol, first-run trials, 9.6 MiB raw evidence, public asset provenance, and standalone offline recomputation | Independent clean-machine reproduction |
 | FaceID/eGov/KYC applicability | 9.5/10 | One contract now runs on stock identity and biometric-vector services, not only display adapters | Authorized domain-specific instrumentation and evaluation |
 | Competition presentation readiness | 9.8/10 | Evidence-bound seven-step showcase, Russian defense/Q&A, and answer-blind bilingual handoff | Timed rehearsal with an unfamiliar reviewer |
 | RKNP competitiveness | 9.8/10 | Formal result plus measured multi-service result satisfy the frozen 9.8 trigger | External PASS or organization confirmation for a defensible 9.9 |
-| ISEF-level readiness | 9.6/10 | Formal contribution, first frozen cross-family stock-service result, raw reproducibility, and explicit limitations | External PASS raises evidence readiness toward 9.7–9.8 |
+| ISEF-level readiness | 9.7/10 | Distinct ET research question, formal boundary, prospective local and live Redis results, raw reproducibility, and explicit limitations | External PASS raises evidence readiness toward 9.8–9.9 |
 
 The independence row is deliberately not averaged away. More project-authored code cannot move it
 above 7.8.
@@ -77,6 +77,15 @@ above 7.8.
     Native-success made 45 false-complete decisions and typed-node audit made 5. Public Olivetti
     vectors improve input realism, but mappings, faults, and execution are project-authored; the
     independence score therefore remains 7.8.
+11. **Erasure Tomography:** the protocol and support schedule were committed before the first v1
+    run. ET recovered 8/8 valid single-mechanism supports with three coded workflows instead of four
+    individual checks, rejected 4/4 broken-assumption cases, matched its independent oracle, and had
+    zero post-control recurrence or retained loss. A separate preregistered digest-pinned Redis run
+    recovered 4/4 mechanisms plus the safe case with the same zero-error pattern. Random and greedy
+    three-row baselines also succeed in this small domain, so the claim is the fail-closed
+    erasure-specific composition, not a superior general code. Both executions remain
+    project-authored; independence stays 7.8 and overall RKNP remains 9.8 until the named external
+    evidence event.
 
 ## Reproduce the jury artifact
 

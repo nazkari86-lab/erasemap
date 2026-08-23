@@ -16,6 +16,8 @@ The Regeneration-Safe Erasure (RSE) extension tests a different failure mode: da
 
 Topology-Robust Erasure (TRE) strengthens MSC from one map to a finite declared uncertainty envelope. Its protocol was also committed before implementation. In the first run, nominal MSC regenerated data in 35/35 topology shifts, whereas one exact TRE plan regenerated data in 0/35, cost 7 versus blanket destruction at 60, and matched an exhaustive oracle. Production TRE additionally matched the oracle in 4,096/4,096 systematic configurations. The guarantee is conditional on the real topology belonging to the declared envelope.
 
+Erasure Tomography (ET) adds a bounded topology-acquisition layer. Three coded synthetic-subject workflows distinguish the empty support and four single recurrence mechanisms. The frozen first run recovered 8/8 valid supports, rejected 4/4 assumption violations, and recorded zero false localization, oracle mismatch, post-control recurrence, or retained-subject loss. A separate preregistered digest-pinned Redis run recovered 4/4 mechanisms and the safe case. Lean checks zero-error separation and limits ET-to-TRE safety to listed localized mechanisms. These results require catalogue closure, `k=1`, `e=0`, complete workflows, isolated synthetic subjects, stable behavior, and observable recurrence.
+
 A further preregistered transfer study executed one frozen contract in 60 cases on digest-pinned stock Keycloak, MLflow, and Qdrant services. EraSeMap produced 0 false-complete decisions, failed closed on 15/15 coverage faults, matched a separate exhaustive control oracle in 60/60 cases, and produced no retained-subject loss or post-control recurrence. Native-success produced 45 false completes and the typed-node snapshot audit produced 5. Qdrant used preregistered public Olivetti face vectors; identities, commitments, mappings, faults, and execution remained project-authored, so this is live stock-service transfer evidence rather than independent or production validation.
 
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
@@ -278,6 +280,30 @@ The first prospective TRE run passed every frozen gate. The backup-only nominal 
 
 Production TRE matched the separately implemented exhaustive oracle in the prospective run and in **4,096/4,096** deterministic configurations spanning eight uncertainty envelopes, all 64 permission masks, four adversarial cost catalogues, and both input orders.
 
+### 8.8 Erasure Tomography
+
+**Hypothesis H5.** Within a frozen candidate catalogue, coded deletion/recovery workflows can
+localize one active recurrence mechanism using fewer rounds than individual testing, while
+returning UNVERIFIED when catalogue, sparsity, execution, or isolation assumptions fail.
+
+The prospective bounded run recovered **8/8** valid supports with three coded workflows rather than
+four individual checks, returned NO_OBSERVED_RECURRENCE in **2/2** safe cases, and returned
+UNVERIFIED for **4/4** assumption violations. False localization, production/oracle mismatch,
+post-control recurrence, and retained-subject loss were all zero. Production decoding matched a
+separately implemented bitmask oracle in **3,584/3,584** configurations.
+
+A separately preregistered live transfer used the digest-pinned Redis image and four
+project-authored native recovery workflows. It recovered **4/4** mechanisms and the safe case with
+zero false localization, recurrence, or retained loss. Random and greedy three-row coded baselines
+also recovered every singleton in this small domain. Therefore the supported novelty is the
+fail-closed erasure-specific acquisition-to-PCUG/TRE-repair composition, not a new or superior
+general group-testing code.
+
+Boolean network tomography and nonadaptive group testing already localize defective components
+from coded Boolean outcomes [19,20], and dependency-aware P2E2 computes meaningful additional
+erasure when semantic rules are supplied [21]. The targeted review found no identical end-to-end ET
+contract, but this is not a world-priority or patentability claim.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -385,6 +411,12 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 
 [18] U.S. Patent Application US20210406398A1, “Data Processing Systems for Data Testing to Confirm Data Deletion and Related Methods,” 2021.
 
+[19] N. Galesi and F. Ranjbar, “Counting and Localizing Defective Nodes by Boolean Network Tomography,” arXiv:2101.04403, 2021.
+
+[20] A. D'yachkov, A. Macula, and V. Rykov, “Error-Correcting Nonadaptive Group Testing with Disjunct Matrices,” Discrete Applied Mathematics 80:217–222, 1997. DOI: 10.1016/S0166-218X(97)80002-9.
+
+[21] V. Chakraborty et al., “Meaningful Data Erasure in the Presence of Dependencies,” Proceedings of the VLDB Endowment 18(10):3435–3448, 2025. DOI: 10.14778/3748191.3748206.
+
 ## Appendix A. Notation
 
 | Symbol | Meaning |
@@ -404,6 +436,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | Reach(q₀,δ) | States reachable after deletion under registered transitions |
 | MSC | Minimum-cost Stabilization Cut blocking every registered regeneration witness |
 | TRE | Topology-Robust Erasure: one exact plan for every topology in a declared uncertainty envelope |
+| ET | Erasure Tomography: bounded coded deletion probes for recurrence-mechanism localization |
 
 ## Appendix B. Claim–Evidence Map
 
@@ -421,3 +454,4 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | Sequential deletion candidate meets six frozen gates | 25 transitions; worst retained accuracy −0.00952; privacy upper CI 0.00624 | First-run preregistered, but project-authored and no-shadow-model |
 | RSE distinguishes future risk from guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC recurrences | Prospective but project-authored local multi-path lab |
 | TRE survives the frozen topology shifts | Nominal 35/35 recurrences; TRE 0/35; cost 7 versus blanket 60 | Prospective but finite, visible, project-authored envelope |
+| ET localizes bounded recurrence mechanisms | 8/8 supports; 4/4 negative fail-closed; 3,584/3,584 oracle; Redis 4/4 | `k=1`, `e=0`, project-authored catalogue/workflows; no arbitrary discovery |

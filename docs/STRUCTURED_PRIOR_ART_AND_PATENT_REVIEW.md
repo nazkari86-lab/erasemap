@@ -2,6 +2,21 @@
 
 Snapshot date: 2026-08-23
 
+## Erasure Tomography update
+
+The ET-specific query family added combinations of `data deletion`, `right to erasure`, `erasure
+verification`, `tomography`, `group testing`, `Boolean probes`, `hidden data flow`, `synthetic test
+subject`, `recovery`, and `regeneration`. The closest technical foundations found were Boolean
+network tomography/failure localization, error-correcting nonadaptive group testing, synthetic
+deletion-test subjects, dependency-aware meaningful erasure, and verification-obligation data
+models.
+
+No reviewed source implemented the complete ET contract of bounded coded deletion/recovery probes,
+fail-closed exact support certification, recurrence-mechanism localization, PCUG/TRE translation,
+and physical post-control replay. This is a targeted negative search result, not proof that no such
+publication or patent exists. General group testing, tomography, synthetic subjects, canaries,
+data-flow mapping, and deletion verification remain excluded from the novelty claim.
+
 ## Scope and method
 
 This is a reproducible structured search, not a legal freedom-to-operate opinion and not a complete

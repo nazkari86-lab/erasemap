@@ -14,6 +14,12 @@ EraSeMap covers only artifacts registered by trusted instrumentation. It does no
 physical erasure, detect secret unregistered copies, provide legal advice, or claim validation on
 eGov, Face ID, or another production identity system.
 
+The new **Erasure Tomography** layer narrows that limitation for a bounded candidate catalogue. It
+uses coded synthetic-subject deletion workflows to localize which candidate recovery mechanism made
+data recur, refuses to localize when catalogue/sparsity/evidence assumptions fail, and passes a
+localized mechanism to PCUG/TRE for physical control replay. It is not arbitrary open-world
+discovery.
+
 ## Quick demonstration
 
 ```bash
@@ -22,6 +28,8 @@ erasemap generate --seed 7 --nodes 100 --fault STALE_CACHE --output /tmp/case.js
 erasemap benchmark dev --protocol benchmark/protocol-v1.json --output outputs/dev-v1
 erasemap showcase --repo-root . --output outputs/jury-showcase-v1
 erasemap rse demo --seed 101
+PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
+PYTHONPATH=src:. python scripts/verify_erasure_tomography_redis_v1.py
 ```
 
 The fixed example contains an erased enrollment record with one still-active face template, so
@@ -83,9 +91,29 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Sequential deletion privacy v1 | Preregistered first run PASS: 25 transitions, all six frozen gates; project-authored |
 | Regeneration-Safe Erasure v2 | Preregistered first run PASS: 30/30 risks, 10/10 guarded safe cases, 10/10 coverage faults; project-authored |
 | Topology-Robust Erasure v1 | Preregistered first run PASS: nominal MSC failed under 35/35 shifts, TRE had 0/35 recurrences; finite project-authored envelope |
+| Erasure Tomography v1 | Preregistered bounded first run PASS: 8/8 exact localization, 4/4 negative cases fail-closed, 3 probes versus 4 individual checks; project-authored |
+| Live Redis tomography transfer | Preregistered digest-pinned stock-service PASS: 4/4 exact localization, safe-case PASS, zero false localization/recurrence/retained loss; project-authored workflows |
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
+
+## Erasure Tomography
+
+The frozen v1 candidate catalogue contains backup restore, checkpoint redeployment, legacy export
+import, and retry queue replay. An exact constructor found a three-row Boolean probe design for the
+empty support and every single active mechanism (`k=1`, `e=0`). The prospective local result
+recovered 8/8 valid supports, returned `UNVERIFIED` for 4/4 deliberately broken-assumption cases,
+matched an independent bitmask oracle, and produced no recurrence after TRE control replay.
+
+A second preregistered run executed the same bounded signatures inside a real digest-pinned Redis
+container: 4/4 mechanisms and the safe case passed with zero false localization, oracle mismatch,
+post-control recurrence, or retained-subject loss. The container workflows and execution were
+project-authored, so this strengthens transfer and engineering evidence but not external
+independence.
+
+See [`docs/ERASURE_TOMOGRAPHY_V1_REPORT.md`](docs/ERASURE_TOMOGRAPHY_V1_REPORT.md), the frozen
+protocols under [`benchmark/`](benchmark/), committed results under `outputs/erasure-tomography-*`,
+and the Lean boundary in `EraseMapFormal/ErasureTomography.lean`.
 
 ## Open stock-service transfer challenge
 

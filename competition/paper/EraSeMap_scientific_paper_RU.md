@@ -16,6 +16,8 @@
 
 Topology-Robust Erasure (TRE) усиливает MSC с одной карты до конечного заявленного uncertainty envelope. Его протокол также зафиксирован до реализации. В первом запуске nominal MSC допустил регенерацию в 35/35 topology shifts, тогда как единый exact TRE-план дал 0/35 возвратов, стоил 7 против 60 у blanket destruction и совпал с exhaustive oracle. Production TRE дополнительно совпал с oracle в 4096/4096 систематических конфигураций. Гарантия условна: реальная топология должна входить в заявленный envelope.
 
+Erasure Tomography (ET) добавляет bounded topology-acquisition layer. Три coded workflow синтетических субъектов различают empty support и четыре single recurrence mechanisms. Первый frozen run восстановил 8/8 valid supports, отклонил 4/4 нарушения предпосылок и дал ноль false localization, oracle mismatch, post-control recurrence и retained-subject loss. Отдельный preregistered digest-pinned Redis run локализовал 4/4 механизма и safe case. Lean проверяет zero-error separation и ограничивает ET-to-TRE safety перечисленными локализованными механизмами. Результаты требуют catalogue closure, `k=1`, `e=0`, complete workflows, isolated synthetic subjects, stable behavior и observable recurrence.
+
 Дополнительное пререгистрированное исследование переноса выполнило один frozen-контракт в 60 случаях на digest-pinned stock Keycloak, MLflow и Qdrant. EraSeMap дал 0 ложных COMPLETE, fail-closed обработал 15/15 coverage faults, совпал с отдельным exhaustive control oracle в 60/60 случаях и не допустил retained loss или recurrence после controls. Native-success дал 45 ложных COMPLETE, typed-node snapshot audit — 5. Qdrant использовал заранее выбранные публичные Olivetti face vectors; identities, commitments, mappings, faults и запуск остались авторскими, поэтому это live stock-service transfer, а не независимая или production validation.
 
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
@@ -278,6 +280,30 @@ Single-carrier cases выбрали локальные controls стоимост
 
 Production TRE совпал с отдельно реализованным exhaustive oracle в prospective run и в **4096/4096** детерминированных конфигураций: восемь uncertainty envelopes, все 64 permission masks, четыре adversarial cost catalogues и оба input order.
 
+### 8.8 Erasure Tomography
+
+**Гипотеза H5.** В frozen candidate catalogue coded deletion/recovery workflows локализуют один
+active recurrence mechanism меньшим числом раундов, чем individual testing, и возвращают UNVERIFIED
+при нарушении catalogue, sparsity, execution или isolation assumptions.
+
+Prospective bounded run восстановил **8/8** valid supports тремя coded workflows вместо четырёх
+individual checks, вернул NO_OBSERVED_RECURRENCE в **2/2** safe cases и UNVERIFIED для **4/4**
+нарушений предпосылок. False localization, production/oracle mismatch, post-control recurrence и
+retained-subject loss равны нулю. Production decoder совпал с independently implemented bitmask
+oracle в **3584/3584** конфигураций.
+
+Отдельный preregistered live transfer использовал digest-pinned Redis image и четыре
+project-authored native recovery workflows. Он локализовал **4/4** механизма и safe case без false
+localization, recurrence или retained loss. Random и greedy three-row coded baselines также
+восстановили каждый singleton в этом малом domain. Поэтому поддерживаемая новизна — fail-closed
+erasure-specific acquisition-to-PCUG/TRE-repair composition, а не новый или лучший общий
+group-testing code.
+
+Boolean network tomography и nonadaptive group testing уже локализуют defective components по coded
+Boolean outcomes [19,20], а dependency-aware P2E2 вычисляет meaningful additional erasure при
+заданных semantic rules [21]. Targeted review не нашёл идентичного end-to-end ET contract, но это не
+world-priority или patentability claim.
+
 ## 9. Обсуждение
 
 Практический результат — не только обнаружение ошибки. Полезная система удаления должна в одной воспроизводимой цепочке ответить: что осталось; почему завершение заблокировано; какой самый дешёвый разрешённый набор действий действительно приводит к завершению. Остаточный путь отвечает на первые два вопроса, CDC и replay — на третий.
@@ -386,6 +412,12 @@ EraSeMap показывает практический и математичес
 
 [18] U.S. Patent Application US20210406398A1. Data Processing Systems for Data Testing to Confirm Data Deletion and Related Methods, 2021.
 
+[19] Galesi N., Ranjbar F. Counting and Localizing Defective Nodes by Boolean Network Tomography. arXiv:2101.04403, 2021.
+
+[20] D'yachkov A., Macula A., Rykov V. Error-Correcting Nonadaptive Group Testing with Disjunct Matrices. Discrete Applied Mathematics 80:217–222, 1997. DOI: 10.1016/S0166-218X(97)80002-9.
+
+[21] Chakraborty V. et al. Meaningful Data Erasure in the Presence of Dependencies. Proceedings of the VLDB Endowment 18(10):3435–3448, 2025. DOI: 10.14778/3748191.3748206.
+
 ## Приложение A. Обозначения
 
 | Символ | Значение |
@@ -405,6 +437,7 @@ EraSeMap показывает практический и математичес
 | Reach(q₀,δ) | Состояния, достижимые после удаления по зарегистрированным переходам |
 | MSC | Минимальный стабилизирующий разрез, блокирующий все зарегистрированные regeneration witnesses |
 | TRE | Topology-Robust Erasure: единый exact-план для каждой топологии заявленного uncertainty envelope |
+| ET | Erasure Tomography: bounded coded deletion probes для localization recurrence-механизма |
 
 ## Приложение B. Карта claim–evidence
 
@@ -422,3 +455,4 @@ EraSeMap показывает практический и математичес
 | Sequential deletion candidate проходит шесть frozen gates | 25 переходов; худшая retained accuracy −0,00952; privacy upper CI 0,00624 | First-run preregistered, но project-authored и без shadow models |
 | RSE отличает будущий риск от guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC повторов | Prospective, но project-authored local multi-path lab |
 | TRE переживает frozen topology shifts | Nominal 35/35 возвратов; TRE 0/35; стоимость 7 против blanket 60 | Prospective, но finite visible project-authored envelope |
+| ET локализует bounded recurrence mechanisms | 8/8 supports; 4/4 negative fail-closed; 3584/3584 oracle; Redis 4/4 | `k=1`, `e=0`, project-authored catalogue/workflows; не arbitrary discovery |

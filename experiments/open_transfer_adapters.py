@@ -249,6 +249,7 @@ class KeycloakIdentityAdapter:
                 "username": username,
                 "password": password,
             },
+            timeout=60.0,
         )
         payload = _dict_body(response, "Keycloak token")
         token = payload.get("access_token")
@@ -262,6 +263,7 @@ class KeycloakIdentityAdapter:
             f"{self.base_url}/admin/realms",
             headers={"Authorization": f"Bearer {token}"},
             payload={"realm": realm, "enabled": True},
+            timeout=60.0,
         )
         if response.status not in {201, 409}:
             raise RuntimeError(f"Keycloak realm creation failed: {response.status}")
@@ -272,6 +274,7 @@ class KeycloakIdentityAdapter:
             f"{self.base_url}/admin/realms/{realm}/users",
             headers={"Authorization": f"Bearer {token}"},
             payload={"username": username, "enabled": True},
+            timeout=60.0,
         )
         if response.status != 201:
             raise RuntimeError(f"Keycloak user creation failed: {response.status}")
@@ -285,6 +288,7 @@ class KeycloakIdentityAdapter:
             "GET",
             f"{self.base_url}/admin/realms/{realm}/users?username={username}&exact=true",
             headers={"Authorization": f"Bearer {token}"},
+            timeout=60.0,
         )
         if response.status != 200:
             raise RuntimeError(f"Keycloak user search failed: {response.status}")
@@ -295,6 +299,7 @@ class KeycloakIdentityAdapter:
             "DELETE",
             f"{self.base_url}/admin/realms/{realm}/users/{user_id}",
             headers={"Authorization": f"Bearer {token}"},
+            timeout=60.0,
         )
         if response.status != 204:
             raise RuntimeError(f"Keycloak user deletion failed: {response.status}")

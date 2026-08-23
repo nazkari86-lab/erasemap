@@ -1,5 +1,14 @@
 # Machine-checked PCUG/CDC core
 
+## Erasure Tomography v1
+
+`EraseMapFormal/ErasureTomography.lean` formalizes the exact zero-error boundary used by the frozen
+v1 experiment. `unique_decode_of_separated` proves unique recovery only for a complete listed
+catalogue with sound observations and pairwise-separated signatures.
+`ambiguous_without_separation` constructs the corresponding two-explanation counterexample, and
+`localized_controls_safe_for_listed_mechanisms` keeps ET-to-TRE safety explicitly limited to the
+localized mechanisms. None of these theorems claims arbitrary open-world topology completeness.
+
 The root [`EraseMapFormal`](../EraseMapFormal/) Lean library contains the formalization frozen in
 [`docs/FORMAL_PCUG_V1_SPEC.md`](../docs/FORMAL_PCUG_V1_SPEC.md); this directory holds its
 reproduction guide and bounded production-conformance record.

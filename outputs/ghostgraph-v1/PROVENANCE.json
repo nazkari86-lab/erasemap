@@ -1,0 +1,8 @@
+{
+  "artifacts": {
+    "result.json": "sha256:68ff4b26b0191f04eb3b04085a078242f2a9b8f04c53adddb5b535af07200663",
+    "trials.jsonl": "sha256:62addf57cf3b2a0cae7fed2e51b7b25a7123616718b2e3181999eddb32be6068"
+  },
+  "git_revision": "a299850bb6c6b121f777eed6d621a59cdf799b86",
+  "schema_version": "erasemap-ghostgraph-provenance-v1"
+}

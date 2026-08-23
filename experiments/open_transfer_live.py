@@ -324,6 +324,24 @@ def _keycloak_case(
                     ),
                     args=("import", "--dir", "/opt/keycloak/import", "--override", "true"),
                 )
+                _one_shot_container(
+                    name=require_transfer_container_name(
+                        f"erasemap-transfer-keycloak-bootstrap-{os.getpid()}-{seed}"
+                    ),
+                    image=image,
+                    root=case_root,
+                    mounts=((restore_data, "/opt/keycloak/data", False),),
+                    env={"KC_BOOTSTRAP_ADMIN_PASSWORD": password},
+                    args=(
+                        "bootstrap-admin",
+                        "user",
+                        "--no-prompt",
+                        "--username",
+                        "admin",
+                        "--password:env",
+                        "KC_BOOTSTRAP_ADMIN_PASSWORD",
+                    ),
+                )
                 restore_service, _, active_adapter, active_token = _start_keycloak(
                     image=image,
                     root=case_root,

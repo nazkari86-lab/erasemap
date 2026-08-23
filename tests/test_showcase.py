@@ -24,8 +24,14 @@ def test_showcase_binds_live_and_frozen_evidence() -> None:
     assert report["evidence"]["topology_robust_erasure"]["nominal_recurrences"] == 35
     assert report["evidence"]["topology_robust_erasure"]["robust_recurrences"] == 0
     assert report["evidence"]["topology_robust_erasure"]["conformance_configurations"] == 4096
+    assert report["evidence"]["open_stock_transfer"]["cases"] == 60
+    assert report["evidence"]["open_stock_transfer"]["erasemap_false_complete"] == 0
+    assert report["evidence"]["open_stock_transfer"]["retained_loss"] == 0
+    assert report["evidence"]["open_stock_transfer"]["result_sha256"].startswith("sha256:")
+    assert len(report["visual_story"]) == 7
+    assert report["usability_handoff"]["human_result_status"] == "NOT_COLLECTED"
     assert report["claim_boundary"]["independence_score"] == 7.8
-    assert len(report["source_sha256"]) == 8
+    assert len(report["source_sha256"]) == 11
 
 
 def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
@@ -34,6 +40,9 @@ def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
     assert "source → template" in rendered
     assert "PROJECT_AUTHORED_DEVELOPMENT" in rendered
     assert "production-внедрение в FaceID/eGov" in rendered
+    assert "PROJECT_AUTHORED_LIVE_STOCK_SERVICES" in rendered
+    assert "NOT_COLLECTED" in rendered
+    assert "Одна понятная история из семи шагов" in rendered
     assert "7.8/10" in rendered
 
 
@@ -48,6 +57,9 @@ def test_showcase_fails_closed_on_tampered_result(tmp_path: Path) -> None:
         "formal/rse-msc-conformance-v1.json",
         "outputs/topology-robust-erasure-v1/result.json",
         "formal/tre-conformance-v1.json",
+        "outputs/open-transfer-v1/result.json",
+        "outputs/open-transfer-v1/PROVENANCE.json",
+        "usability/protocol-v1.json",
     ):
         destination = copied / source
         destination.parent.mkdir(parents=True, exist_ok=True)

@@ -180,6 +180,9 @@ class EvidenceHttpClient:
         self.ledger = ledger
         self.secret_values = secret_values
         self._sequence = len(ledger.records())
+        # Transfer services are bound to loopback. Ignoring ambient proxy variables keeps
+        # evidence collection local and makes the frozen runner reproducible in CI.
+        self._opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
     def request(
         self,
@@ -211,7 +214,7 @@ class EvidenceHttpClient:
             method=method.upper(),
         )
         try:
-            with urllib.request.urlopen(request, timeout=timeout) as response:
+            with self._opener.open(request, timeout=timeout) as response:
                 status = int(response.status)
                 raw_response = response.read()
         except urllib.error.HTTPError as error:

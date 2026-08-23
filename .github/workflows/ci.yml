@@ -32,7 +32,7 @@ jobs:
       - run: python -m ruff check .
       - run: >-
           python -m mypy --strict
-          src pilot external_challenge external_temporal_challenge
+          src pilot external_challenge external_temporal_challenge external_transfer usability
       - run: >-
           python -m pytest
           --cov=erasemap --cov=external_challenge --cov=external_temporal_challenge --cov=pilot
@@ -41,6 +41,8 @@ jobs:
       - run: python scripts/verify_source_locked_holdout.py
       - run: python scripts/verify_external_freeze.py
       - run: python scripts/verify_sequential_deletion_privacy_v1.py
+      - run: python scripts/verify_open_transfer_v1.py
+      - run: python -m usability.verify
       - run: PYTHONPATH=src python scripts/verify_measured_multiservice_v1.py
       - run: python scripts/verify_regeneration_safe_erasure_v1.py
       - run: >-

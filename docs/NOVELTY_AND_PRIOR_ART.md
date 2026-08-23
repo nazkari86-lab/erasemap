@@ -87,3 +87,19 @@ The first prospective result supports only the eight project-authored scenarios 
 catalogue. It cannot be generalized to arbitrary missing transitions or used as evidence that an
 external system lies inside the envelope. A broader novelty claim still requires independent cases
 and a professional patent search.
+
+## Open stock-service transfer contribution boundary
+
+The frozen v1 transfer result adds a narrower empirical contribution: the same family-neutral
+three-valued decision and exact physical-control contract executed without service-specific scoring
+changes on stock Keycloak identity lifecycle, MLflow run/artifact lineage, and Qdrant biometric
+vectors. It caught temporal or derivative failures that native success missed in all three families
+and failures that a complete typed-node snapshot audit missed in the registered recovery cases.
+
+This is evidence for compositional portability, not a claim that using Keycloak, MLflow, Qdrant,
+face vectors, snapshots, garbage collection, lineage adapters, or deletion testing is new. The
+services, public Olivetti input, and underlying operations are prior components. The mappings,
+faults, and execution remain project-authored, so the result cannot establish independent novelty,
+production relevance, world priority, or coverage of arbitrary unknown infrastructures. Those
+claims still require external authorship, an authorized pilot, and a broader professional patent
+review.

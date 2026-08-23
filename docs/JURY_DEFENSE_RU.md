@@ -57,6 +57,14 @@ topology shifts nominal MSC стоимостью 3 пропустил новый
 TRE совпал с отдельным exhaustive oracle во всех 4 096 систематических конфигурациях. Lean
 доказывает условную safety для каждого сценария и минимальность выбранного robust-плана.
 
+Шестое доказательство проверяет перенос одного frozen-контракта на разные готовые сервисы. До
+полного запуска я зафиксировал 60 случаев: stock Keycloak, MLflow и Qdrant, пять seeds и четыре
+типа ошибок. Qdrant получил открытые Olivetti face vectors, остальные идентификаторы были
+синтетическими. В первом полном запуске EraSeMap дал 0 ложных `COMPLETE`, все 15 coverage faults
+вернул как `UNVERIFIED`, сохранил retained-объекты и после controls не допустил recurrence.
+Native-success ошибся 45 раз, а полный typed-node audit — 5 раз. Raw redacted HTTP evidence и
+offline verifier опубликованы. Это project-authored stock-service transfer, не внешний pilot.
+
 ### 2:20–3:00 — честная граница и вклад
 
 Я не утверждаю, что проект уже внедрён в Face ID или eGov. Он видит только инфраструктуру,
@@ -75,8 +83,9 @@ open outputs/jury-showcase-v1/index.html
 
 1. Показать `INCOMPLETE` и путь `source -> template`.
 2. Спросить жюри: «Основная запись удалена — можно ли считать запрос завершённым?»
-3. Показать пять разных блоков: механизм, formal CDC, real processes, RSE и topology-robust TRE.
-4. Самому назвать ограничение: внешняя независимость пока 7.8/10.
+3. Показать семь шагов: request → map → verify → verdict → witness → control/replay → signed evidence.
+4. Показать шесть блоков доказательств, включая frozen Keycloak/MLflow/Qdrant transfer.
+5. Самому назвать ограничение: внешняя независимость пока 7.8/10, human result `NOT_COLLECTED`.
 
 Если спросят о baseline: snapshot PCUG не является «плохим» — он корректно доказывает отсутствие
 данных в текущем состоянии. RSE проверяет более сильное утверждение: не могут ли данные вернуться

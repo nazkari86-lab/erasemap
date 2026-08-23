@@ -30,6 +30,8 @@ checked page by page.
 The paper reports project-authored mechanism evidence, independently sourced but project-mapped
 structures, formal Lean results, local real-process measurements, a post-exposure adaptive model
 result, first-run preregistered sequential-release and temporal results, and the finite-envelope TRE
-result as separate evidence layers. It does not claim certified privacy, arbitrary unknown-topology
-coverage, an independently authored hidden challenge, or a production FaceID/eGov/government
-deployment.
+result and the preregistered 60-case transfer study on digest-pinned stock Keycloak, MLflow, and
+Qdrant services as separate evidence layers. The transfer layer uses public Olivetti vectors but
+project-authored identities, mappings, faults, and execution. It does not claim certified privacy,
+arbitrary unknown-topology coverage, an independently authored hidden challenge, or a production
+FaceID/eGov/government deployment.

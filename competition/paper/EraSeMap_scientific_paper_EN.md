@@ -16,6 +16,8 @@ The Regeneration-Safe Erasure (RSE) extension tests a different failure mode: da
 
 Topology-Robust Erasure (TRE) strengthens MSC from one map to a finite declared uncertainty envelope. Its protocol was also committed before implementation. In the first run, nominal MSC regenerated data in 35/35 topology shifts, whereas one exact TRE plan regenerated data in 0/35, cost 7 versus blanket destruction at 60, and matched an exhaustive oracle. Production TRE additionally matched the oracle in 4,096/4,096 systematic configurations. The guarantee is conditional on the real topology belonging to the declared envelope.
 
+A further preregistered transfer study executed one frozen contract in 60 cases on digest-pinned stock Keycloak, MLflow, and Qdrant services. EraSeMap produced 0 false-complete decisions, failed closed on 15/15 coverage faults, matched a separate exhaustive control oracle in 60/60 cases, and produced no retained-subject loss or post-control recurrence. Native-success produced 45 false completes and the typed-node snapshot audit produced 5. Qdrant used preregistered public Olivetti face vectors; identities, commitments, mappings, faults, and execution remained project-authored, so this is live stock-service transfer evidence rather than independent or production validation.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -225,6 +227,12 @@ The snapshot PCUG baseline closes every currently online residual and passes a m
 
 TRE v1 was committed at `320e437` before solver, runner, verifier, or first result implementation. The nominal scenario contains backup restore. Seven shifted scenarios add every non-empty subset of checkpoint redeployment, legacy import, and retry replay; five frozen seeds produce 35 physical cases. The nominal exact MSC, exact all-scenario TRE, and blanket carrier destruction are compared under the same declared costs. Gates require 35/35 nominal-plan recurrences, zero TRE recurrences, zero oracle mismatches, cost 3 for nominal MSC, cost 7 for TRE, blanket cost 60, and a shift-specific witness in every case.
 
+### 7.9 Layer H: open stock-service transfer
+
+Before implementation and the first complete run, v1 froze three immutable container images, five seeds, four fault states, public-input selection, equal-budget comparator rules, exact-control gates, and the core source hash. The services are Keycloak identity lifecycle, MLflow run/artifact lineage, and Qdrant biometric-vector retrieval. The 60-cell matrix contains safe native deletion, a surviving derivative, recovery regeneration, and missing mandatory coverage in every family.
+
+The Qdrant confirmatory split uses five preregistered subjects from public Olivetti Faces, preserving the normalized 64×64 samples as untrained 4,096-dimensional vectors. Keycloak names and MLflow subject commitments are deterministic synthetic inputs. Every HTTP observation is redacted before append-only persistence; a provenance manifest hashes the public asset, all evidence ledgers, trials, and result. An offline verifier reparses the serialized trials, recomputes every gate, and rejects missing, extra, changed, or core-drifted artifacts.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -234,6 +242,7 @@ TRE v1 was committed at `320e437` before solver, runner, verifier, or first resu
 | Mechanism stress, 75 non-complete cases | 0/75 false complete | Typed node state: 75/75 | Shows value of mandatory channel and replay semantics on project-authored faults |
 | Source-locked benchmark, 100 non-complete cases | 0/100; Wilson 95%: 0.0000–0.0370 | Complete typed audit: 0/100 | Passes transfer gate but does not beat the strongest baseline |
 | Source-locked complete cases | 25/25 correct complete | Typed audit: 25/25 | No over-conservative failure on complete cases |
+| Open stock services, 60 cases | 0 false complete; 15/15 coverage faults fail closed; 0 retained loss/recurrence | Native-success: 45 false complete; typed-node audit: 5 | One frozen contract transfers across three live stock families; mappings and faults remain project-authored |
 
 Flat checklist, model-only, and receipt-only methods each produced 100/100 false completes in the source-locked non-complete cases. This establishes that narrow component checks are insufficient. The tie with the complete typed audit is a scientifically important negative result: external-structure transfer is supported, but superiority of PCUG’s composition is not yet independently established.
 
@@ -292,6 +301,10 @@ The strongest current evidence for added composition value remains internal: the
 **Baseline result.** PCUG did not outperform the strongest typed-node audit on the source-locked primary endpoint. Claims of general superiority are unsupported.
 
 **Production transfer.** No Apple Face ID, Kazakhstan eGov, bank, school, border, or government production environment was accessed. Local real-process tests use synthetic identities.
+
+The open-transfer study uses real stock Keycloak, MLflow, and Qdrant processes and public Olivetti
+vectors, but not production records or independently authored faults. It therefore strengthens
+service-family portability without establishing operational deployment or external independence.
 
 **Model scope.** The adaptive MUFAC result follows exposed earlier runs. The sequential Olivetti result was preregistered and first-run, but uses a shallow classifier over frozen embeddings and four no-shadow-model release-difference attacks. Deep end-to-end models, adaptive shadow-model attacks, reconstruction, longer deletion sequences, population shift, and production threat models remain untested.
 

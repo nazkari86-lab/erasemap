@@ -35,6 +35,9 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     msc_path = root / "formal/rse-msc-conformance-v1.json"
     tre_path = root / "outputs/topology-robust-erasure-v1/result.json"
     tre_conformance_path = root / "formal/tre-conformance-v1.json"
+    transfer_path = root / "outputs/open-transfer-v1/result.json"
+    transfer_provenance_path = root / "outputs/open-transfer-v1/PROVENANCE.json"
+    usability_protocol_path = root / "usability/protocol-v1.json"
 
     graph = graph_from_json(example_path.read_text())
     audit = audit_subject(graph, {}, "subject-1", now_epoch=100)
@@ -98,6 +101,38 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     )
     _require_equal(tre_conformance.get("mismatches"), 0, "TRE conformance mismatches")
 
+    transfer = _load_object(transfer_path)
+    transfer_provenance = _load_object(transfer_provenance_path)
+    transfer_artifacts = transfer_provenance.get("artifacts")
+    if not isinstance(transfer_artifacts, dict):
+        raise ValueError("open-transfer provenance artifacts must be an object")
+    observed_transfer_hash = "sha256:" + hashlib.sha256(transfer_path.read_bytes()).hexdigest()
+    _require_equal(
+        observed_transfer_hash,
+        transfer_artifacts.get("result.json"),
+        "open-transfer result hash",
+    )
+    transfer_summary = transfer.get("summary")
+    if not isinstance(transfer_summary, dict):
+        raise ValueError("open-transfer summary must be an object")
+    _require_equal(transfer_summary.get("decision"), "PASS", "open-transfer decision")
+    _require_equal(transfer_summary.get("case_count"), 60, "open-transfer case count")
+    _require_equal(
+        transfer_summary.get("erasemap_false_complete_count"),
+        0,
+        "open-transfer false-complete count",
+    )
+    _require_equal(
+        transfer_summary.get("post_control_recurrence_count"),
+        0,
+        "open-transfer post-control recurrence count",
+    )
+    _require_equal(
+        transfer_summary.get("retained_loss_count"), 0, "open-transfer retained loss"
+    )
+    usability_protocol = _load_object(usability_protocol_path)
+    _require_equal(usability_protocol.get("card_count"), 12, "usability card count")
+
     source_hashes = {
         str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in (
@@ -109,6 +144,9 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             msc_path,
             tre_path,
             tre_conformance_path,
+            transfer_path,
+            transfer_provenance_path,
+            usability_protocol_path,
         )
     }
     speedup = float(systems["paired_speedup_geometric_mean"])
@@ -175,6 +213,43 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
                 "conformance_mismatches": int(tre_conformance["mismatches"]),
                 "records_sha256": str(tre_conformance["records_sha256"]),
             },
+            "open_stock_transfer": {
+                "scope": "PROJECT_AUTHORED_LIVE_STOCK_SERVICES_PUBLIC_OR_SYNTHETIC_INPUTS",
+                "decision": str(transfer_summary["decision"]),
+                "cases": int(transfer_summary["case_count"]),
+                "families": int(transfer_summary["family_count"]),
+                "erasemap_false_complete": int(
+                    transfer_summary["erasemap_false_complete_count"]
+                ),
+                "native_false_complete": int(
+                    transfer_summary["native_false_complete_count"]
+                ),
+                "typed_false_complete": int(
+                    transfer_summary["typed_false_complete_count"]
+                ),
+                "post_control_recurrence": int(
+                    transfer_summary["post_control_recurrence_count"]
+                ),
+                "retained_loss": int(transfer_summary["retained_loss_count"]),
+                "result_sha256": observed_transfer_hash,
+            },
+        },
+        "visual_story": [
+            "1. Запрос: удалить данные одного человека.",
+            "2. Карта: зарегистрировать источники, производные и пути восстановления.",
+            "3. Проверка: наблюдать физические остатки и обязательные verifier-каналы.",
+            "4. Вердикт: COMPLETE, INCOMPLETE или UNVERIFIED.",
+            "5. Контрпример: показать кратчайший оставшийся или восстанавливающий путь.",
+            "6. Действие: выбрать exact minimum-cost control set и повторить replay.",
+            "7. Доказательство: подписать evidence, сохранив внешние ограничения явными.",
+        ],
+        "usability_handoff": {
+            "languages": list(usability_protocol["languages"]),
+            "cards": int(usability_protocol["card_count"]),
+            "human_result_status": "NOT_COLLECTED",
+            "minimum_participants": int(usability_protocol["minimum_participants"]),
+            "packet": "usability/README.md",
+            "external_handoff": "external_transfer/README.md",
         },
         "claim_boundary": {
             "supported": "EraSeMap объединяет зарегистрированные физические артефакты, request-scoped влияние на модель, обязательные verifier-каналы, replay, контрпримеры и минимальную remediation в одном fail-closed контракте.",
@@ -193,7 +268,10 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     formal = evidence["formal_conformance"]
     temporal = evidence["temporal_erasure"]
     robust = evidence["topology_robust_erasure"]
+    transfer = evidence["open_stock_transfer"]
     boundary = report["claim_boundary"]
+    story = report["visual_story"]
+    usability = report["usability_handoff"]
     embedded = html.escape(json.dumps(report, ensure_ascii=False, sort_keys=True))
     path_text = " → ".join(live["shortest_residual_path"])
     return f"""<!doctype html>
@@ -233,7 +311,9 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <strong>Live audit: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
     <p>{html.escape(live["interpretation"])}</p>
   </section>
-  <h2>Пять разных уровней доказательств</h2>
+  <h2>Одна понятная история из семи шагов</h2>
+  <ol>{''.join(f'<li>{html.escape(step)}</li>' for step in story)}</ol>
+  <h2>Шесть разных уровней доказательств</h2>
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
       <p>ложных COMPLETE у PCUG против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у node-only typed audit.</p>
@@ -250,6 +330,12 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <article><div class=\"eyebrow\">Topology-Robust TRE</div><div class=\"metric\">{robust["robust_recurrences"]} / {robust["shifted_cases"]}</div>
       <p>возвратов после robust-плана против {robust["nominal_recurrences"]}/{robust["shifted_cases"]} у nominal MSC; cost {robust["robust_cost"]} против blanket {robust["blanket_cost"]}; conformance {robust["conformance_configurations"]}/4096.</p>
       <div class=\"scope\">{html.escape(robust["scope"])}</div></article>
+    <article><div class=\"eyebrow\">Open stock transfer</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
+      <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; native-success: {transfer["native_false_complete"]}, typed audit: {transfer["typed_false_complete"]}; recurrence {transfer["post_control_recurrence"]}.</p>
+      <div class=\"scope\">{html.escape(transfer["scope"])}</div></article>
+  </section>
+  <section class=\"path\"><strong>Answer-blind handoff</strong>
+    <p>{usability["cards"]} карточек на EN/RU; human result: {html.escape(usability["human_result_status"])}. Пакет готов, но метрики людей не выдуманы.</p>
   </section>
   <section class=\"boundary\">
     <div><h2 class=\"supported\">Что доказано</h2><p>{html.escape(boundary["supported"])}</p></div>

@@ -19,20 +19,20 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 
 | Dimension | Current | Observable evidence | Next score-changing event |
 |---|---:|---|---|
-| Problem clarity | 9.5/10 | `examples/five_branch_system.json` gives a two-node counterexample: `source -> template` | Usability test with judges or operators who can explain the result unaided |
-| Practical relevance | 9.6/10 | Contracts cover source, template, cache, vector store, backup, and model influence | Authorized organization pilot on actual deletion workflow |
-| Narrow scientific novelty | 9.6/10 | Fail-closed PCUG/CDC, temporal RSE/MSC, and topology-robust TRE with explicit prior-art exclusions | Untouched external topology shifts outperform frozen strong baselines |
-| Experimental methodology | 9.8/10 | Frozen protocols, one-shot holdouts, paired bootstrap, retained negative MUFAC result, three prospective first-run studies, and 4,096-case TRE plus 16,384-case MSC conformance | Independently authored preregistered holdout |
-| Scientific claim completion | 9.7/10 | Conditional PCUG/RSE/TRE soundness and exact CDC/MSC/TRE optimality in Lean; measured systems, sequential-release, temporal, and topology-shift results | External hidden challenge plus materially different system replication |
-| Real inputs and transfer | 9.0/10 | Open face datasets, official source structures, real PostgreSQL/Redis/Qdrant processes | Authorized real records or redacted production instrumentation |
+| Problem clarity | 9.6/10 | Seven-step showcase plus 12 aligned EN/RU one-minute cards; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
+| Practical relevance | 9.7/10 | Frozen failures and remediation now execute on stock identity, ML-lineage, and biometric-vector services | Authorized organization pilot on actual deletion workflow |
+| Narrow scientific novelty | 9.7/10 | One frozen fail-closed PCUG/CDC contract transfers across Keycloak, MLflow, and Qdrant while preserving explicit prior-art exclusions | Untouched external topology shifts outperform frozen strong baselines |
+| Experimental methodology | 9.9/10 | Frozen one-shot 60-case stock-service run, raw process evidence, oracle controls, prior prospective studies, and finite conformance audits | Independently authored preregistered holdout |
+| Scientific claim completion | 9.8/10 | Formal PCUG/RSE/TRE results plus measured optimization and frozen three-family transfer PASS | External hidden challenge plus materially different system replication |
+| Real inputs and transfer | 9.4/10 | Public Olivetti vectors and real stock Keycloak/MLflow/Qdrant processes; identities/commitments and faults remain project-authored | Authorized real records or redacted production instrumentation |
 | Independence of evidence | 7.8/10 | Executable signed challenge exists, but `external_results/` has no accepted external result | One verified evaluator passes all 9.5 rubric gates |
 | Formal justification | 9.8/10 | Lean PCUG/RSE/TRE soundness and exact CDC/MSC/TRE results; axiom audit; 3,072 CDC, 16,384 MSC, and 4,096 TRE production/oracle runs | Independent proof review or machine-checked implementation refinement |
-| Engineering | 9.8/10 | Strict typing, tests, coverage, SHA-pinned CI actions, pinned build backend, exact runtime/test constraints, signed evidence and drift checks | Reproducible external deployment or release audit |
-| Reproducibility | 9.8/10 | CI-equivalent clean-worktree release gate, committed protocols, raw hashes, deterministic showcase | Independent clean-machine reproduction |
-| FaceID/eGov/KYC applicability | 9.4/10 | System-neutral typed contract and display adapters | Authorized domain-specific instrumentation and evaluation |
-| Competition presentation readiness | 9.7/10 | Jury showcase, Russian defense script, Q&A, evidence-led slide deck | Timed rehearsal with an unfamiliar reviewer |
+| Engineering | 9.9/10 | Strict typing, digest-pinned stock lifecycle, redacted ledgers, offline tamper checks, signed external handoff, and fail-safe teardown | Reproducible external deployment or release audit |
+| Reproducibility | 9.9/10 | Committed protocol, first-run trials, 9.6 MiB raw evidence, public asset provenance, and standalone offline recomputation | Independent clean-machine reproduction |
+| FaceID/eGov/KYC applicability | 9.5/10 | One contract now runs on stock identity and biometric-vector services, not only display adapters | Authorized domain-specific instrumentation and evaluation |
+| Competition presentation readiness | 9.8/10 | Evidence-bound seven-step showcase, Russian defense/Q&A, and answer-blind bilingual handoff | Timed rehearsal with an unfamiliar reviewer |
 | RKNP competitiveness | 9.8/10 | Formal result plus measured multi-service result satisfy the frozen 9.8 trigger | External PASS or organization confirmation for a defensible 9.9 |
-| ISEF-level readiness | 9.5/10 | Strong contribution, honest limitations, reproducible artifacts, formal and measured results | External PASS raises evidence readiness toward 9.7–9.8 |
+| ISEF-level readiness | 9.6/10 | Formal contribution, first frozen cross-family stock-service result, raw reproducibility, and explicit limitations | External PASS raises evidence readiness toward 9.7–9.8 |
 
 The independence row is deliberately not averaged away. More project-authored code cannot move it
 above 7.8.
@@ -71,6 +71,12 @@ above 7.8.
    at 60, and returned a shift-specific witness in every case. A separate 4,096-configuration
    conformance audit had zero mismatches. The envelope and execution remain project-authored, so
    independence stays 7.8.
+10. **Open stock-service transfer:** a frozen 60-case first run on digest-pinned Keycloak, MLflow,
+    and Qdrant passed every conjunctive gate: 0 EraSeMap false completes, 15/15 coverage faults
+    failed closed, 0 retained loss, 0 post-control recurrence, and 60/60 exact/oracle matches.
+    Native-success made 45 false-complete decisions and typed-node audit made 5. Public Olivetti
+    vectors improve input realism, but mappings, faults, and execution are project-authored; the
+    independence score therefore remains 7.8.
 
 ## Reproduce the jury artifact
 

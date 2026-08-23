@@ -4,7 +4,6 @@ import json
 import re
 from pathlib import Path
 
-
 PROTOCOL = Path("benchmark/open-transfer-v1.json")
 
 

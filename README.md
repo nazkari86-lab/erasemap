@@ -78,6 +78,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
 | Measured multi-service optimization | 20-pair real-process holdout PASS; local synthetic records |
+| Open stock-service transfer v1 | First frozen 60-case run PASS on Keycloak, MLflow, and Qdrant; public Olivetti vectors plus synthetic identities/commitments; project-authored faults |
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
 | Sequential deletion privacy v1 | Preregistered first run PASS: 25 transitions, all six frozen gates; project-authored |
 | Regeneration-Safe Erasure v2 | Preregistered first run PASS: 30/30 risks, 10/10 guarded safe cases, 10/10 coverage faults; project-authored |
@@ -85,6 +86,31 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
+
+## Open stock-service transfer challenge
+
+The first frozen v1 run executed 60 cases across digest-pinned stock Keycloak 26.7.1, MLflow
+3.15.1-full, and Qdrant 1.15.4 processes. Qdrant used five preregistered confirmatory subjects from
+the public Olivetti faces source as untrained 4,096-dimensional vectors; identity names and MLflow
+commitments were deterministic synthetic inputs. EraSeMap produced **0 false-complete decisions**,
+failed closed on all **15/15 coverage faults**, matched a separate exhaustive control oracle
+in **60/60 cases**, and recorded **0 retained-subject losses** and **0 post-control recurrences**.
+Native-success produced 45 false-complete decisions and the full typed-node audit produced 5.
+
+The protocol, first-run trials, redacted HTTP evidence, public-input provenance, immutable image
+digests, and offline verifier are committed under [`outputs/open-transfer-v1/`](outputs/open-transfer-v1/).
+Recompute the result with:
+
+```bash
+PYTHONPATH=src:. .venv/bin/python scripts/verify_open_transfer_v1.py \
+  --result outputs/open-transfer-v1/result.json
+```
+
+This strengthens real-process transfer evidence but does not change the 7.8/10 independence status:
+service selection, adapters, mappings, fault states, and execution were project-authored. The
+answer-blind EN/RU usability packet in [`usability/`](usability/README.md) has no participant result,
+and [`external_transfer/`](external_transfer/README.md) contains a signed handoff rather than a
+fabricated external submission.
 
 ## Source-locked multi-system holdout
 
@@ -323,8 +349,10 @@ python3 -m venv .venv
 ```
 
 One-command release checks are available as `scripts/reproduce_release.sh core`. The core profile
-now mirrors the Python and Lean CI gates, reruns both RSE experiments in temporary directories,
-verifies CDC, MSC, and TRE conformance records, and fails if reproduction changes the worktree. The
-`face-open` profile additionally rebuilds the open face assets and registered face experiments. EraSeMap code
+now mirrors the Python and Lean CI gates, verifies the committed open-transfer result and usability
+kit, reruns both RSE experiments in temporary directories, verifies CDC, MSC, and TRE conformance
+records, and fails if reproduction changes the worktree. The `transfer-live` profile additionally
+runs and independently verifies a fresh 60-case stock-service experiment in a disposable directory;
+the `face-open` profile rebuilds the open face assets and registered face experiments. EraSeMap code
 is MIT licensed; third-party datasets and weights retain their own terms as documented in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

@@ -8,7 +8,14 @@ python_bin="${ERASEMAP_PYTHON:-$project_root/.venv/bin/python}"
 profile="${1:-core}"
 release_temp="$(mktemp -d "${TMPDIR:-/tmp}/erasemap-release.XXXXXX")"
 initial_status="$(git status --porcelain=v1 --untracked-files=all)"
-trap 'rm -rf "$release_temp"' EXIT
+
+cleanup_release_temp() {
+  if [[ -d "$release_temp" ]]; then
+    find "$release_temp" -depth -delete
+  fi
+}
+
+trap cleanup_release_temp EXIT
 
 assert_worktree_unchanged() {
   local final_status
@@ -41,7 +48,7 @@ esac
 "$python_bin" -m pip check
 "$python_bin" scripts/verify_ci_environment.py --constraints "$environment_constraints"
 "$python_bin" -m mypy --strict \
-  src pilot external_challenge external_temporal_challenge
+  src pilot external_challenge external_temporal_challenge external_transfer usability
 "$python_bin" -m pytest \
   --cov=erasemap --cov=external_challenge --cov=external_temporal_challenge --cov=pilot \
   --cov-report=term --cov-fail-under=90
@@ -51,6 +58,8 @@ PYTHONPATH=src "$python_bin" experiments/run_manual_pipeline_benchmark.py \
 "$python_bin" scripts/verify_source_locked_holdout.py
 "$python_bin" scripts/verify_external_freeze.py
 "$python_bin" scripts/verify_sequential_deletion_privacy_v1.py
+"$python_bin" scripts/verify_open_transfer_v1.py
+"$python_bin" -m usability.verify
 PYTHONPATH=src "$python_bin" scripts/verify_measured_multiservice_v1.py
 "$python_bin" scripts/verify_regeneration_safe_erasure_v1.py
 PYTHONPATH=src "$python_bin" experiments/run_regeneration_safe_erasure_v1.py \
@@ -95,8 +104,17 @@ if [[ "$profile" == "core" ]]; then
   assert_worktree_unchanged
   exit 0
 fi
+if [[ "$profile" == "transfer-live" ]]; then
+  PYTHONPATH=src "$python_bin" experiments/run_open_transfer_v1.py \
+    --protocol benchmark/open-transfer-v1.json \
+    --output "$release_temp/open-transfer-v1"
+  PYTHONPATH=src "$python_bin" scripts/verify_open_transfer_v1.py \
+    --result "$release_temp/open-transfer-v1/result.json"
+  assert_worktree_unchanged
+  exit 0
+fi
 if [[ "$profile" != "face-open" ]]; then
-  echo "Unknown profile: $profile (expected core or face-open)" >&2
+  echo "Unknown profile: $profile (expected core, transfer-live, or face-open)" >&2
   exit 2
 fi
 

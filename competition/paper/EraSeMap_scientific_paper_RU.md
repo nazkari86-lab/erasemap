@@ -16,6 +16,8 @@
 
 Topology-Robust Erasure (TRE) усиливает MSC с одной карты до конечного заявленного uncertainty envelope. Его протокол также зафиксирован до реализации. В первом запуске nominal MSC допустил регенерацию в 35/35 topology shifts, тогда как единый exact TRE-план дал 0/35 возвратов, стоил 7 против 60 у blanket destruction и совпал с exhaustive oracle. Production TRE дополнительно совпал с oracle в 4096/4096 систематических конфигураций. Гарантия условна: реальная топология должна входить в заявленный envelope.
 
+Дополнительное пререгистрированное исследование переноса выполнило один frozen-контракт в 60 случаях на digest-pinned stock Keycloak, MLflow и Qdrant. EraSeMap дал 0 ложных COMPLETE, fail-closed обработал 15/15 coverage faults, совпал с отдельным exhaustive control oracle в 60/60 случаях и не допустил retained loss или recurrence после controls. Native-success дал 45 ложных COMPLETE, typed-node snapshot audit — 5. Qdrant использовал заранее выбранные публичные Olivetti face vectors; identities, commitments, mappings, faults и запуск остались авторскими, поэтому это live stock-service transfer, а не независимая или production validation.
+
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
 ## 1. Введение
@@ -225,6 +227,12 @@ Snapshot PCUG baseline закрывает все текущие online residuals
 
 TRE v1 зафиксирован коммитом `320e437` до реализации solver, runner, verifier или первого результата. Nominal scenario содержит backup restore. Семь shifted scenarios добавляют каждое непустое подмножество checkpoint redeployment, legacy import и retry replay; пять frozen seeds дают 35 физических cases. Nominal exact MSC, exact all-scenario TRE и blanket carrier destruction сравниваются с одинаковыми заявленными стоимостями. Gates требуют 35/35 возвратов после nominal-плана, ноль после TRE, ноль oracle mismatches, стоимость 3 для nominal MSC, 7 для TRE, 60 для blanket и shift-specific witness в каждом случае.
 
+### 7.9 Уровень H: перенос на открытые stock-сервисы
+
+До реализации и первого полного запуска v1 зафиксировал три immutable container images, пять seeds, четыре fault states, выбор публичного входа, equal-budget правила comparators, exact-control gates и хэш исходного core. Проверяются lifecycle identities в Keycloak, lineage run/artifact в MLflow и поиск biometric vectors в Qdrant. Матрица из 60 клеток содержит safe native deletion, surviving derivative, recovery regeneration и отсутствие mandatory coverage в каждой семье.
+
+Confirmatory split Qdrant использует пять заранее выбранных субъектов публичного Olivetti Faces: нормализованные изображения 64×64 сохраняются как необученные 4096-мерные векторы. Keycloak names и MLflow subject commitments детерминированно синтетические. Каждое HTTP-наблюдение редактируется до append-only записи; provenance manifest хэширует public asset, evidence ledgers, trials и result. Offline verifier заново разбирает сериализованные trials, пересчитывает gates и отклоняет missing, extra, changed или core-drifted artifacts.
+
 ## 8. Результаты
 
 ### 8.1 Механизм и перенос
@@ -234,6 +242,7 @@ TRE v1 зафиксирован коммитом `320e437` до реализац
 | Stress test, 75 незавершённых случаев | 0/75 ложных COMPLETE | Typed node state: 75/75 | Показывает пользу обязательных каналов и replay на авторских ошибках |
 | Source-locked, 100 незавершённых | 0/100; Wilson 95%: 0,0000–0,0370 | Полный typed audit: 0/100 | Gate переноса пройден, превосходство над сильнейшим baseline не показано |
 | Source-locked, завершённые | 25/25 корректных COMPLETE | Typed audit: 25/25 | Нет лишнего отказа на корректных случаях |
+| Open stock services, 60 случаев | 0 ложных COMPLETE; 15/15 coverage faults fail-closed; 0 retained loss/recurrence | Native-success: 45 ложных COMPLETE; typed-node audit: 5 | Один frozen-контракт перенесён на три live stock-семьи; mappings и faults остаются авторскими |
 
 Flat checklist, model-only и receipt-only дали по 100/100 ложных COMPLETE на незавершённых source-locked случаях. Значит, узкие component checks недостаточны. Ничья с полным typed audit — важный отрицательный результат: перенос на внешние структуры поддержан, но преимущество композиции PCUG ещё не доказано независимо.
 
@@ -292,6 +301,11 @@ TRE закрывает другую границу: план, оптимальн
 **Baseline.** PCUG не превзошёл strongest typed-node audit на primary endpoint source-locked набора. Заявление общего превосходства не поддержано.
 
 **Production transfer.** Apple Face ID, Kazakhstan eGov, банковская, школьная, пограничная или государственная production-инфраструктура не использовалась. Real-process тесты используют синтетические идентичности.
+
+Open-transfer исследование использует реальные stock-процессы Keycloak, MLflow и Qdrant и
+публичные Olivetti vectors, но не production records или независимо созданные faults. Поэтому оно
+усиливает переносимость между service families, не доказывая operational deployment или внешнюю
+независимость.
 
 **Модель.** Адаптивный MUFAC-результат следует за уже раскрытыми запусками. Sequential Olivetti-результат preregistered и first-run, но использует неглубокий classifier над frozen embeddings и четыре release-difference атаки без shadow models. End-to-end deep models, adaptive shadow-model attacks, reconstruction, более длинные последовательности, population shift и production threat models остаются непроверенными.
 

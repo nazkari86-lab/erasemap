@@ -1,0 +1,36 @@
+{
+  "schema_version": "erasemap-ghostgraph-live-v1",
+  "title": "GhostGraph live stock-service transfer v1",
+  "images": {
+    "keycloak": "quay.io/keycloak/keycloak@sha256:f1f1f01e472c8a78df40d8f2a49a925274eda4d3d80d5f6edbb5c880ee3c01c6",
+    "mlflow": "ghcr.io/mlflow/mlflow@sha256:9f9276e57cda1593cfa0fe8519145cd49328e119e85951851b9244e82e3769be",
+    "qdrant": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1",
+    "redis": "redis@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2"
+  },
+  "network_binding": "127.0.0.1 only",
+  "container_prefix": "erasemap-ghostgraph-",
+  "synthetic_subjects_only": true,
+  "observation_timeout_seconds": 120,
+  "cleanup_timeout_seconds": 30,
+  "cases": [
+    {"case_id": "live-multihop", "expected_verdict": "GRAPH_DISCOVERED"},
+    {"case_id": "live-path-equivalent", "expected_verdict": "PATH_CLASS_DISCOVERED"},
+    {"case_id": "live-outside", "expected_verdict": "OUT_OF_HYPOTHESIS"},
+    {"case_id": "live-safe", "expected_verdict": "NO_OBSERVED_RECURRENCE"}
+  ],
+  "gates": {
+    "false_confident_count_max": 0,
+    "planner_oracle_mismatch_count_max": 0,
+    "post_control_recurrence_count_max": 0,
+    "retained_subject_loss_count_max": 0,
+    "cleanup_failure_count_max": 0
+  },
+  "invalid_run_rules": [
+    "mutable or mismatched image reference",
+    "non-loopback port binding",
+    "incomplete native API observation",
+    "container lifecycle or reset failure",
+    "pre-existing output directory"
+  ],
+  "claim_boundary": "Project-operated live transfer over four stock services with synthetic commitments; not an independent evaluator, organization pilot, production FaceID/eGov deployment, or open-world guarantee."
+}

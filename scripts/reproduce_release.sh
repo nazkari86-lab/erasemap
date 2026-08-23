@@ -77,6 +77,14 @@ esac
   --output "$release_temp/tre-v1"
 "$python_bin" scripts/verify_topology_robust_erasure_v1.py \
   --result "$release_temp/tre-v1/result.json"
+"$python_bin" scripts/verify_erasure_tomography_v1.py
+"$python_bin" experiments/run_erasure_tomography_v1.py \
+  --protocol benchmark/erasure-tomography-v1.json \
+  --reveal benchmark/erasure-tomography-v1-reveal.json \
+  --output "$release_temp/erasure-tomography-v1"
+"$python_bin" scripts/verify_erasure_tomography_v1.py \
+  --result "$release_temp/erasure-tomography-v1/result.json"
+"$python_bin" scripts/verify_erasure_tomography_redis_v1.py
 "$python_bin" scripts/verify_formal_conformance.py \
   --expected formal/conformance-v1.json \
   --output "$release_temp/formal-conformance.json"
@@ -86,6 +94,9 @@ esac
 "$python_bin" scripts/verify_tre_conformance.py \
   --expected formal/tre-conformance-v1.json \
   --output "$release_temp/tre-conformance.json"
+"$python_bin" scripts/verify_erasure_tomography_conformance.py \
+  --expected formal/erasure-tomography-conformance-v1.json \
+  --output "$release_temp/erasure-tomography-conformance.json"
 lake build --wfail
 "$python_bin" experiments/run_pcug_mechanism_stress.py \
   --output "$release_temp/pcug-stress.json"
@@ -105,6 +116,15 @@ if [[ "$profile" == "core" ]]; then
   assert_worktree_unchanged
   exit 0
 fi
+if [[ "$profile" == "tomography-redis-live" ]]; then
+  "$python_bin" experiments/run_erasure_tomography_redis_v1.py \
+    --protocol benchmark/erasure-tomography-redis-v1.json \
+    --output "$release_temp/erasure-tomography-redis-v1"
+  "$python_bin" scripts/verify_erasure_tomography_redis_v1.py \
+    --result "$release_temp/erasure-tomography-redis-v1/result.json"
+  assert_worktree_unchanged
+  exit 0
+fi
 if [[ "$profile" == "transfer-live" ]]; then
   "$python_bin" experiments/run_open_transfer_v1.py \
     --protocol benchmark/open-transfer-v1.json \
@@ -115,7 +135,7 @@ if [[ "$profile" == "transfer-live" ]]; then
   exit 0
 fi
 if [[ "$profile" != "face-open" ]]; then
-  echo "Unknown profile: $profile (expected core, transfer-live, or face-open)" >&2
+  echo "Unknown profile: $profile (expected core, tomography-redis-live, transfer-live, or face-open)" >&2
   exit 2
 fi
 

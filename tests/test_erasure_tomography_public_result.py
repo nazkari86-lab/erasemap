@@ -40,4 +40,4 @@ def test_papers_include_tomography_claim_and_limit() -> None:
     assert "### 8.8 Erasure Tomography" in english
     assert "not a new or superior" in english
     assert "### 8.8 Erasure Tomography" in russian
-    assert "а не новый или лучший" in russian
+    assert "а не новый или лучший" in russian  # noqa: RUF001 - intentional Russian text

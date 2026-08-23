@@ -32,7 +32,8 @@ jobs:
       - run: python -m ruff check .
       - run: >-
           python -m mypy --strict
-          src pilot external_challenge external_temporal_challenge external_transfer usability
+          src pilot external_challenge external_temporal_challenge external_transfer
+          external_ghostgraph_challenge usability
       - run: >-
           python -m pytest
           --cov=erasemap --cov=external_challenge --cov=external_temporal_challenge --cov=pilot
@@ -75,6 +76,16 @@ jobs:
           PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
           --result /tmp/erasemap-et-v1/result.json
       - run: python scripts/verify_erasure_tomography_redis_v1.py
+      - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_v1.py
+      - run: >-
+          PYTHONPATH=src:. python experiments/run_ghostgraph_v1.py
+          --protocol benchmark/ghostgraph-v1.json
+          --reveal benchmark/ghostgraph-v1-reveal.json
+          --output /tmp/erasemap-ghostgraph-v1
+      - run: >-
+          PYTHONPATH=src:. python scripts/verify_ghostgraph_v1.py
+          --output /tmp/erasemap-ghostgraph-v1
+      - run: python -m external_ghostgraph_challenge.verify
       - run: >-
           python scripts/verify_formal_conformance.py
           --expected formal/conformance-v1.json
@@ -91,6 +102,10 @@ jobs:
           PYTHONPATH=src python scripts/verify_erasure_tomography_conformance.py
           --expected formal/erasure-tomography-conformance-v1.json
           --output /tmp/erasure-tomography-conformance.json
+      - run: >-
+          PYTHONPATH=src python scripts/verify_ghostgraph_conformance.py
+          --expected formal/ghostgraph-conformance-v1.json
+          --output /tmp/ghostgraph-conformance.json
       - run: python experiments/run_pcug_mechanism_stress.py --output /tmp/pcug-stress.json
       - run: >-
           python external_evaluator/run.py

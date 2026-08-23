@@ -49,7 +49,8 @@ esac
 "$python_bin" -m pip check
 "$python_bin" scripts/verify_ci_environment.py --constraints "$environment_constraints"
 "$python_bin" -m mypy --strict \
-  src pilot external_challenge external_temporal_challenge external_transfer usability
+  src pilot external_challenge external_temporal_challenge external_transfer \
+  external_ghostgraph_challenge usability
 "$python_bin" -m pytest \
   --cov=erasemap --cov=external_challenge --cov=external_temporal_challenge --cov=pilot \
   --cov-report=term --cov-fail-under=90
@@ -85,6 +86,14 @@ esac
 "$python_bin" scripts/verify_erasure_tomography_v1.py \
   --result "$release_temp/erasure-tomography-v1/result.json"
 "$python_bin" scripts/verify_erasure_tomography_redis_v1.py
+"$python_bin" scripts/verify_ghostgraph_v1.py
+"$python_bin" experiments/run_ghostgraph_v1.py \
+  --protocol benchmark/ghostgraph-v1.json \
+  --reveal benchmark/ghostgraph-v1-reveal.json \
+  --output "$release_temp/ghostgraph-v1"
+"$python_bin" scripts/verify_ghostgraph_v1.py \
+  --output "$release_temp/ghostgraph-v1"
+"$python_bin" -m external_ghostgraph_challenge.verify
 "$python_bin" scripts/verify_formal_conformance.py \
   --expected formal/conformance-v1.json \
   --output "$release_temp/formal-conformance.json"
@@ -97,6 +106,9 @@ esac
 "$python_bin" scripts/verify_erasure_tomography_conformance.py \
   --expected formal/erasure-tomography-conformance-v1.json \
   --output "$release_temp/erasure-tomography-conformance.json"
+"$python_bin" scripts/verify_ghostgraph_conformance.py \
+  --expected formal/ghostgraph-conformance-v1.json \
+  --output "$release_temp/ghostgraph-conformance.json"
 lake build --wfail
 "$python_bin" experiments/run_pcug_mechanism_stress.py \
   --output "$release_temp/pcug-stress.json"

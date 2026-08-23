@@ -20,6 +20,13 @@ data recur, refuses to localize when catalogue/sparsity/evidence assumptions fai
 localized mechanism to PCUG/TRE for physical control replay. It is not arbitrary open-world
 discovery.
 
+The new **GhostGraph** layer goes one step further: it actively distinguishes a bounded catalogue of
+hidden recovery graphs from temporal synthetic-subject traces, preserves complete indistinguishable
+classes, detects traces outside the catalogue, and passes justified survivors to TRE controls. The
+preregistered v1 result used 6 adaptive probes instead of 49 exhaustive case-probes, recovered three
+unique graphs and one complete path class, and produced zero false confident outputs. This remains a
+project-authored bounded result, not open-world or production discovery.
+
 ## Quick demonstration
 
 ```bash
@@ -30,6 +37,7 @@ erasemap showcase --repo-root . --output outputs/jury-showcase-v1
 erasemap rse demo --seed 101
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_redis_v1.py
+PYTHONPATH=src:. python scripts/verify_ghostgraph_v1.py
 ```
 
 The fixed example contains an erased enrollment record with one still-active face template, so
@@ -93,6 +101,9 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Topology-Robust Erasure v1 | Preregistered first run PASS: nominal MSC failed under 35/35 shifts, TRE had 0/35 recurrences; finite project-authored envelope |
 | Erasure Tomography v1 | Preregistered bounded first run PASS: 8/8 exact localization, 4/4 negative cases fail-closed, 3 probes versus 4 individual checks; project-authored |
 | Live Redis tomography transfer | Preregistered digest-pinned stock-service PASS: 4/4 exact localization, safe-case PASS, zero false localization/recurrence/retained loss; project-authored workflows |
+| GhostGraph v1 | Preregistered bounded PASS: 3 exact graphs, 1 complete path class, outside/invalid cases fail-closed, 6 adaptive vs 49 exhaustive probes, zero false confidence/oracle mismatch/recurrence/retained loss |
+| GhostGraph live four-service transfer | Protocol committed before runner; execution `NOT_COLLECTED` because Docker was unavailable |
+| External GhostGraph challenge | Seal/blind-run/reveal/Ed25519 verification kit ready; genuine evaluator result `NOT_COLLECTED` |
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |

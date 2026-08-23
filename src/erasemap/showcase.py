@@ -37,6 +37,9 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     tre_conformance_path = root / "formal/tre-conformance-v1.json"
     transfer_path = root / "outputs/open-transfer-v1/result.json"
     transfer_provenance_path = root / "outputs/open-transfer-v1/PROVENANCE.json"
+    ghostgraph_path = root / "outputs/ghostgraph-v1/result.json"
+    ghostgraph_trials_path = root / "outputs/ghostgraph-v1/trials.jsonl"
+    ghostgraph_provenance_path = root / "outputs/ghostgraph-v1/PROVENANCE.json"
     usability_protocol_path = root / "usability/protocol-v1.json"
 
     graph = graph_from_json(example_path.read_text())
@@ -130,6 +133,33 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     _require_equal(
         transfer_summary.get("retained_loss_count"), 0, "open-transfer retained loss"
     )
+    ghostgraph = _load_object(ghostgraph_path)
+    ghostgraph_provenance = _load_object(ghostgraph_provenance_path)
+    ghostgraph_artifacts = ghostgraph_provenance.get("artifacts")
+    if not isinstance(ghostgraph_artifacts, dict):
+        raise ValueError("GhostGraph provenance artifacts must be an object")
+    _require_equal(
+        "sha256:" + hashlib.sha256(ghostgraph_path.read_bytes()).hexdigest(),
+        ghostgraph_artifacts.get("result.json"),
+        "GhostGraph result hash",
+    )
+    _require_equal(
+        "sha256:" + hashlib.sha256(ghostgraph_trials_path.read_bytes()).hexdigest(),
+        ghostgraph_artifacts.get("trials.jsonl"),
+        "GhostGraph trial hash",
+    )
+    ghostgraph_summary = ghostgraph.get("summary")
+    if not isinstance(ghostgraph_summary, dict):
+        raise ValueError("GhostGraph summary must be an object")
+    _require_equal(ghostgraph_summary.get("decision"), "PASS", "GhostGraph decision")
+    _require_equal(ghostgraph_summary.get("false_confident_count"), 0, "GhostGraph false confidence")
+    _require_equal(ghostgraph_summary.get("exact_unique_graph_recovery_count"), 3, "GhostGraph exact recovery")
+    _require_equal(ghostgraph_summary.get("path_class_recovery_count"), 1, "GhostGraph path class")
+    _require_equal(ghostgraph_summary.get("adaptive_probe_count"), 6, "GhostGraph adaptive probes")
+    _require_equal(ghostgraph_summary.get("exhaustive_probe_count"), 49, "GhostGraph exhaustive probes")
+    ghostgraph_trials = [
+        json.loads(line) for line in ghostgraph_trials_path.read_text().splitlines() if line
+    ]
     usability_protocol = _load_object(usability_protocol_path)
     _require_equal(usability_protocol.get("card_count"), 12, "usability card count")
 
@@ -146,6 +176,9 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             tre_conformance_path,
             transfer_path,
             transfer_provenance_path,
+            ghostgraph_path,
+            ghostgraph_trials_path,
+            ghostgraph_provenance_path,
             usability_protocol_path,
         )
     }
@@ -233,15 +266,44 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
                 "retained_loss": int(transfer_summary["retained_loss_count"]),
                 "result_sha256": observed_transfer_hash,
             },
+            "ghostgraph": {
+                "scope": "PROJECT_AUTHORED_PREREGISTERED_BOUNDED_HIDDEN_GRAPHS",
+                "decision": str(ghostgraph_summary["decision"]),
+                "cases": len(ghostgraph_trials),
+                "exact_graphs": int(ghostgraph_summary["exact_unique_graph_recovery_count"]),
+                "path_classes": int(ghostgraph_summary["path_class_recovery_count"]),
+                "false_confident": int(ghostgraph_summary["false_confident_count"]),
+                "adaptive_probes": int(ghostgraph_summary["adaptive_probe_count"]),
+                "exhaustive_probes": int(ghostgraph_summary["exhaustive_probe_count"]),
+                "planner_oracle_mismatches": int(
+                    ghostgraph_summary["planner_oracle_mismatch_count"]
+                ),
+                "post_control_recurrence": int(
+                    ghostgraph_summary["post_control_recurrence_count"]
+                ),
+                "external_status": "NOT_COLLECTED",
+                "trial_timeline": [
+                    {
+                        "case_id": item["case_id"],
+                        "selected_experiments": [
+                            observation["experiment_id"] for observation in item["observations"]
+                        ],
+                        "verdict": item["verdict"],
+                        "surviving_graph_ids": item["surviving_graph_ids"],
+                        "control_ids": item["control_ids"],
+                    }
+                    for item in ghostgraph_trials
+                ],
+            },
         },
         "visual_story": [
             "1. Запрос: удалить данные одного человека.",
-            "2. Карта: зарегистрировать источники, производные и пути восстановления.",
-            "3. Проверка: наблюдать физические остатки и обязательные verifier-каналы.",
-            "4. Вердикт: COMPLETE, INCOMPLETE или UNVERIFIED.",
-            "5. Контрпример: показать кратчайший оставшийся или восстанавливающий путь.",
-            "6. Действие: выбрать exact minimum-cost control set и повторить replay.",
-            "7. Доказательство: подписать evidence, сохранив внешние ограничения явными.",
+            "2. GhostGraph: активно включать допустимые операции и наблюдать временной trace.",
+            "3. Фильтрация: оставить все графы, совместимые с наблюдениями.",
+            "4. Планирование: выбрать exact minimax эксперимент, лучше всего разделяющий графы.",
+            "5. Fail-closed: вернуть граф, полный path/equivalence class, OUT или UNVERIFIED.",
+            "6. Действие: перевести найденные пути в TRE controls и повторить физический replay.",
+            "7. Доказательство: oracle, Lean и hashes; внешний результат явно NOT_COLLECTED.",
         ],
         "usability_handoff": {
             "languages": list(usability_protocol["languages"]),
@@ -252,7 +314,7 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             "external_handoff": "external_transfer/README.md",
         },
         "claim_boundary": {
-            "supported": "EraSeMap объединяет зарегистрированные физические артефакты, request-scoped влияние на модель, обязательные verifier-каналы, replay, контрпримеры и минимальную remediation в одном fail-closed контракте.",
+            "supported": "EraSeMap объединяет зарегистрированные артефакты с активным bounded-поиском скрытых путей восстановления, полными equivalence classes, TRE replay и минимальной remediation в одном fail-closed контракте.",
             "not_supported": "Не заявляются production-внедрение в FaceID/eGov и завершённый независимый hidden challenge.",
             "independence_score": 7.8,
         },
@@ -269,6 +331,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     temporal = evidence["temporal_erasure"]
     robust = evidence["topology_robust_erasure"]
     transfer = evidence["open_stock_transfer"]
+    ghostgraph = evidence["ghostgraph"]
     boundary = report["claim_boundary"]
     story = report["visual_story"]
     usability = report["usability_handoff"]
@@ -313,7 +376,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
   </section>
   <h2>Одна понятная история из семи шагов</h2>
   <ol>{''.join(f'<li>{html.escape(step)}</li>' for step in story)}</ol>
-  <h2>Шесть разных уровней доказательств</h2>
+  <h2>Семь разных уровней доказательств</h2>
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
       <p>ложных COMPLETE у PCUG против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у node-only typed audit.</p>
@@ -333,6 +396,9 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <article><div class=\"eyebrow\">Open stock transfer</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
       <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; native-success: {transfer["native_false_complete"]}, typed audit: {transfer["typed_false_complete"]}; recurrence {transfer["post_control_recurrence"]}.</p>
       <div class=\"scope\">{html.escape(transfer["scope"])}</div></article>
+    <article><div class=\"eyebrow\">GhostGraph</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
+      <p>adaptive против exhaustive probes; exact graphs {ghostgraph["exact_graphs"]}, path classes {ghostgraph["path_classes"]}, false confident {ghostgraph["false_confident"]}; external {ghostgraph["external_status"]}.</p>
+      <div class=\"scope\">{html.escape(ghostgraph["scope"])}</div></article>
   </section>
   <section class=\"path\"><strong>Answer-blind handoff</strong>
     <p>{usability["cards"]} карточек на EN/RU; human result: {html.escape(usability["human_result_status"])}. Пакет готов, но метрики людей не выдуманы.</p>

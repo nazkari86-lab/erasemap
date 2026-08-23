@@ -134,3 +134,18 @@ The first result is deliberately narrow. Its catalogue has four project-authored
 coded baselines also succeed at three in this small domain. The contribution claim is therefore the
 erasure-specific fail-closed composition and demonstrated topology-acquisition layer, not a better
 general group-testing code.
+
+## GhostGraph working contribution boundary
+
+GhostGraph does not claim invention of active causal discovery, intervention design, version-space
+learning, network tomography, system lineage, deletion canaries, temporal reachability, or robust
+control. Its narrower implemented composition is: bounded recovery-graph hypotheses; active
+temporal deletion/recovery interventions; exact full-version-space filtering; one-step minimax
+selection checked by an independently structured oracle; fail-closed graph/path/equivalence-class
+outputs; and translation of every justified survivor into TRE controls followed by physical replay.
+
+The v1 result raises internal scientific completion because protocol, source hashes, stopping rule,
+reveal, and gates were frozen prospectively and the key conditional properties are Lean-checked. It
+does not establish world priority: a systematic multi-database literature and professional patent
+review remains necessary. It also does not raise independence because hypotheses and execution were
+project-authored; the external challenge status is `NOT_COLLECTED`.

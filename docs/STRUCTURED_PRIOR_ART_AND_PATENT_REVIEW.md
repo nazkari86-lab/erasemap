@@ -112,6 +112,18 @@ the exact combination of heterogeneous temporal erasure semantics, fail-closed e
 all-scenario exact stabilization, and a reproducible adversarial witness. That absence is only a
 working novelty boundary, not a priority or freedom-to-operate conclusion.
 
+The GhostGraph extension adds a fourth composition hypothesis:
+
+> Inside a frozen finite recovery-graph grammar, exact temporal interventions can preserve the full
+> version space, select a one-step minimax separating query, fail closed on indistinguishable or
+> outside-catalogue traces, and translate every justified survivor into robust erasure controls.
+
+This does not claim invention of active causal discovery, optimal experiment design, network
+tomography, version spaces, system identification, provenance discovery, canary users, or graph
+repair. The current review has not established that this exact erasure-specific composition is
+absent from every paper or patent claim. The repository therefore claims an implemented working
+composition and testable hypothesis, not world priority, patentability, or freedom to operate.
+
 The project must demonstrate that the composition catches failures missed by strong component
 baselines. The source-locked v1 holdout showed transfer but tied typed-node audit. The separately
 labelled mechanism stress test exposes cases where all physical node states look complete while a
@@ -125,6 +137,10 @@ author and freeze cases containing channel, edge, replay, and hidden-artifact in
 must outperform the strongest complete typed-node/replay baseline on that untouched set. A patent
 professional must conduct jurisdiction-specific claim analysis before any commercialization or
 patent filing.
+
+For GhostGraph, the external author must also choose hidden graph structure and traces without
+seeing project answers. The seal/blind-run/reveal/sign kit is readiness evidence; until a genuine
+bundle passes technical and identity/conflict review, its status remains `NOT_COLLECTED`.
 
 ## Primary links
 

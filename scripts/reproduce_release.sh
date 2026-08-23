@@ -62,12 +62,20 @@ PYTHONPATH=src "$python_bin" experiments/run_regeneration_safe_erasure_v2.py \
   --output "$release_temp/rse-v2"
 "$python_bin" scripts/verify_regeneration_safe_erasure_v2.py \
   --result "$release_temp/rse-v2/result.json"
+"$python_bin" scripts/verify_topology_robust_erasure_v1.py
+PYTHONPATH=src "$python_bin" experiments/run_topology_robust_erasure_v1.py \
+  --output "$release_temp/tre-v1"
+"$python_bin" scripts/verify_topology_robust_erasure_v1.py \
+  --result "$release_temp/tre-v1/result.json"
 "$python_bin" scripts/verify_formal_conformance.py \
   --expected formal/conformance-v1.json \
   --output "$release_temp/formal-conformance.json"
 "$python_bin" scripts/verify_rse_conformance.py \
   --expected formal/rse-msc-conformance-v1.json \
   --output "$release_temp/rse-msc-conformance.json"
+"$python_bin" scripts/verify_tre_conformance.py \
+  --expected formal/tre-conformance-v1.json \
+  --output "$release_temp/tre-conformance.json"
 lake build --wfail
 PYTHONPATH=src "$python_bin" experiments/run_pcug_mechanism_stress.py \
   --output "$release_temp/pcug-stress.json"

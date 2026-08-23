@@ -24,6 +24,11 @@ The machine-checked contribution has two parts:
   feasibility-soundness obligation: the selected registered control set is replay-feasible,
   temporally safe under that explicit obligation, and no more expensive than any other listed
   feasible set. `no_msc_iff_no_feasible_candidate` proves the fail-closed no-plan case.
+- `EraSeMap.ExactTRE.selected_tre_safe_for_every_scenario_and_minimum` lifts the same exact finite
+  selector to one declared topology uncertainty envelope: under an explicit per-scenario soundness
+  obligation, the selected control set is safe for every listed scenario and minimum-cost among
+  all listed robust-feasible candidates. It does not prove that the envelope contains an unknown
+  production topology.
 
 Build locally with the pinned Lean toolchain:
 
@@ -57,3 +62,16 @@ It covers all 16 carrier subsets, all 64 control-permission masks, eight adversa
 catalogues, and both input orders: 16,384 configurations with zero production/oracle differences.
 The exhaustive oracle is separately implemented, but the domain and both implementations remain
 project-authored.
+
+TRE receives a third implementation-conformance gate:
+
+```bash
+python scripts/verify_tre_conformance.py \
+  --expected formal/tre-conformance-v1.json \
+  --output /tmp/tre-conformance.json
+```
+
+It covers eight finite topology envelopes, all 64 permission masks, four adversarial cost
+catalogues, and both input orders: 4,096 configurations with zero production/oracle differences.
+The result is bounded to the enumerated envelope families and does not establish arbitrary
+unknown-transition coverage.

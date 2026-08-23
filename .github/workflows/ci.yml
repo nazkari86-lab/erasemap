@@ -56,6 +56,13 @@ jobs:
       - run: >-
           python scripts/verify_regeneration_safe_erasure_v2.py
           --result /tmp/erasemap-rse-v2/result.json
+      - run: python scripts/verify_topology_robust_erasure_v1.py
+      - run: >-
+          PYTHONPATH=src python experiments/run_topology_robust_erasure_v1.py
+          --output /tmp/erasemap-tre-v1
+      - run: >-
+          python scripts/verify_topology_robust_erasure_v1.py
+          --result /tmp/erasemap-tre-v1/result.json
       - run: >-
           python scripts/verify_formal_conformance.py
           --expected formal/conformance-v1.json
@@ -64,6 +71,10 @@ jobs:
           python scripts/verify_rse_conformance.py
           --expected formal/rse-msc-conformance-v1.json
           --output /tmp/rse-msc-conformance.json
+      - run: >-
+          python scripts/verify_tre_conformance.py
+          --expected formal/tre-conformance-v1.json
+          --output /tmp/tre-conformance.json
       - run: python experiments/run_pcug_mechanism_stress.py --output /tmp/pcug-stress.json
       - run: >-
           python external_evaluator/run.py

@@ -20,6 +20,11 @@ inference, deletion receipts, or biometric governance. Those components have sub
   representation erasure; adaptive stopping is therefore outside the PCUG novelty claim.
 - [OriginBlame](https://arxiv.org/abs/2607.13037) connects provenance to precise forget-set
   construction; provenance-guided record selection is also outside the PCUG novelty claim.
+- [Robust uncertain set covering](https://optimization-online.org/2013/06/3926/) formalizes
+  minimum-cost covering under uncertainty; robust optimization itself is outside the TRE claim.
+- [OneTrust's deletion-testing patent](https://patents.google.com/patent/US20210406398A1/en)
+  describes test data subjects, unique tokens, and post-deletion interactions. Synthetic deletion
+  canaries are therefore outside the novelty claim.
 
 The research contribution being tested is narrower: a fail-closed, typed residual-path auditor
 that connects operational biometric copies (source, template, index, cache, backup, model, receipt)
@@ -68,3 +73,17 @@ Passing the controlled simulator can support only a statement about its register
 semantics. External generalization requires separately sourced locked evidence. FaceID/eGov claims
 require authorized production instrumentation; application-style labels are not production evidence
 and are not independent scientific datasets.
+
+## TRE working contribution boundary
+
+Topology-Robust Erasure does not claim invention of uncertainty sets, robust set cover, robust
+network interdiction, topology mutation, temporal reachability, tombstones, or synthetic deletion
+tests. Its narrower hypothesis is that a subject-scoped RSE contract can select one exact
+minimum-cost control set that passes fail-closed replay across every topology in a declared finite
+uncertainty envelope, while returning a shortest adversarial regeneration witness and an explicit
+robustness premium relative to nominal MSC.
+
+The first prospective result supports only the eight project-authored scenarios and declared cost
+catalogue. It cannot be generalized to arbitrary missing transitions or used as evidence that an
+external system lies inside the envelope. A broader novelty claim still requires independent cases
+and a professional patent search.

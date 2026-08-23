@@ -14,6 +14,8 @@
 
 Расширение Regeneration-Safe Erasure (RSE) проверяет другой отказ: отсутствующие сейчас данные могут вернуться после восстановления backup, legacy import, replay очереди или повторного развёртывания checkpoint. Multi-path протокол v2 был публично зафиксирован до реализации. Первый запуск обнаружил 30/30 зарегистрированных временных рисков, подтвердил 10/10 безопасных guarded случаев, fail-closed обработал 10/10 дефектов coverage и дал 0/30 физических повторных появлений после точного Minimal Stabilization Cut (MSC). Lean проверяет условную безопасность и минимальную стоимость MSC, а production branch-and-bound совпал с отдельным exhaustive oracle в 16 384/16 384 конфигурациях конечной области. Это project-authored prospective и verification evidence, а не независимый или production-результат.
 
+Topology-Robust Erasure (TRE) усиливает MSC с одной карты до конечного заявленного uncertainty envelope. Его протокол также зафиксирован до реализации. В первом запуске nominal MSC допустил регенерацию в 35/35 topology shifts, тогда как единый exact TRE-план дал 0/35 возвратов, стоил 7 против 60 у blanket destruction и совпал с exhaustive oracle. Production TRE дополнительно совпал с oracle в 4096/4096 систематических конфигураций. Гарантия условна: реальная топология должна входить в заявленный envelope.
+
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
 ## 1. Введение
@@ -40,21 +42,26 @@ Machine unlearning изучает устранение влияния обуча
 
 **Гипотеза H3.** В зарегистрированной временной топологии RSE отличает latent carriers, способные вернуть остаток, от carriers с корректными guards, тогда как snapshot-only и blanket-carrier baselines ошибаются на разных сторонах этого различия. Нулевая гипотеза: RSE не улучшает одновременно обнаружение риска и specificity безопасных случаев.
 
+**Гипотеза H4.** В конечном заявленном topology envelope единый exact TRE-план предотвращает каждый зарегистрированный путь регенерации с меньшей заявленной стоимостью, чем blanket destruction, тогда как nominal MSC может провалиться после topology shift. Нулевая гипотеза: robust replay не даёт преимущества по безопасности и стоимости.
+
 Задачи работы: формализовать завершённость удаления; реализовать evaluator и optimizer; машинно проверить ограниченные гарантии; сравнить фиксированные baselines; измерить систему с реальными процессами; явно определить границу внешней валидности.
 
-Ограниченный вклад работы состоит из пяти частей:
+Ограниченный вклад работы состоит из шести частей:
 
 1. Типизированная модель остаточных путей, в которой физические объекты, влияние на модель, неизвестное доказательство и блокировка политикой имеют разные смыслы.
 2. Трёхзначное правило завершения, работающее fail-closed, возвращающее кратчайший контрпример и требующее успешного replay после исправления.
 3. Конечная задача минимального CDC с машинно проверенной теоремой оптимальности и сопоставлением исполняемого алгоритма с полным перебором.
 4. Многоуровневая оценка на контролируемых ошибках, официальных внешних структурах, реальных локальных сервисах и ограниченном канале face unlearning с сохранением отрицательных результатов и границ независимости.
 5. Временной слой RSE, вычисляющий registered reachable closure, кратчайший regeneration witness, fail-closed transition coverage и точный минимальный стабилизирующий разрез.
+6. Topology-robust слой TRE, выбирающий единый минимальный план по конечному uncertainty envelope и возвращающий кратчайший adversarial witness и robustness premium относительно nominal MSC.
 
 ## 2. Предшествующие работы и граница новизны
 
 Cao и Yang сформулировали machine unlearning как удаление данных и их lineage из обучающихся систем [1]. Bourtoule и соавторы предложили SISA для снижения стоимости переобучения путём изоляции состояния обучения [2]. Sommer и соавторы описали проверку unlearning как статистическую проверку гипотез [3]. Weng и соавторы предложили algorithm-level proof of unlearning с аутентифицированным lineage [4], а Eisenhofer и соавторы исследовали криптографически проверяемое unlearning [5]. Chourasia и Shah показали, что сходство с переобучением само по себе не даёт полной гарантии приватности, особенно при последовательных публикациях моделей [6]. Zhang и соавторы продемонстрировали возможность обхода некоторых проверок нечестным провайдером [7]. Koloskova и соавторы разработали certified unlearning нейросетей в отдельной формальной модели гарантий [8]. Стандарт W3C PROV задаёт словарь сущностей, действий, агентов и происхождения [9].
 
 Поэтому EraSeMap **не** заявляет изобретение provenance-графов, обхода lineage, machine unlearning, exact retraining, доказательств удаления, цифровых подписей, кратчайших путей, set cover или minimum cut. Патентный обзор также выявил более ранние решения для lineage-aware удаления, производных хранилищ, резервных копий и аудируемого подтверждения [10–12].
+
+Robust и probabilistic set covering уже решают задачи покрытия при неопределённости [17]. Synthetic test subjects и проверки уникальных deletion tokens также присутствуют в патентных claims [18]. Поэтому TRE не заявляет изобретение robust optimization или deletion canaries; рабочий вклад — их ограниченная композиция с temporal subject erasure, fail-closed scenario evidence, exact all-scenario replay и adversarial regeneration witness.
 
 Рабочая граница новизны — проверяемая композиция:
 
@@ -151,7 +158,7 @@ UNKNOWN не превращается в успех. Это отсутствую
 
 *Схема доказательства.* Селектор проходит конечный список и хранит самый дешёвый допустимый набор среди уже просмотренных. Инвариант верен до первого элемента и сохраняется после каждого сравнения. После окончания сохранённый набор допустим и дешевле либо равен любому допустимому набору списка. Ч.Т.Д.
 
-Lean 4.33.1 проверяет результаты без `sorry` и `admit`. Для MSC теорема `selected_msc_safe_and_minimum` доказывает: если replay feasibility корректно влечёт temporal safety, выбранный зарегистрированный набор controls безопасен и не дороже любого другого feasible набора; отдельная no-plan theorem сохраняет fail-closed поведение. Теоремы относятся к абстрактному ядру, но не доказывают семантику Python, корректность драйверов или обнаружение реальной топологии. Поэтому производственные Python-селекторы отдельно сравниваются с полными oracles.
+Lean 4.33.1 проверяет результаты без `sorry` и `admit`. Для MSC теорема `selected_msc_safe_and_minimum` доказывает: если replay feasibility корректно влечёт temporal safety, выбранный зарегистрированный набор controls безопасен и не дороже любого другого feasible набора; отдельная no-plan theorem сохраняет fail-closed поведение. Для TRE теорема `selected_tre_safe_for_every_scenario_and_minimum` доказывает безопасность в каждом listed scenario и минимальность среди robust-feasible candidates при соответствующей soundness obligation. Теоремы относятся к абстрактному ядру, но не доказывают семантику Python, корректность драйверов, обнаружение реальной топологии или принадлежность реальной топологии uncertainty envelope. Поэтому производственные Python-селекторы отдельно сравниваются с полными oracles.
 
 ### 5.3 Временная композиция
 
@@ -214,6 +221,10 @@ RSE v2 зафиксирован коммитом `110bb63` до реализац
 
 Snapshot PCUG baseline закрывает все текущие online residuals и проходит обязательный absence channel, но не имеет семантики будущих переходов. Blanket-carrier baseline отклоняет любой latent carrier независимо от guards. Primary gates требуют 30/30 RSE risk detections, 10/10 safe specificity, 10/10 coverage fail-closed, ноль физических повторных появлений после MSC, ноль exact/oracle mismatches и стоимость выбранного контроля не выше 7.
 
+### 7.8 Уровень G: preregistered topology-robust erasure
+
+TRE v1 зафиксирован коммитом `320e437` до реализации solver, runner, verifier или первого результата. Nominal scenario содержит backup restore. Семь shifted scenarios добавляют каждое непустое подмножество checkpoint redeployment, legacy import и retry replay; пять frozen seeds дают 35 физических cases. Nominal exact MSC, exact all-scenario TRE и blanket carrier destruction сравниваются с одинаковыми заявленными стоимостями. Gates требуют 35/35 возвратов после nominal-плана, ноль после TRE, ноль oracle mismatches, стоимость 3 для nominal MSC, 7 для TRE, 60 для blanket и shift-specific witness в каждом случае.
+
 ## 8. Результаты
 
 ### 8.1 Механизм и перенос
@@ -252,6 +263,12 @@ MUFAC v3.2 прошёл все неизменённые gates. Retained verifica
 
 Single-carrier cases выбрали локальные controls стоимостью 2–5. Mixed cases выбрали общий persistent tombstone стоимостью **7**, тогда как четыре раздельных фильтра стоили 14, а destroy-all — 60. Physical replay после MSC дал **0/30** повторных появлений. Помимо 30 prospective cases, branch-and-bound MSC совпал с отдельно реализованным exhaustive oracle в **16 384/16 384** детерминированных конфигурациях: все 16 carrier subsets, все 64 permission masks, восемь adversarial cost catalogues и оба input order.
 
+### 8.7 Topology-Robust Erasure
+
+Первый prospective TRE run прошёл все frozen gates. Backup-only nominal MSC выбрал path filter стоимостью **3**. После каждого из 35 frozen topology shifts минимум один добавленный carrier обошёл этот фильтр и физически восстановил данные субъекта: **35/35** возвратов. TRE выбрал единый persistent subject tombstone стоимостью **7**, вернул shift-specific adversarial witness в **35/35** случаях и дал **0/35** повторных появлений после контроля. Blanket destruction стоил 60, поэтому заявленный robustness premium относительно nominal MSC равен 4, а экономия относительно blanket action — 53.
+
+Production TRE совпал с отдельно реализованным exhaustive oracle в prospective run и в **4096/4096** детерминированных конфигураций: восемь uncertainty envelopes, все 64 permission masks, четыре adversarial cost catalogues и оба input order.
+
 ## 9. Обсуждение
 
 Практический результат — не только обнаружение ошибки. Полезная система удаления должна в одной воспроизводимой цепочке ответить: что осталось; почему завершение заблокировано; какой самый дешёвый разрешённый набор действий действительно приводит к завершению. Остаточный путь отвечает на первые два вопроса, CDC и replay — на третий.
@@ -261,6 +278,8 @@ Single-carrier cases выбрали локальные controls стоимост
 Формальная теорема уточняет, но не устраняет операционный риск. Она показывает корректность COMPLETE **при условии**, что топология представляет реальные остатки, а локальные проверки корректны. Эти условия становятся deployment obligations, которые можно назначить ответственным и тестировать. Теорема не делает невидимую инфраструктуру видимой.
 
 RSE добавляет временное измерение к тому же принципу. Recoverable carrier не обязательно является текущим residual, а текущее отсутствие не обязательно стабильно. Кратчайший regeneration witness объясняет, как обычная будущая операция возвращает субъекта; MSC отделяет безопасное guarded retention от разрушения carrier.
+
+TRE закрывает другую границу: план, оптимальный для одной nominal-карты, может оказаться хрупким при развитии системы. Один план по явному scenario envelope делает эту неопределённость проверяемой и измеряет её стоимость, но не превращает конечные сценарии в знание произвольной скрытой инфраструктуры.
 
 Сильнейшее текущее доказательство дополнительной ценности композиции остаётся внутренним: stress set специально создан для mandatory channels и replay. На внешних структурах сильнейший typed audit не проиграл. Поэтому решающий следующий эксперимент — не новая функция и не увеличенный авторский simulator, а independently authored hidden challenge с взаимодействиями edge, channel, replay и hidden artifact, однократно запущенный против frozen evaluator.
 
@@ -280,6 +299,8 @@ RSE добавляет временное измерение к тому же п
 
 **Временная область.** RSE v2 использует четыре project-authored family carriers, детерминированные синтетические vectors, заявленные стоимости и локальные adapters. Он не доказывает наблюдение неизвестных будущих операций или organization-wide transition coverage. Snapshot PCUG и RSE отвечают на разные claims; v2 comparison нельзя представлять как общий провал PCUG.
 
+**Область topology uncertainty.** TRE использует восемь project-authored scenarios, каталог из трёх optional transitions и заявленные стоимости. Solver видит полный конечный envelope до выбора. Ноль возвратов внутри envelope не доказывает безопасность вне него или вероятность соответствия ему реальной организации.
+
 **Поиск новизны.** Обзор структурирован, но не является полным systematic review или юридическим freedom-to-operate заключением. Новые работы и патенты могут сузить claim.
 
 ## 11. Этика и ответственное применение
@@ -297,6 +318,8 @@ python -m pytest
 lake build
 python scripts/verify_formal_conformance.py --expected formal/conformance-v1.json --output /tmp/formal-conformance.json
 python scripts/verify_rse_conformance.py --expected formal/rse-msc-conformance-v1.json --output /tmp/rse-msc-conformance.json
+python scripts/verify_topology_robust_erasure_v1.py
+python scripts/verify_tre_conformance.py --expected formal/tre-conformance-v1.json
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
@@ -307,7 +330,7 @@ scripts/reproduce_release.sh core
 
 ## 13. Заключение
 
-EraSeMap показывает практический и математически явный подход к аудиту удаления биометрии в неоднородной инфраструктуре и будущих зарегистрированных операциях. Запрос превращается в задачу остаточных путей и temporal reachability; COMPLETE — в совместное условие закрытия путей, положительного обязательного evidence и стабильности зарегистрированных переходов; исправление — в минимальную по стоимости задачу действий, результат которой должен пройти replay. Абстрактные гарантии машинно проверены, оптимизаторы совпадают с exhaustive oracles, реальные локальные сервисы показывают значительное снижение работы, а влияние на модель оценивается ограниченным количественным gate с exact fallback.
+EraSeMap показывает практический и математически явный подход к аудиту удаления биометрии в неоднородной инфраструктуре, будущих зарегистрированных операциях и ограниченном множестве правдоподобных topology shifts. Запрос превращается в задачу остаточных путей и temporal reachability; COMPLETE — в совместное условие закрытия путей, положительного обязательного evidence и стабильности зарегистрированных переходов; исправление — в минимальную по стоимости задачу действий, результат которой должен пройти replay. TRE дополнительно требует, чтобы один набор действий прошёл каждый заявленный topology scenario. Абстрактные гарантии машинно проверены, оптимизаторы совпадают с exhaustive oracles, реальные локальные сервисы показывают значительное снижение работы, а влияние на модель оценивается ограниченным количественным gate с exact fallback.
 
 Доказательства поддерживают воспроизводимость, внутреннюю корректность и реализуемость. Они ещё не устанавливают независимое превосходство или production-wide удаление. Сильнейший следующий результат — independently authored frozen hidden challenge, затем авторизованный pilot организации. Сохранение этой границы делает текущий claim научно защищаемым.
 
@@ -345,6 +368,10 @@ EraSeMap показывает практический и математичес
 
 [16] UK Patent Application GB2562767A. Right to erasure compliant back-up, 2018.
 
+[17] Degel D., Lutter P. A Robust Formulation of the Uncertain Set Covering Problem. Optimization Online, 2013.
+
+[18] U.S. Patent Application US20210406398A1. Data Processing Systems for Data Testing to Confirm Data Deletion and Related Methods, 2021.
+
 ## Приложение A. Обозначения
 
 | Символ | Значение |
@@ -363,6 +390,7 @@ EraSeMap показывает практический и математичес
 | FCR | Доля ложных COMPLETE |
 | Reach(q₀,δ) | Состояния, достижимые после удаления по зарегистрированным переходам |
 | MSC | Минимальный стабилизирующий разрез, блокирующий все зарегистрированные regeneration witnesses |
+| TRE | Topology-Robust Erasure: единый exact-план для каждой топологии заявленного uncertainty envelope |
 
 ## Приложение B. Карта claim–evidence
 
@@ -371,6 +399,7 @@ EraSeMap показывает практический и математичес
 | Replayed COMPLETE условно корректен | Lean theorem с явными assumptions | Не доказывает topology discovery и drivers |
 | Exact CDC минимален среди перечисленных кандидатов | Lean finite optimality theorem | Только конечный зарегистрированный набор |
 | Exact MSC безопасен и минимален в registered temporal semantics | Lean conditional theorem; 16 384/16 384 Python/oracle конфигураций | Зависит от transition coverage и feasibility soundness |
+| Exact TRE безопасен и минимален по заявленному envelope | Lean conditional theorem; 4096/4096 Python/oracle конфигураций | Зависит от all-scenario feasibility soundness и envelope membership |
 | Python exact CDC реализует контракт | 3072/3072 совпадений с oracle | Bounded conformance, не formal Python semantics |
 | Mandatory channels закрывают blind spot typed-node | 0/75 против 75/75 | Авторское development evidence |
 | PCUG переносится на официальные структуры | 0/100 ложных COMPLETE; 25/25 COMPLETE | Strongest typed baseline разделил результат; mappings внутренние |
@@ -378,3 +407,4 @@ EraSeMap показывает практический и математичес
 | Adaptive face candidate проходит frozen gates | −0,00653 AUC; 1,593×; privacy upper CI 0,04091 | Post-exposure результат; exact fallback обязателен |
 | Sequential deletion candidate проходит шесть frozen gates | 25 переходов; худшая retained accuracy −0,00952; privacy upper CI 0,00624 | First-run preregistered, но project-authored и без shadow models |
 | RSE отличает будущий риск от guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC повторов | Prospective, но project-authored local multi-path lab |
+| TRE переживает frozen topology shifts | Nominal 35/35 возвратов; TRE 0/35; стоимость 7 против blanket 60 | Prospective, но finite visible project-authored envelope |

@@ -29,6 +29,7 @@ checked page by page.
 
 The paper reports project-authored mechanism evidence, independently sourced but project-mapped
 structures, formal Lean results, local real-process measurements, a post-exposure adaptive model
-result, and a first-run preregistered sequential-release result as separate evidence layers. It does
-not claim certified privacy, an independently authored hidden challenge, or a production
-FaceID/eGov/government deployment.
+result, first-run preregistered sequential-release and temporal results, and the finite-envelope TRE
+result as separate evidence layers. It does not claim certified privacy, arbitrary unknown-topology
+coverage, an independently authored hidden challenge, or a production FaceID/eGov/government
+deployment.

@@ -33,6 +33,8 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     formal_path = root / "formal/conformance-v1.json"
     rse_path = root / "outputs/regeneration-safe-erasure-v2/result.json"
     msc_path = root / "formal/rse-msc-conformance-v1.json"
+    tre_path = root / "outputs/topology-robust-erasure-v1/result.json"
+    tre_conformance_path = root / "formal/tre-conformance-v1.json"
 
     graph = graph_from_json(example_path.read_text())
     audit = audit_subject(graph, {}, "subject-1", now_epoch=100)
@@ -75,10 +77,39 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     msc = _load_object(msc_path)
     _require_equal(msc.get("configurations"), 16384, "MSC conformance configurations")
     _require_equal(msc.get("mismatches"), 0, "MSC conformance mismatches")
+    tre = _load_object(tre_path)
+    _require_equal(tre.get("passed"), True, "TRE v1 decision")
+    tre_metrics = tre.get("metrics")
+    if not isinstance(tre_metrics, dict):
+        raise ValueError("TRE v1 metrics must be an object")
+    _require_equal(
+        tre_metrics.get("nominal_plan_regeneration_count"),
+        35,
+        "TRE nominal-plan recurrences",
+    )
+    _require_equal(
+        tre_metrics.get("tre_post_control_regeneration_count"),
+        0,
+        "TRE post-control recurrences",
+    )
+    tre_conformance = _load_object(tre_conformance_path)
+    _require_equal(
+        tre_conformance.get("configurations"), 4096, "TRE conformance configurations"
+    )
+    _require_equal(tre_conformance.get("mismatches"), 0, "TRE conformance mismatches")
 
     source_hashes = {
         str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in (example_path, stress_path, systems_path, formal_path, rse_path, msc_path)
+        for path in (
+            example_path,
+            stress_path,
+            systems_path,
+            formal_path,
+            rse_path,
+            msc_path,
+            tre_path,
+            tre_conformance_path,
+        )
     }
     speedup = float(systems["paired_speedup_geometric_mean"])
     speedup_ci = [float(value) for value in systems["paired_speedup_bootstrap_ci95"]]
@@ -127,6 +158,23 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
                 "conformance_mismatches": int(msc["mismatches"]),
                 "records_sha256": str(msc["records_sha256"]),
             },
+            "topology_robust_erasure": {
+                "scope": "PROJECT_AUTHORED_PROSPECTIVE_FINITE_ENVELOPE",
+                "scenarios": int(tre_metrics["scenario_count"]),
+                "shifted_cases": int(tre_metrics["shifted_case_count"]),
+                "nominal_recurrences": int(
+                    tre_metrics["nominal_plan_regeneration_count"]
+                ),
+                "robust_recurrences": int(
+                    tre_metrics["tre_post_control_regeneration_count"]
+                ),
+                "nominal_cost": int(tre_metrics["nominal_selected_cost"]),
+                "robust_cost": int(tre_metrics["tre_selected_cost"]),
+                "blanket_cost": int(tre_metrics["blanket_baseline_cost"]),
+                "conformance_configurations": int(tre_conformance["configurations"]),
+                "conformance_mismatches": int(tre_conformance["mismatches"]),
+                "records_sha256": str(tre_conformance["records_sha256"]),
+            },
         },
         "claim_boundary": {
             "supported": "EraSeMap объединяет зарегистрированные физические артефакты, request-scoped влияние на модель, обязательные verifier-каналы, replay, контрпримеры и минимальную remediation в одном fail-closed контракте.",
@@ -144,6 +192,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     systems = evidence["measured_multiservice"]
     formal = evidence["formal_conformance"]
     temporal = evidence["temporal_erasure"]
+    robust = evidence["topology_robust_erasure"]
     boundary = report["claim_boundary"]
     embedded = html.escape(json.dumps(report, ensure_ascii=False, sort_keys=True))
     path_text = " → ".join(live["shortest_residual_path"])
@@ -184,7 +233,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <strong>Live audit: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
     <p>{html.escape(live["interpretation"])}</p>
   </section>
-  <h2>Четыре разных уровня доказательств</h2>
+  <h2>Пять разных уровней доказательств</h2>
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
       <p>ложных COMPLETE у PCUG против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у node-only typed audit.</p>
@@ -198,6 +247,9 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <article><div class=\"eyebrow\">Temporal RSE / MSC</div><div class=\"metric\">{temporal["risk_detections"]} / 30</div>
       <p>рисков обнаружено; safe {temporal["safe_specificity"]}/10, post-MSC recurrence {temporal["post_msc_recurrences"]}; conformance {temporal["conformance_configurations"]}/16384.</p>
       <div class=\"scope\">{html.escape(temporal["scope"])}</div></article>
+    <article><div class=\"eyebrow\">Topology-Robust TRE</div><div class=\"metric\">{robust["robust_recurrences"]} / {robust["shifted_cases"]}</div>
+      <p>возвратов после robust-плана против {robust["nominal_recurrences"]}/{robust["shifted_cases"]} у nominal MSC; cost {robust["robust_cost"]} против blanket {robust["blanket_cost"]}; conformance {robust["conformance_configurations"]}/4096.</p>
+      <div class=\"scope\">{html.escape(robust["scope"])}</div></article>
   </section>
   <section class=\"boundary\">
     <div><h2 class=\"supported\">Что доказано</h2><p>{html.escape(boundary["supported"])}</p></div>

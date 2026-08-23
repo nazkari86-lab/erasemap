@@ -56,3 +56,26 @@ method-improvement после exposure, а не новым независимы�
 Авторизованная topology registration, sound drivers для каждого хранилища, trusted key management,
 проверка freshness/replay, redacted signed evidence и внешний production pilot как минимум на двух
 независимо сохраняемых системах.
+
+## «Разве TRE не решает проблему неполной топологии полностью?»
+
+Нет. TRE гарантирует безопасность только для конечного uncertainty envelope, объявленного до
+выбора плана. Если реальная топология находится вне envelope, гарантия не действует. Новое свойство
+состоит в том, что один exact-план проходит каждый допустимый сценарий и явно показывает цену
+устойчивости, а не в магическом обнаружении неизвестных сервисов.
+
+## «Robust optimization уже существует — где тогда новизна TRE?»
+
+Robust set cover, uncertainty sets и network interdiction не новые и прямо исключены из claim.
+Рабочая новизна — проверяемая композиция с subject-scoped temporal erasure: fail-closed coverage,
+реальный replay heterogeneous carriers, shortest adversarial regeneration witness, единый exact
+control set и robustness premium относительно nominal MSC. Это working contribution, а не
+заявление мирового приоритета.
+
+## «Почему nominal MSC провалился 35 из 35 — baseline искусственно ослаблен?»
+
+Nominal MSC не ошибочен: он оптимален для заранее объявленной backup-only топологии и выбирает
+дешёвый backup filter. Shifted cases проверяют другой вопрос — что происходит после добавления
+пути, которого не было в nominal map. TRE заранее получает конечный envelope и платит на 4
+условные единицы больше, чтобы защитить все его варианты. Blanket baseline также защищает их, но
+стоит 60 вместо 7.

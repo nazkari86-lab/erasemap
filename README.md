@@ -81,6 +81,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
 | Sequential deletion privacy v1 | Preregistered first run PASS: 25 transitions, all six frozen gates; project-authored |
 | Regeneration-Safe Erasure v2 | Preregistered first run PASS: 30/30 risks, 10/10 guarded safe cases, 10/10 coverage faults; project-authored |
+| Topology-Robust Erasure v1 | Preregistered first run PASS: nominal MSC failed under 35/35 shifts, TRE had 0/35 recurrences; finite project-authored envelope |
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
@@ -163,6 +164,11 @@ adversarial cost catalogues, and two input orders: **16,384/16,384** configurati
 [`docs/SCIENTIFIC_CLAIM_MATRIX.md`](docs/SCIENTIFIC_CLAIM_MATRIX.md). This is bounded conformance,
 not independent evaluation or proof that an external topology is complete.
 
+The TRE layer selects one control set across a finite declared topology uncertainty envelope.
+Lean conditionally proves all-scenario safety and minimum cost; production branch-and-bound matched
+a separate exhaustive oracle in **4,096/4,096** envelope/cost/permission/order configurations. This
+does not prove that the declared envelope contains an arbitrary real topology.
+
 The preregistered sequential-deletion privacy v1 experiment passed all six frozen gates on its
 first run: 25/25 deleted classifier classes were absent, the worst retained-accuracy difference
 from exact retraining was −0.00952, the worst forgotten-verification AUC gap was 0.00395, and the
@@ -201,6 +207,27 @@ current absence but missed all 30 later replays; a blanket-carrier audit rejecte
 guarded cases. This distinguishes a snapshot property from a registered temporal invariant rather
 than claiming that ordinary PCUG ignores active backups. See
 [`docs/REGENERATION_SAFE_ERASURE_V2_REPORT.md`](docs/REGENERATION_SAFE_ERASURE_V2_REPORT.md).
+
+## Topology-Robust Erasure
+
+Ordinary MSC is exact for one registered map. TRE asks for one minimum-cost permitted control set
+that passes the same temporal replay in every topology inside a finite, preregistered uncertainty
+envelope. It also reports the shortest topology-shift witness and the declared robustness premium
+over nominal MSC.
+
+The first frozen experiment used eight scenarios: a nominal backup topology and all subsets of
+three additional paths—legacy import, retry replay, and checkpoint redeployment. Across 35 physical
+shifted cases, nominal MSC cost 3 and regenerated data in 35/35; TRE selected the shared tombstone
+at cost 7, regenerated data in 0/35, and remained 53 declared cost units cheaper than blanket
+carrier destruction. All frozen gates passed, but the envelope and execution are project-authored.
+See [`docs/TOPOLOGY_ROBUST_ERASURE_V1_REPORT.md`](docs/TOPOLOGY_ROBUST_ERASURE_V1_REPORT.md).
+
+```bash
+PYTHONPATH=src python experiments/run_topology_robust_erasure_v1.py \
+  --output /tmp/erasemap-tre-v1
+python scripts/verify_topology_robust_erasure_v1.py \
+  --result /tmp/erasemap-tre-v1/result.json
+```
 
 An external author can now create a sealed temporal suite, publish answer commitments, run the
 frozen evaluator without labels, reveal the committed answers, and obtain an automatic gated score.
@@ -297,7 +324,7 @@ python3 -m venv .venv
 
 One-command release checks are available as `scripts/reproduce_release.sh core`. The core profile
 now mirrors the Python and Lean CI gates, reruns both RSE experiments in temporary directories,
-verifies both CDC and MSC conformance records, and fails if reproduction changes the worktree. The
+verifies CDC, MSC, and TRE conformance records, and fails if reproduction changes the worktree. The
 `face-open` profile additionally rebuilds the open face assets and registered face experiments. EraSeMap code
 is MIT licensed; third-party datasets and weights retain their own terms as documented in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

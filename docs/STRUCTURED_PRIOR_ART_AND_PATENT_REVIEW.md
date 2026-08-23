@@ -14,6 +14,8 @@ Query families combined:
 - `data deletion` with `provenance graph`, `derived data`, `backup`, and `proof`;
 - `right to be forgotten` with `lineage`, `model`, `backup`, and `verification`;
 - patent searches for the same concepts and their synonyms.
+- `robust optimization` and `uncertain set cover` with `deletion`, `erasure`, `topology`, and
+  `regeneration`; deletion testing with `test subject`, `token`, `canary`, and `restore`.
 
 Included items had to implement or formally define at least one relevant input/algorithm/output
 component. Commentary without a technical mechanism was excluded. Titles, publication identifiers,
@@ -37,6 +39,7 @@ before competition submission because 2025–2026 unlearning work is moving quic
 | Lee, *Temporal Program Logic for Data* (2024) | Temporal deletion and retention policies in program logic | Prevents claiming invention of temporal deletion invariants |
 | MUTE, *When Unlearning Fails* (2026) | Post-training influence echo in self-improving federated agent networks | Overlaps future re-emergence, but not heterogeneous storage transition auditing or costed stabilization |
 | K9db (OSDI 2023) | Ownership-aware storage and compliant derived views by construction | Prevents claiming invention of erasability-by-design or compliant caches |
+| Degel & Lutter, *A Robust Formulation of the Uncertain Set Covering Problem* (2013) | Minimum-cost set covering under uncertain coverage coefficients | Prevents claiming invention of robust covering or uncertainty envelopes |
 
 ## Closest patents
 
@@ -53,6 +56,7 @@ before competition submission because 2025–2026 unlearning work is moving quic
 | US20250190784A1 / US12456052B2 | DAG-like staged unlearning, hashes or zero-knowledge proofs for intermediate model instances, and verification that the resulting model reached production |
 | GB2562767A | Right-to-erasure-compatible encrypted backups and restoration |
 | US10733148B2 | Predicate deletion and tombstone markers during compaction |
+| US20210406398A1 / US11354435B2 | Synthetic test subjects, unique tokens, and post-deletion interactions used to detect retained personal data |
 
 ## Corrected novelty boundary
 
@@ -80,6 +84,18 @@ This does not claim invention of temporal logic, tombstones, backup-aware deleti
 minimum cuts, or data-resurrection prevention separately. A targeted 2026-08-23 search did not find
 the full heterogeneous DB/cache/vector/backup/model composition, but that search is not sufficient
 for a worldwide-first or freedom-to-operate claim.
+
+The TRE extension adds a third composition hypothesis:
+
+> For a finite declared envelope of plausible topology shifts, one subject-scoped control set can
+> be selected by exact all-scenario replay, accompanied by the shortest adversarial regeneration
+> witness and the additional declared cost paid for robustness over nominal MSC.
+
+This does not claim invention of robust optimization, uncertain set cover, network interdiction,
+topology ensembles, mutation testing, canary users, or tombstones. The targeted search did not find
+the exact combination of heterogeneous temporal erasure semantics, fail-closed evidence coverage,
+all-scenario exact stabilization, and a reproducible adversarial witness. That absence is only a
+working novelty boundary, not a priority or freedom-to-operate conclusion.
 
 The project must demonstrate that the composition catches failures missed by strong component
 baselines. The source-locked v1 holdout showed transfer but tied typed-node audit. The separately
@@ -116,3 +132,5 @@ patent filing.
 - <https://www.usenix.org/system/files/osdi23-albab.pdf>
 - <https://patents.google.com/patent/GB2562767A/en>
 - <https://patents.google.com/patent/US10733148B2/en>
+- <https://optimization-online.org/2013/06/3926/>
+- <https://patents.google.com/patent/US20210406398A1/en>

@@ -14,6 +14,8 @@ A separately preregistered first-run sequential study passed all six frozen gate
 
 The Regeneration-Safe Erasure (RSE) extension tests a different failure mode: data absent now can return after backup restore, legacy import, retry replay, or checkpoint redeployment. Its multi-path v2 protocol was publicly committed before implementation. The first run detected 30/30 registered temporal risks, verified 10/10 guarded safe cases, failed closed on 10/10 coverage faults, and produced 0/30 physical recurrences after the exact Minimal Stabilization Cut (MSC). Lean checks conditional MSC safety and minimum cost, while production branch-and-bound matched a separate exhaustive oracle in 16,384/16,384 finite-domain configurations. These are project-authored prospective and verification results, not independent or production evidence.
 
+Topology-Robust Erasure (TRE) strengthens MSC from one map to a finite declared uncertainty envelope. Its protocol was also committed before implementation. In the first run, nominal MSC regenerated data in 35/35 topology shifts, whereas one exact TRE plan regenerated data in 0/35, cost 7 versus blanket destruction at 60, and matched an exhaustive oracle. Production TRE additionally matched the oracle in 4,096/4,096 systematic configurations. The guarantee is conditional on the real topology belonging to the declared envelope.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -40,21 +42,26 @@ The research question is:
 
 **Hypothesis H3.** In a registered temporal topology, RSE can distinguish latent carriers that can regenerate a residual from guarded carriers that cannot, while snapshot-only and blanket-carrier baselines each fail on one side of this distinction. The null hypothesis is that RSE provides no improvement in risk detection or safe-case specificity.
 
+**Hypothesis H4.** Across a finite declared topology envelope, one exact TRE plan can prevent every registered regeneration path at lower declared cost than blanket destruction, while a nominal MSC can fail after topology shift. The null hypothesis is that robust replay offers no safety/cost advantage over the fixed baselines.
+
 The tasks are to formalize residual completion, implement the evaluator and optimizer, machine-check the bounded guarantees, compare against fixed baselines, measure a real-process system, and state the external-validity boundary.
 
-The paper makes five bounded contributions:
+The paper makes six bounded contributions:
 
 1. A typed residual-path model that keeps physical artifacts, model influence, unknown evidence, and policy blocks semantically distinct.
 2. A three-valued completion rule that fails closed, returns the shortest counterexample, and requires successful replay before accepting a correction.
 3. A finite minimum-cost CDC formulation with a machine-checked optimality theorem and executable oracle conformance.
 4. A layered evaluation covering controlled faults, official external structures, real local services, and a bounded face-unlearning channel, with negative results and independence limits preserved.
 5. A temporal RSE layer that computes registered reachable closure, returns a shortest regeneration witness, fails closed on transition-coverage gaps, and selects an exact minimum-cost stabilization cut.
+6. A topology-robust TRE layer that selects one minimum-cost plan across a finite declared uncertainty envelope and reports the shortest adversarial witness and robustness premium over nominal MSC.
 
 ## 2. Related Work and Novelty Boundary
 
 Cao and Yang introduced machine unlearning as a way to remove data and its lineage from learning systems [1]. Bourtoule et al. proposed SISA training to reduce retraining cost by isolating training state [2]. Sommer et al. framed unlearning verification as hypothesis testing [3]. Weng et al. proposed algorithm-level proof of unlearning with authenticated lineage [4], while Eisenhofer et al. studied cryptographically verifiable unlearning [5]. Chourasia and Shah showed that similarity to retraining is not automatically a complete privacy guarantee, especially across releases [6]. Zhang et al. demonstrated that verification mechanisms can be evaded by a dishonest provider [7]. Koloskova et al. developed certified neural-network unlearning under a separate formal guarantee model [8]. W3C PROV provides a standard vocabulary for entities, activities, agents, and derivations [9].
 
 EraSeMap therefore does **not** claim to invent provenance graphs, lineage traversal, machine unlearning, exact retraining, proofs of deletion, signatures, shortest paths, set cover, or minimum cuts. Patent review also found prior claims covering lineage-aware deletion, derived locations, backups, and auditable deletion [10–12].
+
+Robust and probabilistic set covering already optimize coverage under uncertainty [17]. Synthetic test subjects and unique-token deletion checks also appear in prior patent claims [18]. TRE therefore claims neither robust optimization nor deletion canaries; its working contribution is their exclusion-aware composition with temporal subject erasure, fail-closed scenario evidence, exact all-scenario replay, and an adversarial regeneration witness.
 
 The working novelty claim is the tested composition:
 
@@ -151,7 +158,7 @@ For a finite list of candidate action subsets, a deterministic feasibility predi
 
 *Proof sketch.* The selector folds over a finite list while maintaining the cheapest feasible candidate observed so far. The invariant is true initially and preserved at every comparison. At termination, the stored candidate is feasible and no listed feasible candidate has smaller cost. Q.E.D.
 
-Lean 4.33.1 machine-checks these results without `sorry` or `admit`. For MSC, `selected_msc_safe_and_minimum` proves that when replay feasibility soundly implies temporal safety, the selected listed control set is temporally safe and no more expensive than another listed feasible set; the no-plan theorem preserves fail-closed behavior. These theorems cover the abstract core, not Python semantics, driver correctness, or real topology discovery. The production Python selectors are therefore tested separately against exhaustive oracles.
+Lean 4.33.1 machine-checks these results without `sorry` or `admit`. For MSC, `selected_msc_safe_and_minimum` proves that when replay feasibility soundly implies temporal safety, the selected listed control set is temporally safe and no more expensive than another listed feasible set; the no-plan theorem preserves fail-closed behavior. For TRE, `selected_tre_safe_for_every_scenario_and_minimum` proves safety for every listed scenario and minimum cost among robust-feasible candidates under the corresponding soundness obligation. These theorems cover the abstract core, not Python semantics, driver correctness, real topology discovery, or membership of the real topology in the uncertainty envelope. The production Python selectors are therefore tested separately against exhaustive oracles.
 
 ### 5.3 Temporal composition
 
@@ -214,6 +221,10 @@ RSE v2 was committed at `110bb63` before implementation of its new adapters or f
 
 The snapshot PCUG baseline closes every currently online residual and passes a mandatory absence channel but has no future-transition semantics. The blanket-carrier baseline rejects every latent carrier regardless of guards. Primary gates require 30/30 RSE risk detections, 10/10 safe specificity, 10/10 coverage fail-closed decisions, zero post-MSC physical recurrences, zero exact/oracle mismatches, and selected cost at most 7.
 
+### 7.8 Layer G: preregistered topology-robust erasure
+
+TRE v1 was committed at `320e437` before solver, runner, verifier, or first result implementation. The nominal scenario contains backup restore. Seven shifted scenarios add every non-empty subset of checkpoint redeployment, legacy import, and retry replay; five frozen seeds produce 35 physical cases. The nominal exact MSC, exact all-scenario TRE, and blanket carrier destruction are compared under the same declared costs. Gates require 35/35 nominal-plan recurrences, zero TRE recurrences, zero oracle mismatches, cost 3 for nominal MSC, cost 7 for TRE, blanket cost 60, and a shift-specific witness in every case.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -252,6 +263,12 @@ The first prospective v2 run passed every frozen gate. RSE detected **30/30** te
 
 Single-carrier cases selected path-specific controls costing 2–5. Mixed cases selected the shared persistent tombstone at cost **7**, compared with four separate filters costing 14 or destroy-all costing 60. Physical replay after MSC caused **0/30** recurrences. Beyond the 30 prospective cases, branch-and-bound MSC matched a separately implemented exhaustive oracle in **16,384/16,384** deterministic configurations: all 16 carrier subsets, all 64 permission masks, eight adversarial cost catalogues, and both input orders.
 
+### 8.7 Topology-Robust Erasure
+
+The first prospective TRE run passed every frozen gate. The backup-only nominal MSC selected a path filter at cost **3**. After each of the 35 frozen topology shifts, at least one added carrier bypassed that filter and physically regenerated subject data: **35/35** recurrences. TRE selected one persistent subject tombstone at cost **7**, returned a shift-specific adversarial witness in **35/35** cases, and produced **0/35** post-control recurrences. Blanket destruction cost 60, so the declared robustness premium over nominal MSC was 4 while the saving relative to blanket action was 53.
+
+Production TRE matched the separately implemented exhaustive oracle in the prospective run and in **4,096/4,096** deterministic configurations spanning eight uncertainty envelopes, all 64 permission masks, four adversarial cost catalogues, and both input orders.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -261,6 +278,8 @@ The three-valued verdict also separates absence of evidence from evidence of abs
 The formal theorem clarifies rather than eliminates operational risk. It shows that COMPLETE is sound **if** the topology represents real residuals and local verifiers are sound. These conditions become deployment obligations that an organization can test, assign, and audit. The theorem does not make invisible infrastructure visible.
 
 RSE adds a time dimension to the same principle. A recoverable carrier is not automatically a current residual, and current absence is not automatically stable. The shortest regeneration witness explains how a normal future operation can reopen the subject; MSC separates safe guarded retention from destructive carrier removal.
+
+TRE addresses a different boundary: a plan optimized for one correct nominal map can be brittle when the map evolves. Optimizing one plan over an explicit scenario envelope makes that uncertainty auditable and quantifies its cost, but does not turn bounded scenarios into knowledge of arbitrary unknown infrastructure.
 
 The strongest current evidence for added composition value remains internal: the mechanism stress set was designed to exercise mandatory channels and replay. The external-structure benchmark tied the strongest typed audit. Therefore, the next decisive experiment is not another feature or larger project-authored simulator. It is an independently authored hidden challenge containing edge, channel, replay, and hidden-artifact interactions, executed once against a frozen evaluator.
 
@@ -280,6 +299,8 @@ The strongest current evidence for added composition value remains internal: the
 
 **Temporal scope.** RSE v2 uses four project-authored carrier families, deterministic synthetic vectors, declared costs, and local adapters. It does not prove observation of unknown future operations or organization-wide transition coverage. Snapshot PCUG and RSE answer different claims; the v2 comparison must not be presented as general PCUG failure.
 
+**Topology-uncertainty scope.** TRE uses eight project-authored scenarios, a three-transition mutation catalogue, and declared costs. The solver sees the complete finite envelope before selection. Zero recurrence inside this envelope is not evidence of safety outside it or of the probability that a real organization satisfies the envelope.
+
 **Novelty search.** The review is structured but not a complete systematic review or legal freedom-to-operate opinion. New publications and patents can narrow the claim.
 
 ## 11. Ethics and Responsible Use
@@ -297,6 +318,8 @@ python -m pytest
 lake build
 python scripts/verify_formal_conformance.py --expected formal/conformance-v1.json --output /tmp/formal-conformance.json
 python scripts/verify_rse_conformance.py --expected formal/rse-msc-conformance-v1.json --output /tmp/rse-msc-conformance.json
+python scripts/verify_topology_robust_erasure_v1.py
+python scripts/verify_tre_conformance.py --expected formal/tre-conformance-v1.json
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
@@ -307,7 +330,7 @@ The measured service experiment additionally requires pinned PostgreSQL, Redis, 
 
 ## 13. Conclusion
 
-EraSeMap demonstrates a practical and mathematically explicit way to audit biometric erasure across heterogeneous artifacts and future registered operations. A deletion request becomes a typed residual-path and temporal-reachability problem, completion becomes a conjunction of path closure, positive mandatory evidence, and stable registered transitions, and correction becomes a minimum-cost action problem whose result must survive replay. The abstract guarantees are machine-checked; the optimizers conform to exhaustive oracles; real local services show substantial savings; and model influence is handled through a bounded quantitative gate with exact fallback.
+EraSeMap demonstrates a practical and mathematically explicit way to audit biometric erasure across heterogeneous artifacts, future registered operations, and a bounded set of plausible topology shifts. A deletion request becomes a typed residual-path and temporal-reachability problem, completion becomes a conjunction of path closure, positive mandatory evidence, and stable registered transitions, and correction becomes a minimum-cost action problem whose result must survive replay. TRE further requires one action set to survive every declared topology scenario. The abstract guarantees are machine-checked; the optimizers conform to exhaustive oracles; real local services show substantial savings; and model influence is handled through a bounded quantitative gate with exact fallback.
 
 The evidence supports reproducibility, internal correctness, and feasibility. It does not yet establish independent superiority or production-wide deletion. The strongest next result is an independently authored, frozen hidden challenge followed by an authorized organizational pilot. Preserving this boundary is not a weakness of the project; it is what makes its current claim scientifically defensible.
 
@@ -345,6 +368,10 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 
 [16] UK Patent Application GB2562767A, “Right to erasure compliant back-up,” 2018.
 
+[17] D. Degel and P. Lutter, “A Robust Formulation of the Uncertain Set Covering Problem,” Optimization Online, 2013.
+
+[18] U.S. Patent Application US20210406398A1, “Data Processing Systems for Data Testing to Confirm Data Deletion and Related Methods,” 2021.
+
 ## Appendix A. Notation
 
 | Symbol | Meaning |
@@ -363,6 +390,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | FCR | False-complete rate |
 | Reach(q₀,δ) | States reachable after deletion under registered transitions |
 | MSC | Minimum-cost Stabilization Cut blocking every registered regeneration witness |
+| TRE | Topology-Robust Erasure: one exact plan for every topology in a declared uncertainty envelope |
 
 ## Appendix B. Claim–Evidence Map
 
@@ -371,6 +399,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | Replayed COMPLETE is conditionally sound | Lean theorem with explicit assumptions | Does not prove topology discovery or driver correctness |
 | Exact CDC is minimum-cost over listed candidates | Lean finite optimality theorem | Only for the registered finite candidate set |
 | Exact MSC is safe and minimum-cost under registered temporal semantics | Lean conditional theorem; 16,384/16,384 Python/oracle configurations | Depends on transition coverage and feasibility soundness |
+| Exact TRE is safe and minimum-cost across a declared envelope | Lean conditional theorem; 4,096/4,096 Python/oracle configurations | Depends on all-scenario feasibility soundness and envelope membership |
 | Python exact CDC implements the finite contract | 3,072/3,072 oracle matches | Bounded systematic conformance, not Python formal semantics |
 | Mandatory channels prevent a typed-node blind spot | 0/75 versus 75/75 mechanism stress | Project-authored development evidence |
 | PCUG transfers to official external structures | 0/100 false complete; 25/25 complete | Strongest typed baseline tied; mappings are internal |
@@ -378,3 +407,4 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | Adaptive face candidate meets frozen bounded gates | −0.00653 AUC difference; 1.593×; privacy upper CI 0.04091 | Post-exposure adaptive result; exact fallback remains required |
 | Sequential deletion candidate meets six frozen gates | 25 transitions; worst retained accuracy −0.00952; privacy upper CI 0.00624 | First-run preregistered, but project-authored and no-shadow-model |
 | RSE distinguishes future risk from guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC recurrences | Prospective but project-authored local multi-path lab |
+| TRE survives the frozen topology shifts | Nominal 35/35 recurrences; TRE 0/35; cost 7 versus blanket 60 | Prospective but finite, visible, project-authored envelope |

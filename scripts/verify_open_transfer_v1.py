@@ -1,13 +1,30 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, cast
 
 from erasemap.open_transfer import summarize_transfer, transfer_record_from_payload
 from erasemap.open_transfer_evidence import canonical_json, sha256_file
-from experiments.run_open_transfer_v1 import core_sha256
+
+
+def core_sha256(protocol: dict[str, Any]) -> str:
+    """Recompute the frozen core without importing the experiment runner."""
+    digest = hashlib.sha256()
+    core_files = protocol.get("core_files")
+    if not isinstance(core_files, list) or not core_files:
+        raise ValueError("protocol core_files must be a non-empty array")
+    for raw_path in core_files:
+        path = Path(str(raw_path))
+        if not path.is_file():
+            raise FileNotFoundError(f"frozen core file is missing: {path}")
+        digest.update(str(path).encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return "sha256:" + digest.hexdigest()
 
 
 def _load_object(path: Path) -> dict[str, Any]:

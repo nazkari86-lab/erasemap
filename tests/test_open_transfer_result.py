@@ -12,9 +12,17 @@ from erasemap.open_transfer import (
 )
 from erasemap.open_transfer_evidence import canonical_json, sha256_bytes
 from experiments.run_open_transfer_v1 import core_sha256, write_result_bundle
+from scripts.verify_open_transfer_v1 import core_sha256 as verifier_core_sha256
 from scripts.verify_open_transfer_v1 import verify_result
 
 PROTOCOL_PATH = Path("benchmark/open-transfer-v1.json")
+
+
+def test_offline_verifier_recomputes_core_without_runner_import() -> None:
+    protocol = json.loads(PROTOCOL_PATH.read_text())
+    assert verifier_core_sha256(protocol) == core_sha256(protocol)
+
+
 PROTOCOL = json.loads(PROTOCOL_PATH.read_text())
 
 

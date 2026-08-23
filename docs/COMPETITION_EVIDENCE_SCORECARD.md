@@ -21,9 +21,9 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 |---|---:|---|---|
 | Problem clarity | 9.5/10 | `examples/five_branch_system.json` gives a two-node counterexample: `source -> template` | Usability test with judges or operators who can explain the result unaided |
 | Practical relevance | 9.6/10 | Contracts cover source, template, cache, vector store, backup, and model influence | Authorized organization pilot on actual deletion workflow |
-| Narrow scientific novelty | 9.5/10 | Fail-closed composition plus PCUG/CDC; formal and stress evidence; prior-art exclusions are explicit | Untouched external interaction cases outperform a strong typed-node/replay baseline |
-| Experimental methodology | 9.6/10 | Frozen protocols, one-shot holdouts, paired bootstrap, negative MUFAC result retained, first-run sequential protocol | Independently authored preregistered holdout |
-| Scientific claim completion | 9.5/10 | Formal conditional soundness, finite optimality, measured systems and sequential-release results | External hidden challenge plus materially different system replication |
+| Narrow scientific novelty | 9.5/10 | Fail-closed PCUG/CDC plus registered temporal RSE/MSC; formal, stress, and prospective multi-path evidence; prior-art exclusions explicit | Untouched external temporal cases outperform frozen strong baselines |
+| Experimental methodology | 9.6/10 | Frozen protocols, one-shot holdouts, paired bootstrap, retained negative MUFAC result, and preregistered first-run sequential and RSE v2 protocols | Independently authored preregistered holdout |
+| Scientific claim completion | 9.5/10 | Formal conditional soundness, finite optimality, measured systems, sequential-release, and prospective temporal results | External hidden challenge plus materially different system replication |
 | Real inputs and transfer | 9.0/10 | Open face datasets, official source structures, real PostgreSQL/Redis/Qdrant processes | Authorized real records or redacted production instrumentation |
 | Independence of evidence | 7.8/10 | Executable signed challenge exists, but `external_results/` has no accepted external result | One verified evaluator passes all 9.5 rubric gates |
 | Formal justification | 9.6/10 | Lean proof, axiom audit, 3,072/3,072 production/oracle conformance runs | Independent proof review or stronger implementation-refinement theorem |
@@ -55,10 +55,12 @@ above 7.8.
    0.00624 against the 0.05 limit. The attacks use no shadow models and are not a privacy guarantee.
 6. **External boundary:** the independent score remains 7.8 until an identifiable evaluator authors,
    freezes, reveals, signs, and submits the challenge.
-7. **Temporal deletion:** RSE detected 20/20 project-authored backup regeneration events after an
-   online-only snapshot declared absence. Exact MSC selected the cost-7 persistent tombstone over
-   cost-40 backup destruction, and physical replay produced 0/20 recurrences. This adds a new
-   mechanism result without changing the 7.8 independence score.
+7. **Temporal deletion:** the RSE v2 protocol was public before implementation and first execution.
+   RSE detected 30/30 multi-path risks, verified 10/10 guarded safe cases, failed closed on 10/10
+   coverage faults, matched its exhaustive oracle, and produced 0/30 physical recurrences after
+   exact MSC. Snapshot PCUG missed future replay in 30/30 risk cases, while blanket carrier audit
+   rejected 10/10 safe cases. This strengthens the prospective mechanism result without changing
+   the 7.8 independence score.
 
 ## Reproduce the jury artifact
 

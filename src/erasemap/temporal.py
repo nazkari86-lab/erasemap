@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass
 from enum import StrEnum
-from itertools import combinations
 
 
 class RSEVerdict(StrEnum):
@@ -252,24 +251,45 @@ def exact_stabilization_cut(
     if baseline.verdict is RSEVerdict.RSE_VERIFIED:
         return StabilizationPlan((), 0, StabilizationStatus.OPTIMAL, baseline)
     best: tuple[tuple[int, int, tuple[str, ...]], StabilizationPlan] | None = None
-    for size in range(1, len(permitted) + 1):
-        for chosen in combinations(permitted, size):
-            ids = tuple(item.id for item in chosen)
-            guarded = frozenset().union(*(item.guarded_transition_ids for item in chosen))
-            report = evaluate_rse(
-                initial_state,
-                transitions,
-                coverage,
-                protocol,
-                guarded_transition_ids=guarded,
-            )
-            if report.verdict is not RSEVerdict.RSE_VERIFIED:
-                continue
-            cost = sum(item.cost for item in chosen)
+
+    def search(
+        index: int,
+        chosen: tuple[StabilizationControl, ...],
+        guarded: frozenset[str],
+        cost: int,
+    ) -> None:
+        nonlocal best
+        ids = tuple(item.id for item in chosen)
+        if best is not None and (
+            cost > best[0][0]
+            or (cost == best[0][0] and len(chosen) > best[0][1])
+        ):
+            return
+        report = evaluate_rse(
+            initial_state,
+            transitions,
+            coverage,
+            protocol,
+            guarded_transition_ids=guarded,
+        )
+        if report.verdict is RSEVerdict.RSE_VERIFIED:
             key = (cost, len(chosen), ids)
             plan = StabilizationPlan(ids, cost, StabilizationStatus.OPTIMAL, report)
             if best is None or key < best[0]:
                 best = (key, plan)
+            return
+        if index == len(permitted):
+            return
+        control = permitted[index]
+        search(
+            index + 1,
+            (*chosen, control),
+            guarded | control.guarded_transition_ids,
+            cost + control.cost,
+        )
+        search(index + 1, chosen, guarded, cost)
+
+    search(0, (), frozenset(), 0)
 
     if best is not None:
         return best[1]

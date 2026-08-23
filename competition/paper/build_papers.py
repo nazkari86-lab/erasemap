@@ -95,7 +95,7 @@ def make_system_figure(path: Path, ru: bool) -> None:
 
 
 def make_result_figure(path: Path, ru: bool) -> None:
-    img = Image.new("RGB", (1800, 980), "white")
+    img = Image.new("RGB", (1800, 1270), "white")
     d = ImageDraw.Draw(img)
     title = ImageFont.truetype(font_path(True), 46)
     label = ImageFont.truetype(font_path(True), 28)
@@ -118,7 +118,7 @@ def make_result_figure(path: Path, ru: bool) -> None:
     metrics = [
         ("17.64×", "speedup" if not ru else "ускорение"),
         ("94.62%", "fewer written bytes" if not ru else "меньше записанных байтов"),
-        ("2.22×10⁻¹⁵", "max ridge weight gap" if not ru else "макс. отклонение ridge weights"),
+        ("2.22e-15", "max ridge weight gap" if not ru else "макс. отклонение ridge weights"),
     ]
     for idx, (value, caption) in enumerate(metrics):
         x1 = 90 + idx * 560
@@ -127,6 +127,21 @@ def make_result_figure(path: Path, ru: bool) -> None:
         d.text((x1 + (500 - box[2]) / 2, 700), value, fill="#173B57", font=title)
         box2 = d.textbbox((0, 0), caption, font=small)
         d.text((x1 + (500 - box2[2]) / 2, 800), caption, fill="#5D6D7E", font=small)
+
+    d.line((80, 950, 1720, 950), fill="#AAB7C4", width=3)
+    d.text((90, 995), "Preregistered RSE v2 first run" if not ru else "Первый preregistered запуск RSE v2", fill="#17202A", font=label)
+    temporal_metrics = [
+        ("30/30", "risks detected" if not ru else "рисков обнаружено"),
+        ("10/10", "guarded safe cases" if not ru else "безопасных guarded случаев"),
+        ("0/30", "post-MSC recurrences" if not ru else "повторов после MSC"),
+    ]
+    for idx, (value, caption) in enumerate(temporal_metrics):
+        x1 = 90 + idx * 560
+        d.rounded_rectangle((x1, 1060, x1 + 500, 1225), radius=22, fill="#F2F8F3", outline="#1E8449", width=3)
+        box = d.textbbox((0, 0), value, font=title)
+        d.text((x1 + (500 - box[2]) / 2, 1080), value, fill="#1E8449", font=title)
+        box2 = d.textbbox((0, 0), caption, font=small)
+        d.text((x1 + (500 - box2[2]) / 2, 1165), caption, fill="#5D6D7E", font=small)
     img.save(path, dpi=(180, 180))
 
 
@@ -527,8 +542,8 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
                 add_figure(
                     doc,
                     result_fig,
-                    ("Рисунок 2. Результат стресс-теста механизма и эффективность измеренного многосервисного испытания. Составлено автором по зафиксированным результатам." if ru else "Figure 2. Mechanism-stress result and measured multi-service holdout efficiency. Author-generated from the frozen results."),
-                    ("Диаграмма: PCUG даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; многосервисный CDC достигает 17,64-кратного ускорения и сокращает записанные байты на 94,62 процента." if ru else "Results chart: PCUG has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; multi-service CDC reaches 17.64-fold speedup and 94.62 percent fewer written bytes."),
+                    ("Рисунок 2. Stress test механизма, измеренное многосервисное испытание и preregistered RSE v2. Составлено автором по зафиксированным результатам." if ru else "Figure 2. Mechanism stress, measured multi-service holdout, and preregistered RSE v2. Author-generated from the frozen results."),
+                    ("Диаграмма: PCUG даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; CDC достигает 17,64-кратного ускорения и сокращает записанные байты на 94,62 процента; RSE обнаруживает 30 из 30 рисков без повторов после MSC." if ru else "Results chart: PCUG has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; CDC reaches 17.64-fold speedup and 94.62 percent fewer written bytes; RSE detects 30 of 30 risks with no post-MSC recurrence."),
                 )
                 inserted_results = True
             i += 1
@@ -573,9 +588,9 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
 
     core = doc.core_properties
     core.title = title
-    core.subject = "Biometric erasure auditing, PCUG, CDC, and machine unlearning"
+    core.subject = "Biometric erasure auditing, PCUG, CDC, RSE, and machine unlearning"
     core.author = "EraSeMap project — author fields intentionally left for submission"
-    core.keywords = "biometric erasure, machine unlearning, data lineage, verifiable deletion"
+    core.keywords = "biometric erasure, machine unlearning, data lineage, verifiable deletion, regeneration-safe erasure"
     core.comments = "Design preset: narrative_proposal; named override: A4 academic submission geometry."
     output.parent.mkdir(parents=True, exist_ok=True)
     doc.save(output)

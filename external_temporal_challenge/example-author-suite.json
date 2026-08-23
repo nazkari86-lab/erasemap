@@ -1,0 +1,51 @@
+{
+  "schema_version": "erasemap-external-temporal-suite-v1",
+  "author": {
+    "name": "Example only",
+    "organization": "Example lab",
+    "public_identifier": "https://example.org/evaluator",
+    "independently_authored": false,
+    "external_repository": "https://example.org/temporal-suite.git",
+    "external_commit": "1111111111111111111111111111111111111111"
+  },
+  "cases": [
+    {
+      "case_id": "example-backup-risk",
+      "family": "example-backup",
+      "initial_facts": ["backup:subject"],
+      "residual_facts": ["database:subject"],
+      "transitions": [
+        {
+          "id": "restore",
+          "requires": ["backup:subject"],
+          "adds": ["database:subject"],
+          "removes": [],
+          "forbids": []
+        }
+      ],
+      "coverage": {
+        "required_sensor_ids": ["backup-sensor"],
+        "observations": [
+          {
+            "id": "backup-attestation",
+            "sensor_id": "backup-sensor",
+            "transition_id": "restore",
+            "verified": true
+          }
+        ]
+      },
+      "controls": [
+        {
+          "id": "restore-filter",
+          "cost": 3,
+          "guarded_transition_ids": ["restore"],
+          "permitted": true
+        }
+      ],
+      "expected": {
+        "verdict": "REGENERATION_RISK",
+        "minimum_cost": 3
+      }
+    }
+  ]
+}

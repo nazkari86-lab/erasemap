@@ -71,6 +71,9 @@ class RegisteredStoreLab:
             self._commitment_key, message, hashlib.sha256
         ).hexdigest()
 
+    def subject_commitment(self, subject_id: str) -> str:
+        return self._commitment(subject_id)
+
     def _key_name(self, subject_id: str) -> str:
         return self._commitment(subject_id).removeprefix("hmac-sha256:") + ".key"
 
@@ -177,6 +180,51 @@ class RegisteredStoreLab:
         tombstones = set(self._read_json(self.tombstone_path, []))
         tombstones.add(commitment)
         self._write_json(self.tombstone_path, sorted(tombstones))
+
+    def is_tombstoned(self, subject_id: str) -> bool:
+        commitment = self._commitment(subject_id)
+        return commitment in set(self._read_json(self.tombstone_path, []))
+
+    def destroy_recoverable_backup(self, subject_id: str) -> None:
+        self.backup_key_path(subject_id).unlink(missing_ok=True)
+
+    def import_vector_to_source(
+        self, subject_id: str, embedding: np.ndarray[Any, Any]
+    ) -> bool:
+        if self.is_tombstoned(subject_id):
+            return False
+        commitment = self._commitment(subject_id)
+        vector = np.asarray(embedding, dtype=np.float32).reshape(-1)
+        with closing(sqlite3.connect(self.database_path)) as connection, connection:
+            connection.execute(
+                "INSERT OR REPLACE INTO identities(commitment, embedding) VALUES (?, ?)",
+                (commitment, vector.tobytes()),
+            )
+        return True
+
+    def replay_cache_entry(
+        self, subject_id: str, embedding: np.ndarray[Any, Any]
+    ) -> bool:
+        if self.is_tombstoned(subject_id):
+            return False
+        commitment = self._commitment(subject_id)
+        vector = np.asarray(embedding, dtype=np.float32).reshape(-1)
+        cache = self._read_json(self.cache_path, {})
+        cache[commitment] = vector.tolist()
+        self._write_json(self.cache_path, cache)
+        return True
+
+    def redeploy_model_reference(self, subject_id: str) -> bool:
+        if self.is_tombstoned(subject_id):
+            return False
+        commitment = self._commitment(subject_id)
+        model = self._read_json(self.model_path, {"training_commitments": []})
+        commitments = set(model["training_commitments"])
+        commitments.add(commitment)
+        self._write_json(
+            self.model_path, {"training_commitments": sorted(commitments)}
+        )
+        return True
 
     def restore_backup_to_source(self, subject_id: str) -> bool:
         """Restore one subject unless a durable subject tombstone blocks the transition."""

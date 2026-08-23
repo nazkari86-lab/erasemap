@@ -1,6 +1,6 @@
-# EraseMap
+# EraSeMap
 
-EraseMap answers one concrete question: **after a biometric deletion request, which registered
+EraSeMap answers one concrete question: **after a biometric deletion request, which registered
 copy or derivative can still be used?** It models the source record, Face ID template, search
 index, cache, backup, model influence, and audit receipt as a typed lineage graph. The auditor
 returns `COMPLETE`, `INCOMPLETE`, or `UNVERIFIED`, plus the shortest counterexample path and a
@@ -10,7 +10,7 @@ The project is intentionally system-neutral: the same graph contract can describ
 access system, a bank KYC flow, or a government identity service. That portability is a research
 hypothesis to test, not a claim of production validation.
 
-EraseMap covers only artifacts registered by trusted instrumentation. It does not prove global
+EraSeMap covers only artifacts registered by trusted instrumentation. It does not prove global
 physical erasure, detect secret unregistered copies, provide legal advice, or claim validation on
 eGov, Face ID, or another production identity system.
 
@@ -80,7 +80,8 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Measured multi-service optimization | 20-pair real-process holdout PASS; local synthetic records |
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
 | Sequential deletion privacy v1 | Preregistered first run PASS: 25 transitions, all six frozen gates; project-authored |
-| Regeneration-Safe Erasure v1 | 20/20 registered regeneration risks detected; 0/20 after exact MSC; project-authored local lab |
+| Regeneration-Safe Erasure v2 | Preregistered first run PASS: 30/30 risks, 10/10 guarded safe cases, 10/10 coverage faults; project-authored |
+| External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
@@ -182,6 +183,21 @@ replay produced 0/20 post-control recurrences. This is project-authored mechanis
 independent or production result. See
 [`docs/REGENERATION_SAFE_ERASURE_V1_REPORT.md`](docs/REGENERATION_SAFE_ERASURE_V1_REPORT.md).
 
+The publicly preregistered multi-path v2 experiment adds four physically distinct latent carriers:
+encrypted backup, legacy export, retry queue, and old model checkpoint. Its first frozen run passed
+all gates: RSE detected 30/30 registered risks, verified 10/10 guarded safe cases, failed closed on
+10/10 transition-coverage faults, matched an independent exhaustive subset oracle, and produced
+0/30 physical recurrences after the exact MSC. A strong snapshot PCUG audit correctly established
+current absence but missed all 30 later replays; a blanket-carrier audit rejected all ten safe
+guarded cases. This distinguishes a snapshot property from a registered temporal invariant rather
+than claiming that ordinary PCUG ignores active backups. See
+[`docs/REGENERATION_SAFE_ERASURE_V2_REPORT.md`](docs/REGENERATION_SAFE_ERASURE_V2_REPORT.md).
+
+An external author can now create a sealed temporal suite, publish answer commitments, run the
+frozen evaluator without labels, reveal the committed answers, and obtain an automatic gated score.
+The kit is ready under [`external_temporal_challenge/`](external_temporal_challenge/README.md), but
+it is not independent evidence until an identifiable external author actually completes it.
+
 ## Real-face unlearning benchmark
 
 The repository contains reproducible biometric-deletion experiments on Olivetti Faces and a
@@ -206,6 +222,8 @@ PYTHONPATH=src python experiments/advanced_face_unlearning.py \
   --dataset lfw --protocol benchmark/lfw-holdout-v1.json \
   --output outputs/lfw-holdout-v1
 PYTHONPATH=src python experiments/run_registered_storage_lab.py
+PYTHONPATH=src python experiments/run_regeneration_safe_erasure_v2.py
+python scripts/verify_regeneration_safe_erasure_v2.py
 ```
 
 See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for the locked results,
@@ -268,6 +286,6 @@ python3 -m venv .venv
 ```
 
 One-command release checks are available as `scripts/reproduce_release.sh core`; the `face-open`
-profile additionally rebuilds the open face assets and registered face experiments. EraseMap code
+profile additionally rebuilds the open face assets and registered face experiments. EraSeMap code
 is MIT licensed; third-party datasets and weights retain their own terms as documented in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

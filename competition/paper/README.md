@@ -8,7 +8,7 @@ This directory contains two synchronized, submission-ready manuscripts:
 - `build_papers.py` — deterministic DOCX and figure builder;
 - `assets/` — the four generated bilingual figures.
 
-Both papers use A4 pages, the same research question, two falsifiable hypotheses, the same compact
+Both papers use A4 pages, the same research question, three falsifiable hypotheses, the same compact
 mathematical model, the same experiment results, and the same limitation boundary. Personal author,
 affiliation, and supervisor fields are intentionally blank because the repository does not contain
 verified submission metadata.

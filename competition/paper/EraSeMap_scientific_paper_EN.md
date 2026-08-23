@@ -1,4 +1,4 @@
-# EraSeMap: Proof-Carrying Residual-Path Auditing and Minimum-Cost Remediation for Biometric Data Erasure
+# EraSeMap: Proof-Carrying, Regeneration-Safe Erasure Auditing for Biometric Systems
 
 **Research paper — English version**
 **Author:** ____________________
@@ -12,7 +12,9 @@ Deleting a biometric record from the primary database does not necessarily remov
 
 A separately preregistered first-run sequential study passed all six frozen gates over 25 release transitions; the largest upper 95% confidence bound for additional retained-user membership advantage relative to exact retraining was 0.00624 against a 0.05 limit. This bounded result is not independent confirmation or certified privacy.
 
-**Keywords:** biometric erasure; machine unlearning; data lineage; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
+The Regeneration-Safe Erasure (RSE) extension tests a different failure mode: data absent now can return after backup restore, legacy import, retry replay, or checkpoint redeployment. Its multi-path v2 protocol was publicly committed before implementation. The first run detected 30/30 registered temporal risks, verified 10/10 guarded safe cases, failed closed on 10/10 coverage faults, and produced 0/30 physical recurrences after the exact Minimal Stabilization Cut (MSC). These are project-authored prospective results, not independent or production evidence.
+
+**Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
 
@@ -36,14 +38,17 @@ The research question is:
 
 **Hypothesis H2.** In a registered multi-service topology, exact CDC can use less measured time and fewer written bytes than rebuild-all while reaching the same replayed COMPLETE verdict and retaining the same non-deleted identities. The null hypothesis is that targeted CDC has no efficiency advantage under equal completion requirements.
 
+**Hypothesis H3.** In a registered temporal topology, RSE can distinguish latent carriers that can regenerate a residual from guarded carriers that cannot, while snapshot-only and blanket-carrier baselines each fail on one side of this distinction. The null hypothesis is that RSE provides no improvement in risk detection or safe-case specificity.
+
 The tasks are to formalize residual completion, implement the evaluator and optimizer, machine-check the bounded guarantees, compare against fixed baselines, measure a real-process system, and state the external-validity boundary.
 
-The paper makes four bounded contributions:
+The paper makes five bounded contributions:
 
 1. A typed residual-path model that keeps physical artifacts, model influence, unknown evidence, and policy blocks semantically distinct.
 2. A three-valued completion rule that fails closed, returns the shortest counterexample, and requires successful replay before accepting a correction.
 3. A finite minimum-cost CDC formulation with a machine-checked optimality theorem and executable oracle conformance.
 4. A layered evaluation covering controlled faults, official external structures, real local services, and a bounded face-unlearning channel, with negative results and independence limits preserved.
+5. A temporal RSE layer that computes registered reachable closure, returns a shortest regeneration witness, fails closed on transition-coverage gaps, and selects an exact minimum-cost stabilization cut.
 
 ## 2. Related Work and Novelty Boundary
 
@@ -148,13 +153,19 @@ For a finite list of candidate action subsets, a deterministic feasibility predi
 
 Lean 4.33.1 machine-checks both results without `sorry` or `admit`. These theorems cover the abstract core, not Python semantics, driver correctness, or real topology discovery. The production Python selector is therefore tested separately against an exhaustive oracle.
 
+### 5.3 Temporal composition
+
+Let **Q** be a finite state space, **δᵣ** the registered transition relation, **δₜ** the real data-bearing transition relation, and **Residualᵤ(q)** the subject-residual predicate. Assume the post-deletion state **q₀** is residual-free, every real transition is covered by a registered transition, and every registered transition preserves residual absence. Then every state reachable from **q₀** under **δₜ** remains residual-free.
+
+Lean checks this induction over reflexive-transitive reachability. A separate checked counterexample constructs a hidden real transition that regenerates a residual when the coverage premise is removed. The theorem makes transition coverage an explicit deployment obligation rather than claiming it automatically.
+
 ## 6. Implementation
 
 EraSeMap is implemented as a reproducible Python package with canonical JSON inputs and outputs. Decoding rejects missing or unknown fields, duplicate nodes or edges, unknown endpoints, and implicit cross-subject edges. Canonical sorting makes graph roots, receipts, and evidence bundles deterministic.
 
 The output proof bundle includes the request and protocol identifiers, registered graph commitment, three-valued verdict, shortest residual path, verifier-channel decisions, selected actions and costs, replay result, evidence hashes, and an Ed25519 receipt chain. The signature covers a minimal envelope and intentionally excludes subject identifiers, biometric values, raw paths, and free text. The evaluator recomputes the verdict and plan from the evidence rather than trusting cached labels.
 
-The repository includes 240 tests with 90.30% measured coverage in the full CI-equivalent test command, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
+The repository includes 263 tests with at least 90% measured coverage in the full CI-equivalent test command, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
 
 ## 7. Experimental Methodology
 
@@ -197,6 +208,12 @@ Before the first confirmatory run, the repository froze five seeded deletion ord
 
 All six gates were frozen before execution: deleted classes absent; epoch-budget ratio at least 1.5×; retained-accuracy difference at least −0.02 on every transition; retained embedding MSE to exact at most 0.001; forgotten-verification AUC gap at most 0.05; and the largest upper confidence bound for additional privacy advantage at most 0.05. The run refuses a dirty worktree and records the pre-result commit, raw transitions, and artifact hashes.
 
+### 7.7 Layer F: preregistered multi-path temporal erasure
+
+RSE v2 was committed at `110bb63` before implementation of its new adapters or first execution. Thirty risk cases cover AES-GCM backup restore, legacy export import, retry-queue replay, old-checkpoint redeployment, and mixed carriers. Ten safe cases retain all carriers but install a persistent subject tombstone. Ten coverage-fault cases invalidate a required transition attestation.
+
+The snapshot PCUG baseline closes every currently online residual and passes a mandatory absence channel but has no future-transition semantics. The blanket-carrier baseline rejects every latent carrier regardless of guards. Primary gates require 30/30 RSE risk detections, 10/10 safe specificity, 10/10 coverage fail-closed decisions, zero post-MSC physical recurrences, zero exact/oracle mismatches, and selected cost at most 7.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -229,6 +246,12 @@ The first confirmatory run at the preregistration commit passed all six gates. A
 
 The largest paired privacy upper 95% confidence bound was **0.00624**, below the frozen 0.05 limit. Paired candidate-minus-exact mean advantages and intervals were confidence −0.08370 [−0.11263, −0.05977], energy −0.00144 [−0.00781, 0.00624], margin −0.07687 [−0.10252, −0.05515], and negative entropy −0.08512 [−0.11802, −0.05614]. Absolute membership advantages remained substantial for several attacks. Thus the result bounds additional exposure relative to exact retraining under the registered panel; it does not establish that either release is private.
 
+### 8.6 Regeneration-Safe Erasure
+
+The first prospective v2 run passed every frozen gate. RSE detected **30/30** temporal risk cases, verified **10/10** guarded safe cases, and returned incomplete coverage for **10/10** attestation faults. Snapshot PCUG returned current-state COMPLETE before all **30/30** later physical regenerations. The blanket-carrier baseline rejected all **10/10** safe guarded cases.
+
+Single-carrier cases selected path-specific controls costing 2–5. Mixed cases selected the shared persistent tombstone at cost **7**, compared with four separate filters costing 14 or destroy-all costing 60. Physical replay after MSC caused **0/30** recurrences. Branch-and-bound MSC matched the separate exhaustive oracle in **30/30** prospective cases and in property tests varying all control costs and permissions.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -236,6 +259,8 @@ The main practical result is not merely detection. A useful erasure system must 
 The three-valued verdict also separates absence of evidence from evidence of absence. A binary system is tempted to treat “not observed” as “gone.” UNVERIFIED preserves uncertainty and keeps the request open. This matters for delayed backup expiry, unreachable services, missing model audits, and asynchronous cache invalidation.
 
 The formal theorem clarifies rather than eliminates operational risk. It shows that COMPLETE is sound **if** the topology represents real residuals and local verifiers are sound. These conditions become deployment obligations that an organization can test, assign, and audit. The theorem does not make invisible infrastructure visible.
+
+RSE adds a time dimension to the same principle. A recoverable carrier is not automatically a current residual, and current absence is not automatically stable. The shortest regeneration witness explains how a normal future operation can reopen the subject; MSC separates safe guarded retention from destructive carrier removal.
 
 The strongest current evidence for added composition value remains internal: the mechanism stress set was designed to exercise mandatory channels and replay. The external-structure benchmark tied the strongest typed audit. Therefore, the next decisive experiment is not another feature or larger project-authored simulator. It is an independently authored hidden challenge containing edge, channel, replay, and hidden-artifact interactions, executed once against a frozen evaluator.
 
@@ -253,6 +278,8 @@ The strongest current evidence for added composition value remains internal: the
 
 **Performance scope.** The 17.64× result is local wall-clock performance on one Apple M4 laptop. The byte count measures application payload and replaced files, not full storage or network I/O.
 
+**Temporal scope.** RSE v2 uses four project-authored carrier families, deterministic synthetic vectors, declared costs, and local adapters. It does not prove observation of unknown future operations or organization-wide transition coverage. Snapshot PCUG and RSE answer different claims; the v2 comparison must not be presented as general PCUG failure.
+
 **Novelty search.** The review is structured but not a complete systematic review or legal freedom-to-operate opinion. New publications and patents can narrow the claim.
 
 ## 11. Ethics and Responsible Use
@@ -263,7 +290,7 @@ A production deployment should separate the topology registrar, evidence produce
 
 ## 12. Reproducibility
 
-The public repository contains code, frozen protocols, raw records, manifests, reports, Lean proofs, and CI configuration. The evidence evaluated in this paper is preserved in the public v0.3.1 history; protocol and raw-record manifests carry cryptographic hashes. Core reproduction commands are:
+The public repository contains code, frozen protocols, raw records, manifests, reports, Lean proofs, and CI configuration. The evidence evaluated in this paper is preserved in the public v0.5.0 history; protocol and raw-record manifests carry cryptographic hashes. Core reproduction commands are:
 
 ```bash
 python -m pytest
@@ -271,13 +298,14 @@ lake build
 python scripts/verify_formal_conformance.py --expected formal/conformance-v1.json --output /tmp/formal-conformance.json
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
+python scripts/verify_regeneration_safe_erasure_v2.py
 ```
 
 The measured service experiment additionally requires pinned PostgreSQL, Redis, Qdrant, and container dependencies. Reproduction verifies the published computation; it does not create independent authorship. No personal biometric data generated by the multi-service experiment are released because that experiment uses deterministic synthetic identities; the external face inputs remain governed by their original dataset terms.
 
 ## 13. Conclusion
 
-EraSeMap demonstrates a practical and mathematically explicit way to audit biometric erasure across heterogeneous artifacts. A deletion request becomes a typed residual-path problem, completion becomes a conjunction of path closure and positive mandatory evidence, and correction becomes a minimum-cost action problem whose result must survive replay. The abstract guarantees are machine-checked; the optimizer conforms to an exhaustive oracle; real local services show substantial savings; and model influence is handled through a bounded quantitative gate with exact fallback.
+EraSeMap demonstrates a practical and mathematically explicit way to audit biometric erasure across heterogeneous artifacts and future registered operations. A deletion request becomes a typed residual-path and temporal-reachability problem, completion becomes a conjunction of path closure, positive mandatory evidence, and stable registered transitions, and correction becomes a minimum-cost action problem whose result must survive replay. The abstract guarantees are machine-checked; the optimizers conform to exhaustive oracles; real local services show substantial savings; and model influence is handled through a bounded quantitative gate with exact fallback.
 
 The evidence supports reproducibility, internal correctness, and feasibility. It does not yet establish independent superiority or production-wide deletion. The strongest next result is an independently authored, frozen hidden challenge followed by an authorized organizational pilot. Preserving this boundary is not a weakness of the project; it is what makes its current claim scientifically defensible.
 
@@ -309,7 +337,11 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 
 [13] D. Temoshok et al., “Digital Identity Guidelines: Identity Proofing and Enrollment,” NIST SP 800-63A-4, July 2025. DOI: 10.6028/NIST.SP.800-63a-4.
 
-[14] EraSeMap, public repository and evidence archive, version 0.3.1, 2026: https://github.com/nazkari86-lab/erasemap.
+[14] EraSeMap, public repository and evidence archive, version 0.5.0, 2026: https://github.com/nazkari86-lab/erasemap.
+
+[15] European Data Protection Board, “EDPB identifies challenges hindering the full implementation of the right to erasure,” 18 February 2026.
+
+[16] UK Patent Application GB2562767A, “Right to erasure compliant back-up,” 2018.
 
 ## Appendix A. Notation
 
@@ -327,6 +359,8 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | F | Frozen three-valued evaluator |
 | Feasible(B) | All selected actions are permitted and replay returns COMPLETE |
 | FCR | False-complete rate |
+| Reach(q₀,δ) | States reachable after deletion under registered transitions |
+| MSC | Minimum-cost Stabilization Cut blocking every registered regeneration witness |
 
 ## Appendix B. Claim–Evidence Map
 
@@ -340,3 +374,4 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | Targeted remediation can be cheaper than rebuild-all | 17.64× speedup; 94.62% fewer bytes; 20/20 complete | One local machine and synthetic identities |
 | Adaptive face candidate meets frozen bounded gates | −0.00653 AUC difference; 1.593×; privacy upper CI 0.04091 | Post-exposure adaptive result; exact fallback remains required |
 | Sequential deletion candidate meets six frozen gates | 25 transitions; worst retained accuracy −0.00952; privacy upper CI 0.00624 | First-run preregistered, but project-authored and no-shadow-model |
+| RSE distinguishes future risk from guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC recurrences | Prospective but project-authored local multi-path lab |

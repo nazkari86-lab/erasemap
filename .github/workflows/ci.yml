@@ -23,10 +23,12 @@ jobs:
           cache: pip
       - run: python -m pip install -e '.[dev,real]'
       - run: python -m ruff check .
-      - run: python -m mypy --strict src pilot external_challenge
+      - run: >-
+          python -m mypy --strict
+          src pilot external_challenge external_temporal_challenge
       - run: >-
           python -m pytest
-          --cov=erasemap --cov=external_challenge --cov=pilot
+          --cov=erasemap --cov=external_challenge --cov=external_temporal_challenge --cov=pilot
           --cov-report=term-missing --cov-fail-under=90
       - run: python -m build
       - run: python scripts/verify_source_locked_holdout.py
@@ -40,6 +42,13 @@ jobs:
       - run: >-
           python scripts/verify_regeneration_safe_erasure_v1.py
           --result /tmp/erasemap-rse-v1/result.json
+      - run: python scripts/verify_regeneration_safe_erasure_v2.py
+      - run: >-
+          PYTHONPATH=src python experiments/run_regeneration_safe_erasure_v2.py
+          --output /tmp/erasemap-rse-v2
+      - run: >-
+          python scripts/verify_regeneration_safe_erasure_v2.py
+          --result /tmp/erasemap-rse-v2/result.json
       - run: >-
           python scripts/verify_formal_conformance.py
           --expected formal/conformance-v1.json

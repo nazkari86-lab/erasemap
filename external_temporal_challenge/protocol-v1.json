@@ -1,0 +1,20 @@
+{
+  "schema_version": "erasemap-external-temporal-protocol-v1",
+  "gates": {
+    "minimum_case_count": 120,
+    "minimum_family_count": 4,
+    "minimum_nonverified_case_count": 100,
+    "minimum_accuracy": 0.95,
+    "maximum_false_verified_count": 0,
+    "minimum_cost_accuracy": 0.95,
+    "require_independently_authored": true
+  },
+  "required_process": [
+    "external author seals public cases and private answers",
+    "public cases and commitment manifest are frozen before predictions",
+    "EraSeMap runner produces answer-blind predictions bound to the public-suite hash and tested git commit",
+    "external author reveals the byte-identical committed answers",
+    "score is recomputed without changing EraSeMap or the cases"
+  ],
+  "claim_boundary": "A passing record is independent evidence only when authorship, freeze-before-run timing, answer reveal, tested commit, and evaluator identity are externally verifiable."
+}

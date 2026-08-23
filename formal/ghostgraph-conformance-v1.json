@@ -1,0 +1,15 @@
+{
+  "claim": "production temporal prediction, version filtering, verdicts, and one-step minimax selection equal an independently structured packed-bit oracle on every listed case",
+  "configurations": 367,
+  "experiments": 7,
+  "graphs": 8,
+  "mismatches": 0,
+  "records_sha256": "cb4da28159d1e26fa72978467a5113d8f8a87dd3a0269cb1269d7e1d1d821bd7",
+  "schema": "erasemap-ghostgraph-conformance-v1",
+  "verdict_counts": {
+    "EQUIVALENCE_CLASS": 22,
+    "GRAPH_DISCOVERED": 2,
+    "NO_OBSERVED_RECURRENCE": 28,
+    "PATH_CLASS_DISCOVERED": 4
+  }
+}

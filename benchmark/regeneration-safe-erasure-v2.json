@@ -1,0 +1,55 @@
+{
+  "schema_version": "erasemap-rse-multipath-v2",
+  "protocol_id": "regeneration-safe-erasure-multipath-v2",
+  "registration_date": "2026-08-23",
+  "registration_status": "FROZEN_BEFORE_MULTIPATH_IMPLEMENTATION_AND_FIRST_RUN",
+  "method_status": "RSE_V1_CORE_PREEXISTING_NEW_MULTIPATH_ADAPTERS_AND_ENDPOINTS_UNSEEN",
+  "risk_families": {
+    "backup_restore": [101, 211, 307, 401, 503],
+    "legacy_export_import": [601, 701, 809, 907, 1009],
+    "retry_queue_replay": [1103, 1201, 1301, 1409, 1511],
+    "checkpoint_redeploy": [1601, 1709, 1801, 1901, 2003],
+    "mixed_multicarrier": [2111, 2203, 2309, 2411, 2503, 2609, 2707, 2801, 2903, 3001]
+  },
+  "safe_seeds": [3109, 3203, 3301, 3407, 3511, 3607, 3701, 3803, 3907, 4001],
+  "coverage_fault_seeds": [4103, 4201, 4303, 4409, 4507, 4603, 4703, 4801, 4903, 5003],
+  "registered_transitions": [
+    "backup_restore",
+    "legacy_export_import",
+    "retry_queue_replay",
+    "checkpoint_redeploy",
+    "nightly_etl",
+    "vector_rebuild",
+    "model_retrain"
+  ],
+  "declared_control_costs": {
+    "persistent_subject_tombstone": 7,
+    "backup_restore_filter": 3,
+    "legacy_import_filter": 4,
+    "retry_queue_filter": 2,
+    "checkpoint_deploy_filter": 5,
+    "destroy_all_latent_carriers": 60
+  },
+  "primary_gates": {
+    "risk_case_count": 30,
+    "safe_case_count": 10,
+    "coverage_fault_case_count": 10,
+    "rse_risk_detection_count": 30,
+    "rse_safe_specificity_count": 10,
+    "rse_coverage_fail_closed_count": 10,
+    "snapshot_pcug_false_complete_count": 30,
+    "blanket_carrier_false_incomplete_count": 10,
+    "post_msc_physical_regeneration_count_max": 0,
+    "exact_oracle_mismatch_count_max": 0,
+    "maximum_selected_control_cost": 7
+  },
+  "secondary_endpoints": [
+    "shortest_witness_length_by_family",
+    "reachable_state_count",
+    "selected_control_ids",
+    "path_specific_control_cost",
+    "rebuild_all_cost",
+    "runtime_milliseconds"
+  ],
+  "claim_boundary": "Project-authored prospective multi-path local systems experiment with deterministic synthetic vectors. It is not an independent hidden challenge, organization pilot, production FaceID/eGov validation, or proof of unknown-transition coverage."
+}

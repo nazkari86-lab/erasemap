@@ -142,6 +142,25 @@ def test_docker_service_builds_scoped_command_and_tears_down(tmp_path: Path) -> 
     assert runner.calls[-1][0][:3] == ("docker", "rm", "-f")
 
 
+def test_docker_service_graceful_stop_flushes_before_cleanup(tmp_path: Path) -> None:
+    runner = FakeRunner()
+    service = DockerService(
+        family="keycloak",
+        image=IMAGE,
+        internal_port=8080,
+        root=tmp_path,
+        command_runner=runner,
+        nonce="graceful",
+    )
+    service.start(env={}, mounts=(), args=("start-dev",))
+    service.stop_gracefully(timeout_seconds=20)
+    assert runner.calls[-2][0][:4] == ("docker", "stop", "--time", "20")
+    assert runner.calls[-1][0][:3] == ("docker", "rm", "-f")
+    with pytest.raises(ValueError, match="between 1 and 120"):
+        service._running = True
+        service.stop_gracefully(timeout_seconds=0)
+
+
 def test_docker_service_rejects_mount_outside_root_and_digest_drift(tmp_path: Path) -> None:
     runner = FakeRunner()
     service = DockerService(

@@ -271,7 +271,7 @@ def _keycloak_case(
             "coverage_fault",
         }
         if has_export:
-            source_service.stop()
+            source_service.stop_gracefully()
             _one_shot_container(
                 name=require_transfer_container_name(
                     f"erasemap-transfer-keycloak-export-{os.getpid()}-{seed}"

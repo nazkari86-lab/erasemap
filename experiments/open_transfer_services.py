@@ -159,6 +159,18 @@ class DockerService(AbstractContextManager["DockerService"]):
         self.command_runner(["docker", "rm", "-f", name], check=False)
         self._running = False
 
+    def stop_gracefully(self, *, timeout_seconds: int = 30) -> None:
+        if not self._running:
+            return
+        if timeout_seconds < 1 or timeout_seconds > 120:
+            raise ValueError("graceful stop timeout must be between 1 and 120 seconds")
+        name = require_transfer_container_name(self.container_name)
+        self.command_runner(
+            ["docker", "stop", "--time", str(timeout_seconds), name], check=False
+        )
+        self.command_runner(["docker", "rm", "-f", name], check=False)
+        self._running = False
+
     def __exit__(self, *args: object) -> None:
         self.stop()
 

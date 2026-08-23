@@ -288,8 +288,8 @@ legacy fixture mechanism, not a production trust boundary.
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install --constraint constraints/ci-py311.txt -e '.[dev,real]'
-.venv/bin/python scripts/verify_ci_environment.py
+.venv/bin/pip install --constraint constraints/local-py314.txt -e '.[dev,real]'
+.venv/bin/python scripts/verify_ci_environment.py --constraints constraints/local-py314.txt
 .venv/bin/pytest
 .venv/bin/ruff check .
 .venv/bin/mypy src/erasemap

@@ -1,4 +1,4 @@
-# Frozen environment used by the Python 3.11 GitHub Actions evidence gate.
+# Frozen environment used by the local Python 3.14 release reproduction gate.
 build==1.5.0
 cffi==2.1.1
 coverage==7.15.4
@@ -19,7 +19,7 @@ pytest==9.1.1
 pytest-cov==7.1.0
 ruff==0.16.4
 scikit-learn==1.8.0
-scipy==1.17.1
+scipy==1.18.0
 sortedcontainers==2.4.0
 threadpoolctl==3.6.0
 typing_extensions==4.16.0

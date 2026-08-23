@@ -28,7 +28,7 @@ jobs:
           python -m pip install
           --constraint constraints/ci-py311.txt
           -e '.[dev,real]'
-      - run: python scripts/verify_ci_environment.py
+      - run: python scripts/verify_ci_environment.py --constraints constraints/ci-py311.txt
       - run: python -m ruff check .
       - run: >-
           python -m mypy --strict

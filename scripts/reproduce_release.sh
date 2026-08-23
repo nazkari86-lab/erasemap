@@ -26,9 +26,20 @@ if [[ ! -x "$python_bin" ]]; then
   exit 2
 fi
 
+python_minor="$($python_bin -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+case "$python_minor" in
+  3.11) environment_constraints="constraints/ci-py311.txt" ;;
+  3.14) environment_constraints="constraints/local-py314.txt" ;;
+  *)
+    echo "No frozen release environment for Python $python_minor." >&2
+    echo "Use Python 3.11 or 3.14 for evidence reproduction." >&2
+    exit 2
+    ;;
+esac
+
 "$python_bin" -m ruff check .
 "$python_bin" -m pip check
-"$python_bin" scripts/verify_ci_environment.py
+"$python_bin" scripts/verify_ci_environment.py --constraints "$environment_constraints"
 "$python_bin" -m mypy --strict \
   src pilot external_challenge external_temporal_challenge
 "$python_bin" -m pytest \

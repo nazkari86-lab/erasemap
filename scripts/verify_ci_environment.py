@@ -32,9 +32,7 @@ def verify(path: Path) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--constraints", type=Path, default=Path("constraints/ci-py311.txt")
-    )
+    parser.add_argument("--constraints", type=Path, required=True)
     args = parser.parse_args()
     mismatches = verify(args.constraints)
     if mismatches:

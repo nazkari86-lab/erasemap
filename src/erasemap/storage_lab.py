@@ -56,6 +56,7 @@ class RegisteredStoreLab:
         self.backup_directory = self.root / "backups"
         self.backup_directory.mkdir(exist_ok=True)
         self.model_path = self.root / "model-manifest.json"
+        self.tombstone_path = self.root / "deletion-tombstones.json"
         with closing(sqlite3.connect(self.database_path)) as connection, connection:
             connection.execute(
                 "CREATE TABLE IF NOT EXISTS identities "
@@ -144,6 +145,94 @@ class RegisteredStoreLab:
             connection.execute(
                 "DELETE FROM identities WHERE commitment = ?", (commitment,)
             )
+
+    def delete_online_keep_recoverable_backup(self, subject_id: str) -> None:
+        """Delete registered online derivatives while retaining the offline backup carrier."""
+        commitment = self._commitment(subject_id)
+        self.delete_source_only(subject_id)
+        ids, embeddings = self._read_index()
+        keep = ids != commitment
+        retained = embeddings[keep]
+        width = embeddings.shape[1] if embeddings.ndim == 2 else 0
+        np.savez_compressed(
+            self.index_path,
+            ids=ids[keep],
+            embeddings=(
+                retained
+                if len(retained)
+                else np.empty((0, width), dtype=np.float32)
+            ),
+        )
+        cache = self._read_json(self.cache_path, {})
+        cache.pop(commitment, None)
+        self._write_json(self.cache_path, cache)
+        model = self._read_json(self.model_path, {"training_commitments": []})
+        model["training_commitments"] = sorted(
+            value for value in model["training_commitments"] if value != commitment
+        )
+        self._write_json(self.model_path, model)
+
+    def install_persistent_tombstone(self, subject_id: str) -> None:
+        commitment = self._commitment(subject_id)
+        tombstones = set(self._read_json(self.tombstone_path, []))
+        tombstones.add(commitment)
+        self._write_json(self.tombstone_path, sorted(tombstones))
+
+    def restore_backup_to_source(self, subject_id: str) -> bool:
+        """Restore one subject unless a durable subject tombstone blocks the transition."""
+        commitment = self._commitment(subject_id)
+        tombstones = set(self._read_json(self.tombstone_path, []))
+        if commitment in tombstones:
+            return False
+        key_path = self.backup_key_path(subject_id)
+        backup_path = self._backup_cipher_path(subject_id)
+        if not key_path.exists() or not backup_path.exists():
+            return False
+        encrypted = backup_path.read_bytes()
+        plaintext = AESGCM(key_path.read_bytes()).decrypt(
+            encrypted[:12], encrypted[12:], commitment.encode()
+        )
+        payload = json.loads(plaintext)
+        vector = np.asarray(payload["embedding"], dtype=np.float32)
+        with closing(sqlite3.connect(self.database_path)) as connection, connection:
+            connection.execute(
+                "INSERT OR REPLACE INTO identities(commitment, embedding) VALUES (?, ?)",
+                (commitment, vector.tobytes()),
+            )
+        return True
+
+    def rebuild_online_derivatives(self, subject_id: str) -> bool:
+        """Run the registered source-to-cache/index/model propagation workflow."""
+        commitment = self._commitment(subject_id)
+        with closing(sqlite3.connect(self.database_path)) as connection, connection:
+            row = connection.execute(
+                "SELECT embedding FROM identities WHERE commitment = ?", (commitment,)
+            ).fetchone()
+        if row is None:
+            return False
+        vector = np.frombuffer(row[0], dtype=np.float32).copy()
+        ids, embeddings = self._read_index()
+        keep = ids != commitment
+        retained = embeddings[keep] if len(ids) else np.empty((0, len(vector)), np.float32)
+        np.savez_compressed(
+            self.index_path,
+            ids=np.asarray([*ids[keep].tolist(), commitment]),
+            embeddings=np.vstack((retained, vector)),
+        )
+        cache = self._read_json(self.cache_path, {})
+        cache[commitment] = vector.tolist()
+        self._write_json(self.cache_path, cache)
+        model = self._read_json(self.model_path, {"training_commitments": []})
+        commitments = set(model["training_commitments"])
+        commitments.add(commitment)
+        self._write_json(
+            self.model_path, {"training_commitments": sorted(commitments)}
+        )
+        return True
+
+    def online_presence(self, subject_id: str) -> dict[str, bool]:
+        presence = self.registered_presence(subject_id)
+        return {key: value for key, value in presence.items() if key != "backup"}
 
     def remediate(self, subject_id: str) -> None:
         commitment = self._commitment(subject_id)

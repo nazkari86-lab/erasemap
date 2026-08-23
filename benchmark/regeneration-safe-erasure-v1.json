@@ -1,0 +1,16 @@
+{
+  "schema_version": "erasemap-rse-protocol-v1",
+  "protocol_id": "regeneration-safe-erasure-v1",
+  "status": "PROJECT_AUTHORED_DEVELOPMENT",
+  "frozen_before_first_run": true,
+  "seeds": [101, 211, 307, 401, 503, 601, 701, 809, 907, 1009, 1103, 1201, 1301, 1409, 1511, 1601, 1709, 1801, 1901, 2003],
+  "registered_workflow": ["backup_restore", "nightly_etl", "vector_rebuild", "model_retrain"],
+  "primary_gates": {
+    "snapshot_false_complete_count": 20,
+    "rse_detection_count": 20,
+    "post_control_regeneration_count_max": 0,
+    "coverage_complete_count": 20,
+    "optimal_control_cost_max": 7
+  },
+  "claim_boundary": "Local synthetic records in real local storage formats; not independent, organizational, FaceID, eGov, or production evidence."
+}

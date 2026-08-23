@@ -1,6 +1,6 @@
 # EraSeMap competition evidence scorecard
 
-Snapshot: 2026-08-22. This is a fixed evidence map, not an official RKNP or ISEF score and not a
+Snapshot: 2026-08-23. This is a fixed evidence map, not an official RKNP or ISEF score and not a
 probability of winning. A number may move only after the named evidence event occurs.
 
 ## Thirty-second explanation
@@ -55,6 +55,10 @@ above 7.8.
    0.00624 against the 0.05 limit. The attacks use no shadow models and are not a privacy guarantee.
 6. **External boundary:** the independent score remains 7.8 until an identifiable evaluator authors,
    freezes, reveals, signs, and submits the challenge.
+7. **Temporal deletion:** RSE detected 20/20 project-authored backup regeneration events after an
+   online-only snapshot declared absence. Exact MSC selected the cost-7 persistent tombstone over
+   cost-40 backup destruction, and physical replay produced 0/20 recurrences. This adds a new
+   mechanism result without changing the 7.8 independence score.
 
 ## Reproduce the jury artifact
 

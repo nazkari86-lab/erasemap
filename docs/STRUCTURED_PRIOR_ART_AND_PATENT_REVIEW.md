@@ -1,6 +1,6 @@
 # Structured Prior-Art and Patent Review
 
-Snapshot date: 2026-08-22
+Snapshot date: 2026-08-23
 
 ## Scope and method
 
@@ -34,6 +34,9 @@ before competition submission because 2025–2026 unlearning work is moving quic
 | Wang et al., *Machine Unlearning: A Comprehensive Survey* (2024) | Taxonomy including verification, privacy, and security | Confirms the breadth of established unlearning work |
 | Koloskova et al., *Certified Unlearning for Neural Networks* (ICML 2025) | Certified neural-network unlearning | Prevents broad certified-unlearning novelty claims |
 | Ahsan et al., *Forget and Explain* (2025/2026) | Explainability and graph-change evidence for GNN unlearning | Overlaps human-readable residual evidence, but focuses on GNN model internals |
+| Lee, *Temporal Program Logic for Data* (2024) | Temporal deletion and retention policies in program logic | Prevents claiming invention of temporal deletion invariants |
+| MUTE, *When Unlearning Fails* (2026) | Post-training influence echo in self-improving federated agent networks | Overlaps future re-emergence, but not heterogeneous storage transition auditing or costed stabilization |
+| K9db (OSDI 2023) | Ownership-aware storage and compliant derived views by construction | Prevents claiming invention of erasability-by-design or compliant caches |
 
 ## Closest patents
 
@@ -48,6 +51,8 @@ before competition submission because 2025–2026 unlearning work is moving quic
 | US20230350843A1 | Transaction-level retention inheritance through data lineage |
 | US20260087104A1 | AI training/deployment data removal and an unlearning verification network |
 | US20250190784A1 / US12456052B2 | DAG-like staged unlearning, hashes or zero-knowledge proofs for intermediate model instances, and verification that the resulting model reached production |
+| GB2562767A | Right-to-erasure-compatible encrypted backups and restoration |
+| US10733148B2 | Predicate deletion and tombstone markers during compaction |
 
 ## Corrected novelty boundary
 
@@ -64,6 +69,17 @@ The research hypothesis is the narrower composition:
 > request-scoped model influence, mandatory quantitative verification channels, replayed deletion
 > actions, and independently recomputed evidence into one three-valued verdict, shortest residual
 > counterexample, and minimum-cost remediation plan.
+
+The RSE extension adds a second, separately testable composition hypothesis:
+
+> Given a declared finite transition catalogue and fail-closed observed coverage, subject-specific
+> reachable-closure checking can expose a shortest future regeneration witness and exact selection
+> can find the least-cost set of registered guards that removes every registered witness.
+
+This does not claim invention of temporal logic, tombstones, backup-aware deletion, reachability,
+minimum cuts, or data-resurrection prevention separately. A targeted 2026-08-23 search did not find
+the full heterogeneous DB/cache/vector/backup/model composition, but that search is not sufficient
+for a worldwide-first or freedom-to-operate claim.
 
 The project must demonstrate that the composition catches failures missed by strong component
 baselines. The source-locked v1 holdout showed transfer but tied typed-node audit. The separately
@@ -95,3 +111,8 @@ patent filing.
 - <https://patents.google.com/patent/US20200387625A1/en>
 - <https://patents.google.com/patent/WO2021174104A1/en>
 - <https://patents.google.com/patent/US12456052B2/en>
+- <https://ethz.ch/content/dam/ethz/special-interest/infk/chair-program-method/pm/documents/Education/Theses/Andrew_Lee_MA_report.pdf>
+- <https://arxiv.org/abs/2607.28829>
+- <https://www.usenix.org/system/files/osdi23-albab.pdf>
+- <https://patents.google.com/patent/GB2562767A/en>
+- <https://patents.google.com/patent/US10733148B2/en>

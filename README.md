@@ -21,6 +21,7 @@ erasemap audit examples/five_branch_system.json --subject subject-1
 erasemap generate --seed 7 --nodes 100 --fault STALE_CACHE --output /tmp/case.json
 erasemap benchmark dev --protocol benchmark/protocol-v1.json --output outputs/dev-v1
 erasemap showcase --repo-root . --output outputs/jury-showcase-v1
+erasemap rse demo --seed 101
 ```
 
 The fixed example contains an erased enrollment record with one still-active face template, so
@@ -79,6 +80,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Measured multi-service optimization | 20-pair real-process holdout PASS; local synthetic records |
 | Independent hidden challenge | Executable freeze/commit/score kit ready; no external run claimed |
 | Sequential deletion privacy v1 | Preregistered first run PASS: 25 transitions, all six frozen gates; project-authored |
+| Regeneration-Safe Erasure v1 | 20/20 registered regeneration risks detected; 0/20 after exact MSC; project-authored local lab |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
@@ -163,6 +165,22 @@ a general privacy guarantee. See
 The novelty claim has been narrowed after a structured literature and patent search; lineage-aware
 deletion graphs and proof-of-deletion are prior art. See
 [`docs/STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md`](docs/STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md).
+
+## Regeneration-Safe Erasure
+
+Snapshot deletion is not necessarily stable under future restore, ETL, index rebuild, or model
+training operations. RSE computes the finite closure of a registered subject-specific transition
+catalogue, returns a shortest reproducible regeneration witness, and refuses `RSE_VERIFIED` when a
+declared sensor is missing, an observation is unverified, or a runtime transition is unregistered.
+Its exact Minimal Stabilization Cut selects the least-cost set of subject-scoped guards that removes
+every registered regeneration witness.
+
+The first local development run used SQLite, a JSON cache, a NumPy vector index, an AES-GCM backup,
+and a model manifest. An online-only snapshot missed 20/20 later backup restorations; RSE detected
+20/20, selected a cost-7 persistent tombstone instead of cost-40 backup destruction, and physical
+replay produced 0/20 post-control recurrences. This is project-authored mechanism evidence, not an
+independent or production result. See
+[`docs/REGENERATION_SAFE_ERASURE_V1_REPORT.md`](docs/REGENERATION_SAFE_ERASURE_V1_REPORT.md).
 
 ## Real-face unlearning benchmark
 

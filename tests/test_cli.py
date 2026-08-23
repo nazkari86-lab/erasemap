@@ -51,6 +51,19 @@ def test_generate_command_writes_reproducible_graph(tmp_path: Path) -> None:
     assert json.loads(first.stdout)["faults"][0]["kind"] == "STALE_CACHE"
 
 
+def test_rse_demo_exposes_regeneration_and_verified_control() -> None:
+    result = run_cli("rse", "demo", "--seed", "101")
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["snapshot_complete"]
+    assert payload["regenerated_without_control"]
+    assert payload["rse_verdict"] == "REGENERATION_RISK"
+    assert payload["shortest_witness"] == ["backup_restore"]
+    assert payload["selected_controls"] == ["persistent-subject-tombstone"]
+    assert not payload["regenerated_after_control"]
+
+
 def test_invalid_input_returns_code_two() -> None:
     result = run_cli("generate", "--seed", "-1", "--nodes", "2", "--output", "x")
 

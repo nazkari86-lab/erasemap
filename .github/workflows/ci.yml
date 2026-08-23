@@ -33,6 +33,13 @@ jobs:
       - run: python scripts/verify_external_freeze.py
       - run: python scripts/verify_sequential_deletion_privacy_v1.py
       - run: PYTHONPATH=src python scripts/verify_measured_multiservice_v1.py
+      - run: python scripts/verify_regeneration_safe_erasure_v1.py
+      - run: >-
+          PYTHONPATH=src python experiments/run_regeneration_safe_erasure_v1.py
+          --output /tmp/erasemap-rse-v1
+      - run: >-
+          python scripts/verify_regeneration_safe_erasure_v1.py
+          --result /tmp/erasemap-rse-v1/result.json
       - run: >-
           python scripts/verify_formal_conformance.py
           --expected formal/conformance-v1.json

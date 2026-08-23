@@ -1,0 +1,1 @@
+{"protocol_path":"benchmark/regeneration-safe-erasure-v1.json","protocol_sha256":"56cfd923085d97102b5d79acdeb99567cecd2feffcfd4ea12a3a4ef29002ab21","runner":"experiments/run_regeneration_safe_erasure_v1.py"}

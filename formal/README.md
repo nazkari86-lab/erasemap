@@ -15,6 +15,11 @@ The machine-checked contribution has two parts:
 - `EraSeMap.PCUG.Boundary` contains checked counterexamples showing that a hidden residual can
   survive without topology completeness and that a channel pass is meaningless without channel
   soundness. These demonstrate that the main theorem's assumptions are necessary claim boundaries.
+- `EraSeMap.RSE.observed_coverage_lifts_to_real_safety` proves the temporal composition result:
+  when every real transition is covered by the registered relation and every registered transition
+  preserves residual absence, snapshot safety extends to every real reachable state. It does not
+  prove the coverage premise for an external deployment. The checked
+  `missing_coverage_allows_regeneration` example shows why that premise cannot be removed.
 
 Build locally with the pinned Lean toolchain:
 

@@ -50,6 +50,7 @@ from erasemap.receipts import (
     verify_receipt,
 )
 from erasemap.showcase import write_showcase
+from erasemap.temporal_lab import run_temporal_lab_trial
 
 
 def _json(payload: Any) -> str:
@@ -448,6 +449,13 @@ def _showcase(args: argparse.Namespace) -> int:
     return 0
 
 
+def _rse_demo(args: argparse.Namespace) -> int:
+    with tempfile.TemporaryDirectory(prefix="erasemap-rse-demo-") as root:
+        trial = run_temporal_lab_trial(root, seed=args.seed)
+    _print(trial.payload())
+    return 0 if not trial.regenerated_after_control else 1
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="erasemap")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -509,6 +517,12 @@ def _parser() -> argparse.ArgumentParser:
     showcase.add_argument("--repo-root", default=".")
     showcase.add_argument("--output", default="outputs/jury-showcase-v1")
     showcase.set_defaults(handler=_showcase)
+
+    rse = commands.add_parser("rse")
+    rse_commands = rse.add_subparsers(dest="rse_command", required=True)
+    rse_demo = rse_commands.add_parser("demo")
+    rse_demo.add_argument("--seed", type=int, default=101)
+    rse_demo.set_defaults(handler=_rse_demo)
 
     pcug = commands.add_parser("pcug")
     pcug_commands = pcug.add_subparsers(dest="pcug_command", required=True)

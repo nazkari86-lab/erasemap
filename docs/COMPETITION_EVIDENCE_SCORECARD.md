@@ -22,13 +22,13 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 | Problem clarity | 9.5/10 | `examples/five_branch_system.json` gives a two-node counterexample: `source -> template` | Usability test with judges or operators who can explain the result unaided |
 | Practical relevance | 9.6/10 | Contracts cover source, template, cache, vector store, backup, and model influence | Authorized organization pilot on actual deletion workflow |
 | Narrow scientific novelty | 9.5/10 | Fail-closed PCUG/CDC plus registered temporal RSE/MSC; formal, stress, and prospective multi-path evidence; prior-art exclusions explicit | Untouched external temporal cases outperform frozen strong baselines |
-| Experimental methodology | 9.6/10 | Frozen protocols, one-shot holdouts, paired bootstrap, retained negative MUFAC result, and preregistered first-run sequential and RSE v2 protocols | Independently authored preregistered holdout |
-| Scientific claim completion | 9.5/10 | Formal conditional soundness, finite optimality, measured systems, sequential-release, and prospective temporal results | External hidden challenge plus materially different system replication |
+| Experimental methodology | 9.7/10 | Frozen protocols, one-shot holdouts, paired bootstrap, retained negative MUFAC result, preregistered first-run studies, and 16,384-case deterministic MSC conformance | Independently authored preregistered holdout |
+| Scientific claim completion | 9.6/10 | Conditional PCUG/RSE soundness and exact CDC/MSC optimality in Lean; measured systems, sequential-release, and prospective temporal results | External hidden challenge plus materially different system replication |
 | Real inputs and transfer | 9.0/10 | Open face datasets, official source structures, real PostgreSQL/Redis/Qdrant processes | Authorized real records or redacted production instrumentation |
 | Independence of evidence | 7.8/10 | Executable signed challenge exists, but `external_results/` has no accepted external result | One verified evaluator passes all 9.5 rubric gates |
-| Formal justification | 9.6/10 | Lean proof, axiom audit, 3,072/3,072 production/oracle conformance runs | Independent proof review or stronger implementation-refinement theorem |
-| Engineering | 9.8/10 | Strict typing, tests, coverage gate, reproducible CI, signed evidence and drift checks | Reproducible external deployment or release audit |
-| Reproducibility | 9.8/10 | One-command gates, committed protocols, raw hashes, deterministic showcase | Independent clean-machine reproduction |
+| Formal justification | 9.7/10 | Lean PCUG/RSE soundness and exact CDC/MSC results; axiom audit; 3,072 CDC plus 16,384 MSC production/oracle runs | Independent proof review or machine-checked implementation refinement |
+| Engineering | 9.8/10 | Strict typing, tests, coverage, SHA-pinned CI actions, pinned build backend, exact runtime/test constraints, signed evidence and drift checks | Reproducible external deployment or release audit |
+| Reproducibility | 9.8/10 | CI-equivalent clean-worktree release gate, committed protocols, raw hashes, deterministic showcase | Independent clean-machine reproduction |
 | FaceID/eGov/KYC applicability | 9.4/10 | System-neutral typed contract and display adapters | Authorized domain-specific instrumentation and evaluation |
 | Competition presentation readiness | 9.7/10 | Jury showcase, Russian defense script, Q&A, evidence-led slide deck | Timed rehearsal with an unfamiliar reviewer |
 | RKNP competitiveness | 9.8/10 | Formal result plus measured multi-service result satisfy the frozen 9.8 trigger | External PASS or organization confirmation for a defensible 9.9 |
@@ -61,6 +61,10 @@ above 7.8.
    exact MSC. Snapshot PCUG missed future replay in 30/30 risk cases, while blanket carrier audit
    rejected 10/10 safe cases. This strengthens the prospective mechanism result without changing
    the 7.8 independence score.
+8. **MSC conformance:** production branch-and-bound matched a separate exhaustive subset oracle in
+   16,384/16,384 configurations spanning every carrier subset and permission mask, eight cost
+   catalogues, and both input orders. This closes a bounded implementation gap; it is not a new
+   external experiment.
 
 ## Reproduce the jury artifact
 

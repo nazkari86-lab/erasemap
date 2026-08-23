@@ -1,0 +1,13 @@
+{
+  "carrier_subsets": 16,
+  "claim": "production exact_stabilization_cut equals a separately implemented exhaustive subset oracle on every listed finite-domain configuration",
+  "complete_configurations": 13584,
+  "configurations": 16384,
+  "cost_catalogs": 8,
+  "infeasible_configurations": 2800,
+  "input_orderings": 2,
+  "mismatches": 0,
+  "permission_masks": 64,
+  "records_sha256": "633d5b0eb9a5d024f8ac2f1acb039e2b87e408e2f60b1cc94aa6ff85c2aedf9d",
+  "schema": "erasemap-rse-msc-conformance-v1"
+}

@@ -30,6 +30,18 @@ The production MSC solver is now branch-and-bound. A separately implemented exha
 oracle matched its action identifiers and costs in all 30 prospective risk cases. Hypothesis-based
 tests additionally vary every control cost and permission mask.
 
+A separate deterministic conformance audit covers the complete frozen finite domain formed by all
+16 carrier subsets, all 64 permission masks, eight cost catalogues designed to exercise ties,
+zero-cost controls and shared-versus-path-specific trade-offs, and both input orders. Production
+branch-and-bound matched the separately implemented exhaustive subset oracle in **16,384/16,384**
+configurations. This is bounded software verification, not another prospective experiment or
+external evidence.
+
+Lean additionally checks `selected_msc_safe_and_minimum`: if replay feasibility soundly implies
+temporal safety for the registered transition semantics, the exact finite selector returns a safe
+listed candidate no more expensive than any other feasible listed candidate. The theorem preserves
+the coverage and local-soundness assumptions rather than claiming they hold automatically.
+
 ## Baseline interpretation
 
 The snapshot PCUG baseline is intentionally strong for its stated snapshot claim: every online

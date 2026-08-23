@@ -20,6 +20,10 @@ The machine-checked contribution has two parts:
   preserves residual absence, snapshot safety extends to every real reachable state. It does not
   prove the coverage premise for an external deployment. The checked
   `missing_coverage_allows_regeneration` example shows why that premise cannot be removed.
+- `EraSeMap.ExactMSC.selected_msc_safe_and_minimum` composes finite exact selection with the RSE
+  feasibility-soundness obligation: the selected registered control set is replay-feasible,
+  temporally safe under that explicit obligation, and no more expensive than any other listed
+  feasible set. `no_msc_iff_no_feasible_candidate` proves the fail-closed no-plan case.
 
 Build locally with the pinned Lean toolchain:
 
@@ -40,3 +44,16 @@ python scripts/verify_formal_conformance.py \
 The committed v1 report covers 512 cost/permission catalogs and all 3,072 action orderings with
 zero differences between `exact_cdc` and `brute_force_cdc`. This is bounded implementation
 conformance, not a proof of the Python runtime or an external deployment.
+
+MSC receives a separate implementation-conformance gate:
+
+```bash
+python scripts/verify_rse_conformance.py \
+  --expected formal/rse-msc-conformance-v1.json \
+  --output /tmp/rse-msc-conformance.json
+```
+
+It covers all 16 carrier subsets, all 64 control-permission masks, eight adversarial cost
+catalogues, and both input orders: 16,384 configurations with zero production/oracle differences.
+The exhaustive oracle is separately implemented, but the domain and both implementations remain
+project-authored.

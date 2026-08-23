@@ -14,14 +14,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.11"
           cache: pip
-      - run: python -m pip install -e '.[dev,real]'
+          cache-dependency-path: |
+            pyproject.toml
+            constraints/ci-py311.txt
+      - run: >-
+          python -m pip install
+          --constraint constraints/ci-py311.txt
+          -e '.[dev,real]'
+      - run: python scripts/verify_ci_environment.py
       - run: python -m ruff check .
       - run: >-
           python -m mypy --strict
@@ -53,6 +60,10 @@ jobs:
           python scripts/verify_formal_conformance.py
           --expected formal/conformance-v1.json
           --output /tmp/formal-conformance.json
+      - run: >-
+          python scripts/verify_rse_conformance.py
+          --expected formal/rse-msc-conformance-v1.json
+          --output /tmp/rse-msc-conformance.json
       - run: python experiments/run_pcug_mechanism_stress.py --output /tmp/pcug-stress.json
       - run: >-
           python external_evaluator/run.py
@@ -74,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
       # Pinned after v1.5.0 so the declared axiom-audit input is actually executed.

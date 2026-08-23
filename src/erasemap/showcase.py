@@ -31,6 +31,8 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     stress_path = root / "benchmark/results/pcug-mechanism-stress-v1.json"
     systems_path = root / "benchmark/results/measured-multiservice-v1-summary.json"
     formal_path = root / "formal/conformance-v1.json"
+    rse_path = root / "outputs/regeneration-safe-erasure-v2/result.json"
+    msc_path = root / "formal/rse-msc-conformance-v1.json"
 
     graph = graph_from_json(example_path.read_text())
     audit = audit_subject(graph, {}, "subject-1", now_epoch=100)
@@ -58,9 +60,25 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     _require_equal(formal.get("ordering_runs"), 3072, "formal conformance run count")
     _require_equal(formal.get("mismatches"), 0, "formal conformance mismatches")
 
+    rse = _load_object(rse_path)
+    _require_equal(rse.get("passed"), True, "RSE v2 decision")
+    rse_metrics = rse.get("metrics")
+    if not isinstance(rse_metrics, dict):
+        raise ValueError("RSE v2 metrics must be an object")
+    _require_equal(rse_metrics.get("rse_risk_detection_count"), 30, "RSE risk detections")
+    _require_equal(rse_metrics.get("rse_safe_specificity_count"), 10, "RSE safe specificity")
+    _require_equal(
+        rse_metrics.get("post_msc_physical_regeneration_count"),
+        0,
+        "post-MSC physical recurrences",
+    )
+    msc = _load_object(msc_path)
+    _require_equal(msc.get("configurations"), 16384, "MSC conformance configurations")
+    _require_equal(msc.get("mismatches"), 0, "MSC conformance mismatches")
+
     source_hashes = {
         str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in (example_path, stress_path, systems_path, formal_path)
+        for path in (example_path, stress_path, systems_path, formal_path, rse_path, msc_path)
     }
     speedup = float(systems["paired_speedup_geometric_mean"])
     speedup_ci = [float(value) for value in systems["paired_speedup_bootstrap_ci95"]]
@@ -98,6 +116,17 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
                 "mismatches": int(formal["mismatches"]),
                 "records_sha256": str(formal["records_sha256"]),
             },
+            "temporal_erasure": {
+                "scope": "PROJECT_AUTHORED_PROSPECTIVE_AND_BOUNDED_CONFORMANCE",
+                "risk_detections": int(rse_metrics["rse_risk_detection_count"]),
+                "safe_specificity": int(rse_metrics["rse_safe_specificity_count"]),
+                "post_msc_recurrences": int(
+                    rse_metrics["post_msc_physical_regeneration_count"]
+                ),
+                "conformance_configurations": int(msc["configurations"]),
+                "conformance_mismatches": int(msc["mismatches"]),
+                "records_sha256": str(msc["records_sha256"]),
+            },
         },
         "claim_boundary": {
             "supported": "EraSeMap объединяет зарегистрированные физические артефакты, request-scoped влияние на модель, обязательные verifier-каналы, replay, контрпримеры и минимальную remediation в одном fail-closed контракте.",
@@ -114,6 +143,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     mechanism = evidence["mechanism_stress"]
     systems = evidence["measured_multiservice"]
     formal = evidence["formal_conformance"]
+    temporal = evidence["temporal_erasure"]
     boundary = report["claim_boundary"]
     embedded = html.escape(json.dumps(report, ensure_ascii=False, sort_keys=True))
     path_text = " → ".join(live["shortest_residual_path"])
@@ -136,7 +166,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     .path {{ margin:42px 0; padding:30px; background:var(--paper); border-left:7px solid var(--accent); }}
     .path strong {{ display:block; margin-bottom:10px; font-size:16px; text-transform:uppercase; }}
     .path span {{ font-size:36px; font-weight:750; }}
-    .grid {{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin:30px 0 52px; }}
+    .grid {{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin:30px 0 52px; }}
     article {{ min-height:220px; padding:26px; border:1px solid var(--line); }}
     .metric {{ margin:18px 0 4px; font-size:48px; font-weight:800; letter-spacing:-1.5px; }}
     .scope {{ color:var(--muted); font-size:13px; overflow-wrap:anywhere; }}
@@ -154,7 +184,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <strong>Live audit: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
     <p>{html.escape(live["interpretation"])}</p>
   </section>
-  <h2>Три разных уровня доказательств</h2>
+  <h2>Четыре разных уровня доказательств</h2>
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
       <p>ложных COMPLETE у PCUG против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у node-only typed audit.</p>
@@ -165,6 +195,9 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <article><div class=\"eyebrow\">Формальная связь</div><div class=\"metric\">{formal["runs"]} / {formal["runs"]}</div>
       <p>совпадений production exact CDC с exhaustive oracle; mismatches: {formal["mismatches"]}.</p>
       <div class=\"scope\">{html.escape(formal["scope"])}</div></article>
+    <article><div class=\"eyebrow\">Temporal RSE / MSC</div><div class=\"metric\">{temporal["risk_detections"]} / 30</div>
+      <p>рисков обнаружено; safe {temporal["safe_specificity"]}/10, post-MSC recurrence {temporal["post_msc_recurrences"]}; conformance {temporal["conformance_configurations"]}/16384.</p>
+      <div class=\"scope\">{html.escape(temporal["scope"])}</div></article>
   </section>
   <section class=\"boundary\">
     <div><h2 class=\"supported\">Что доказано</h2><p>{html.escape(boundary["supported"])}</p></div>

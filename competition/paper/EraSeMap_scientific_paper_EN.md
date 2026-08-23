@@ -12,7 +12,7 @@ Deleting a biometric record from the primary database does not necessarily remov
 
 A separately preregistered first-run sequential study passed all six frozen gates over 25 release transitions; the largest upper 95% confidence bound for additional retained-user membership advantage relative to exact retraining was 0.00624 against a 0.05 limit. This bounded result is not independent confirmation or certified privacy.
 
-The Regeneration-Safe Erasure (RSE) extension tests a different failure mode: data absent now can return after backup restore, legacy import, retry replay, or checkpoint redeployment. Its multi-path v2 protocol was publicly committed before implementation. The first run detected 30/30 registered temporal risks, verified 10/10 guarded safe cases, failed closed on 10/10 coverage faults, and produced 0/30 physical recurrences after the exact Minimal Stabilization Cut (MSC). These are project-authored prospective results, not independent or production evidence.
+The Regeneration-Safe Erasure (RSE) extension tests a different failure mode: data absent now can return after backup restore, legacy import, retry replay, or checkpoint redeployment. Its multi-path v2 protocol was publicly committed before implementation. The first run detected 30/30 registered temporal risks, verified 10/10 guarded safe cases, failed closed on 10/10 coverage faults, and produced 0/30 physical recurrences after the exact Minimal Stabilization Cut (MSC). Lean checks conditional MSC safety and minimum cost, while production branch-and-bound matched a separate exhaustive oracle in 16,384/16,384 finite-domain configurations. These are project-authored prospective and verification results, not independent or production evidence.
 
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
@@ -151,7 +151,7 @@ For a finite list of candidate action subsets, a deterministic feasibility predi
 
 *Proof sketch.* The selector folds over a finite list while maintaining the cheapest feasible candidate observed so far. The invariant is true initially and preserved at every comparison. At termination, the stored candidate is feasible and no listed feasible candidate has smaller cost. Q.E.D.
 
-Lean 4.33.1 machine-checks both results without `sorry` or `admit`. These theorems cover the abstract core, not Python semantics, driver correctness, or real topology discovery. The production Python selector is therefore tested separately against an exhaustive oracle.
+Lean 4.33.1 machine-checks these results without `sorry` or `admit`. For MSC, `selected_msc_safe_and_minimum` proves that when replay feasibility soundly implies temporal safety, the selected listed control set is temporally safe and no more expensive than another listed feasible set; the no-plan theorem preserves fail-closed behavior. These theorems cover the abstract core, not Python semantics, driver correctness, or real topology discovery. The production Python selectors are therefore tested separately against exhaustive oracles.
 
 ### 5.3 Temporal composition
 
@@ -165,7 +165,7 @@ EraSeMap is implemented as a reproducible Python package with canonical JSON inp
 
 The output proof bundle includes the request and protocol identifiers, registered graph commitment, three-valued verdict, shortest residual path, verifier-channel decisions, selected actions and costs, replay result, evidence hashes, and an Ed25519 receipt chain. The signature covers a minimal envelope and intentionally excludes subject identifiers, biometric values, raw paths, and free text. The evaluator recomputes the verdict and plan from the evidence rather than trusting cached labels.
 
-The repository includes 263 tests with at least 90% measured coverage in the full CI-equivalent test command, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
+The repository includes 265 tests with at least 90% measured coverage in the full CI-equivalent test command, a pinned build backend, exact runtime/test constraints, SHA-pinned workflow actions, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
 
 ## 7. Experimental Methodology
 
@@ -250,7 +250,7 @@ The largest paired privacy upper 95% confidence bound was **0.00624**, below the
 
 The first prospective v2 run passed every frozen gate. RSE detected **30/30** temporal risk cases, verified **10/10** guarded safe cases, and returned incomplete coverage for **10/10** attestation faults. Snapshot PCUG returned current-state COMPLETE before all **30/30** later physical regenerations. The blanket-carrier baseline rejected all **10/10** safe guarded cases.
 
-Single-carrier cases selected path-specific controls costing 2–5. Mixed cases selected the shared persistent tombstone at cost **7**, compared with four separate filters costing 14 or destroy-all costing 60. Physical replay after MSC caused **0/30** recurrences. Branch-and-bound MSC matched the separate exhaustive oracle in **30/30** prospective cases and in property tests varying all control costs and permissions.
+Single-carrier cases selected path-specific controls costing 2–5. Mixed cases selected the shared persistent tombstone at cost **7**, compared with four separate filters costing 14 or destroy-all costing 60. Physical replay after MSC caused **0/30** recurrences. Beyond the 30 prospective cases, branch-and-bound MSC matched a separately implemented exhaustive oracle in **16,384/16,384** deterministic configurations: all 16 carrier subsets, all 64 permission masks, eight adversarial cost catalogues, and both input orders.
 
 ## 9. Discussion
 
@@ -296,9 +296,11 @@ The public repository contains code, frozen protocols, raw records, manifests, r
 python -m pytest
 lake build
 python scripts/verify_formal_conformance.py --expected formal/conformance-v1.json --output /tmp/formal-conformance.json
+python scripts/verify_rse_conformance.py --expected formal/rse-msc-conformance-v1.json --output /tmp/rse-msc-conformance.json
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
+scripts/reproduce_release.sh core
 ```
 
 The measured service experiment additionally requires pinned PostgreSQL, Redis, Qdrant, and container dependencies. Reproduction verifies the published computation; it does not create independent authorship. No personal biometric data generated by the multi-service experiment are released because that experiment uses deterministic synthetic identities; the external face inputs remain governed by their original dataset terms.
@@ -368,6 +370,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 |---|---|---|
 | Replayed COMPLETE is conditionally sound | Lean theorem with explicit assumptions | Does not prove topology discovery or driver correctness |
 | Exact CDC is minimum-cost over listed candidates | Lean finite optimality theorem | Only for the registered finite candidate set |
+| Exact MSC is safe and minimum-cost under registered temporal semantics | Lean conditional theorem; 16,384/16,384 Python/oracle configurations | Depends on transition coverage and feasibility soundness |
 | Python exact CDC implements the finite contract | 3,072/3,072 oracle matches | Bounded systematic conformance, not Python formal semantics |
 | Mandatory channels prevent a typed-node blind spot | 0/75 versus 75/75 mechanism stress | Project-authored development evidence |
 | PCUG transfers to official external structures | 0/100 false complete; 25/25 complete | Strongest typed baseline tied; mappings are internal |

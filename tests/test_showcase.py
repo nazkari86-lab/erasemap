@@ -19,8 +19,10 @@ def test_showcase_binds_live_and_frozen_evidence() -> None:
     assert report["evidence"]["mechanism_stress"]["pcug_false_complete"] == 0
     assert report["evidence"]["measured_multiservice"]["speedup_geometric_mean"] > 17
     assert report["evidence"]["formal_conformance"]["mismatches"] == 0
+    assert report["evidence"]["temporal_erasure"]["risk_detections"] == 30
+    assert report["evidence"]["temporal_erasure"]["conformance_configurations"] == 16384
     assert report["claim_boundary"]["independence_score"] == 7.8
-    assert len(report["source_sha256"]) == 4
+    assert len(report["source_sha256"]) == 6
 
 
 def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
@@ -39,6 +41,8 @@ def test_showcase_fails_closed_on_tampered_result(tmp_path: Path) -> None:
         "benchmark/results/pcug-mechanism-stress-v1.json",
         "benchmark/results/measured-multiservice-v1-summary.json",
         "formal/conformance-v1.json",
+        "outputs/regeneration-safe-erasure-v2/result.json",
+        "formal/rse-msc-conformance-v1.json",
     ):
         destination = copied / source
         destination.parent.mkdir(parents=True, exist_ok=True)

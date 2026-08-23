@@ -1,0 +1,28 @@
+# EraSeMap scientific claim matrix
+
+Snapshot: 2026-08-23. This document separates claims that are proved, measured, prospectively
+tested, or still pending. Passing engineering checks cannot promote a result into a more independent
+evidence class.
+
+| Claim | Scope and assumptions | Strongest evidence | Direct falsifier | Status |
+|---|---|---|---|---|
+| Replayed PCUG `COMPLETE` excludes represented residual paths | Registered topology is complete; local verifiers are sound; mandatory channels are included | Lean theorem `replayed_complete_sound`; checked counterexamples when assumptions are removed | A represented active residual or unsound passed mandatory channel after replay | Conditional theorem + bounded implementation tests |
+| Exact CDC is minimum-cost among registered permitted candidates | Finite candidate catalogue; declared integer costs; replay feasibility is correct | Lean finite-selector theorem; 3,072/3,072 Python/oracle ordering runs | Any cheaper feasible registered candidate than the selected CDC | Conditional theorem + bounded conformance |
+| RSE lifts current absence to registered temporal safety | Every real data-bearing transition is covered; registered transitions preserve absence | Lean theorem `observed_coverage_lifts_to_real_safety`; missing-coverage counterexample | A covered registered transition regenerates a residual from a safe state | Conditional theorem |
+| Exact MSC is temporally safe and minimum-cost | Finite registered control sets; replay feasibility soundly implies temporal safety | Lean theorem `selected_msc_safe_and_minimum`; 16,384/16,384 Python/oracle configurations | Unsafe selected plan, solver/oracle mismatch, or cheaper feasible registered plan | Conditional theorem + exhaustive finite-domain conformance |
+| RSE distinguishes latent risk from guarded retention in the v2 lab | Four project-authored carrier families, registered transitions, local physical adapters | Preregistered first run: 30/30 risk, 10/10 safe, 10/10 coverage-fault, 0/30 post-MSC recurrence | Any frozen primary gate failure | Prospective project-authored result |
+| Targeted CDC is cheaper than rebuild-all in the measured local system | Synthetic identities; pinned local PostgreSQL, Redis and Qdrant; declared byte accounting | 20 paired trials; 17.64x geometric-mean speedup; 94.62% fewer written bytes | Loss of completion/retained records, failed equivalence, or CI outside frozen gate | Preregistered local real-process result |
+| Sequential candidate stays within frozen retained-user privacy bound | Olivetti task, four no-shadow attacks, 25 transitions, fixed candidate budget | First-run six-gate PASS; maximum added-advantage upper bound 0.00624 | Any frozen transition or attack exceeds its gate | Bounded project-authored result, not certified privacy |
+| EraSeMap transfers to independently authored temporal topologies | External author, hidden answers, frozen clean commit, at least 120 cases and four families | Executable commit/blind-run/reveal/score protocol only | Any false `RSE_VERIFIED`, accuracy/cost gate failure, invalid provenance | **Pending external execution** |
+| EraSeMap works in production FaceID/eGov/government infrastructure | Authorized instrumentation covers actual stores, transitions and model channels | Pilot protocol and adapters only | Missed real residual, incomplete transition coverage, unacceptable operational cost | **Not established** |
+
+## Interpretation rules
+
+1. A formal theorem is reported together with its assumptions; it is not evidence that an external
+   organization satisfies them.
+2. A bounded exhaustive check establishes equivalence only inside its enumerated finite domain.
+3. Project-authored prospective evidence is stronger than an adaptive demonstration but remains
+   weaker than independently authored hidden evaluation.
+4. A null or failed result remains published. A later adaptive method cannot rewrite the original
+   endpoint.
+5. Headline scores move only after the event named in the competition scorecard.

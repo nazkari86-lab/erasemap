@@ -12,7 +12,7 @@
 
 Отдельное preregistered first-run исследование последовательных релизов прошло все шесть зафиксированных gates на 25 переходах; наибольшая верхняя граница 95% ДИ дополнительного membership advantage сохраняемых пользователей относительно exact retraining составила 0,00624 при лимите 0,05. Этот ограниченный результат не является независимым подтверждением или сертифицированной гарантией приватности.
 
-Расширение Regeneration-Safe Erasure (RSE) проверяет другой отказ: отсутствующие сейчас данные могут вернуться после восстановления backup, legacy import, replay очереди или повторного развёртывания checkpoint. Multi-path протокол v2 был публично зафиксирован до реализации. Первый запуск обнаружил 30/30 зарегистрированных временных рисков, подтвердил 10/10 безопасных guarded случаев, fail-closed обработал 10/10 дефектов coverage и дал 0/30 физических повторных появлений после точного Minimal Stabilization Cut (MSC). Это prospective, но project-authored evidence, а не независимый или production-результат.
+Расширение Regeneration-Safe Erasure (RSE) проверяет другой отказ: отсутствующие сейчас данные могут вернуться после восстановления backup, legacy import, replay очереди или повторного развёртывания checkpoint. Multi-path протокол v2 был публично зафиксирован до реализации. Первый запуск обнаружил 30/30 зарегистрированных временных рисков, подтвердил 10/10 безопасных guarded случаев, fail-closed обработал 10/10 дефектов coverage и дал 0/30 физических повторных появлений после точного Minimal Stabilization Cut (MSC). Lean проверяет условную безопасность и минимальную стоимость MSC, а production branch-and-bound совпал с отдельным exhaustive oracle в 16 384/16 384 конфигурациях конечной области. Это project-authored prospective и verification evidence, а не независимый или production-результат.
 
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
@@ -151,7 +151,7 @@ UNKNOWN не превращается в успех. Это отсутствую
 
 *Схема доказательства.* Селектор проходит конечный список и хранит самый дешёвый допустимый набор среди уже просмотренных. Инвариант верен до первого элемента и сохраняется после каждого сравнения. После окончания сохранённый набор допустим и дешевле либо равен любому допустимому набору списка. Ч.Т.Д.
 
-Lean 4.33.1 проверяет оба результата без `sorry` и `admit`. Теоремы относятся к абстрактному ядру, но не доказывают семантику Python, корректность драйверов или обнаружение реальной топологии. Поэтому производственный Python-селектор отдельно сравнивается с полным oracle.
+Lean 4.33.1 проверяет результаты без `sorry` и `admit`. Для MSC теорема `selected_msc_safe_and_minimum` доказывает: если replay feasibility корректно влечёт temporal safety, выбранный зарегистрированный набор controls безопасен и не дороже любого другого feasible набора; отдельная no-plan theorem сохраняет fail-closed поведение. Теоремы относятся к абстрактному ядру, но не доказывают семантику Python, корректность драйверов или обнаружение реальной топологии. Поэтому производственные Python-селекторы отдельно сравниваются с полными oracles.
 
 ### 5.3 Временная композиция
 
@@ -165,7 +165,7 @@ EraSeMap реализован как воспроизводимый Python-па�
 
 Proof bundle включает идентификаторы запроса и протокола, commitment зарегистрированного графа, трёхзначный вердикт, кратчайший остаточный путь, решения каналов, выбранные действия и стоимости, replay-result, хэши evidence и цепочку Ed25519 receipts. Подпись покрывает минимальный envelope и намеренно исключает идентификаторы субъекта, биометрию, сырые пути и свободный текст. Вычислитель пересчитывает вердикт и план из evidence, а не доверяет сохранённой метке.
 
-Репозиторий содержит 263 теста с покрытием не ниже 90% по полной CI-equivalent команде, locked protocols, raw records, manifests, preregistrations, отчёты об отрицательных результатах, Lean-проект, CLI-демонстрации и CI gates. Инженерная проверка повышает воспроизводимость, но не считается независимой научной валидацией.
+Репозиторий содержит 265 тестов с покрытием не ниже 90% по полной CI-equivalent команде, pinned build backend, exact runtime/test constraints, SHA-pinned workflow actions, locked protocols, raw records, manifests, preregistrations, отчёты об отрицательных результатах, Lean-проект, CLI-демонстрации и CI gates. Инженерная проверка повышает воспроизводимость, но не считается независимой научной валидацией.
 
 ## 7. Методика экспериментов
 
@@ -250,7 +250,7 @@ MUFAC v3.2 прошёл все неизменённые gates. Retained verifica
 
 Первый prospective v2 run прошёл все frozen gates. RSE обнаружил **30/30** temporal risk cases, подтвердил **10/10** guarded safe cases и вернул incomplete coverage для **10/10** дефектов attestation. Snapshot PCUG вернул current-state COMPLETE перед всеми **30/30** последующими физическими регенерациями. Blanket-carrier baseline отклонил все **10/10** безопасных guarded случаев.
 
-Single-carrier cases выбрали локальные controls стоимостью 2–5. Mixed cases выбрали общий persistent tombstone стоимостью **7**, тогда как четыре раздельных фильтра стоили 14, а destroy-all — 60. Physical replay после MSC дал **0/30** повторных появлений. Branch-and-bound MSC совпал с отдельным exhaustive oracle в **30/30** prospective cases и в property tests с изменением всех стоимостей и permissions.
+Single-carrier cases выбрали локальные controls стоимостью 2–5. Mixed cases выбрали общий persistent tombstone стоимостью **7**, тогда как четыре раздельных фильтра стоили 14, а destroy-all — 60. Physical replay после MSC дал **0/30** повторных появлений. Помимо 30 prospective cases, branch-and-bound MSC совпал с отдельно реализованным exhaustive oracle в **16 384/16 384** детерминированных конфигурациях: все 16 carrier subsets, все 64 permission masks, восемь adversarial cost catalogues и оба input order.
 
 ## 9. Обсуждение
 
@@ -296,9 +296,11 @@ Production deployment должен разделять роли topology registra
 python -m pytest
 lake build
 python scripts/verify_formal_conformance.py --expected formal/conformance-v1.json --output /tmp/formal-conformance.json
+python scripts/verify_rse_conformance.py --expected formal/rse-msc-conformance-v1.json --output /tmp/rse-msc-conformance.json
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
+scripts/reproduce_release.sh core
 ```
 
 Для повторения многосервисного эксперимента дополнительно нужны зафиксированные зависимости PostgreSQL, Redis, Qdrant и контейнерная среда. Воспроизведение проверяет опубликованное вычисление, но не создаёт независимое авторство. Персональные биометрические данные многосервисного эксперимента не публикуются, потому что в нём использованы детерминированные синтетические личности; внешние изображения лиц регулируются исходными условиями соответствующего набора данных.
@@ -368,6 +370,7 @@ EraSeMap показывает практический и математичес
 |---|---|---|
 | Replayed COMPLETE условно корректен | Lean theorem с явными assumptions | Не доказывает topology discovery и drivers |
 | Exact CDC минимален среди перечисленных кандидатов | Lean finite optimality theorem | Только конечный зарегистрированный набор |
+| Exact MSC безопасен и минимален в registered temporal semantics | Lean conditional theorem; 16 384/16 384 Python/oracle конфигураций | Зависит от transition coverage и feasibility soundness |
 | Python exact CDC реализует контракт | 3072/3072 совпадений с oracle | Bounded conformance, не formal Python semantics |
 | Mandatory channels закрывают blind spot typed-node | 0/75 против 75/75 | Авторское development evidence |
 | PCUG переносится на официальные структуры | 0/100 ложных COMPLETE; 25/25 COMPLETE | Strongest typed baseline разделил результат; mappings внутренние |

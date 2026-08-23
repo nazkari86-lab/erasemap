@@ -73,7 +73,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 |---|---|
 | Typed residual-path audit v1 | Measured controlled benchmark; see `docs/CORE_PROTOCOL.md` |
 | Deletion-matched model experiments v3 | Measured only on the named open datasets; MUFAC retained-utility gate failed |
-| PCUG/CDC deterministic core | Lean-checked conditional soundness and finite optimality; bounded Python conformance PASS |
+| PCUG/CDC and RSE/MSC deterministic cores | Lean-checked conditional soundness and finite optimality; bounded Python conformance PASS |
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
 | Real service-process pilot | PostgreSQL 15.18 isolated cluster PASS; synthetic records, not an organization |
@@ -153,6 +153,15 @@ oracle in all 3,072 preregistered cost/permission/order conformance runs. See
 [`formal/README.md`](formal/README.md) and
 [`docs/FORMAL_PCUG_V1_REPORT.md`](docs/FORMAL_PCUG_V1_REPORT.md). This does not prove discovery of
 unregistered infrastructure or correctness of an external deployment.
+
+The formal RSE/MSC layer now composes temporal feasibility soundness with exact finite selection:
+a selected MSC is temporally safe under the stated registered-transition assumptions and no more
+expensive than another listed feasible control set. Production branch-and-bound also matched a
+separately implemented exhaustive oracle over all 16 carrier subsets, 64 permission masks, eight
+adversarial cost catalogues, and two input orders: **16,384/16,384** configurations. See
+[`formal/README.md`](formal/README.md) and
+[`docs/SCIENTIFIC_CLAIM_MATRIX.md`](docs/SCIENTIFIC_CLAIM_MATRIX.md). This is bounded conformance,
+not independent evaluation or proof that an external topology is complete.
 
 The preregistered sequential-deletion privacy v1 experiment passed all six frozen gates on its
 first run: 25/25 deleted classifier classes were absent, the worst retained-accuracy difference
@@ -279,13 +288,16 @@ legacy fixture mechanism, not a production trust boundary.
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -e '.[dev]'
+.venv/bin/pip install --constraint constraints/ci-py311.txt -e '.[dev,real]'
+.venv/bin/python scripts/verify_ci_environment.py
 .venv/bin/pytest
 .venv/bin/ruff check .
 .venv/bin/mypy src/erasemap
 ```
 
-One-command release checks are available as `scripts/reproduce_release.sh core`; the `face-open`
-profile additionally rebuilds the open face assets and registered face experiments. EraSeMap code
+One-command release checks are available as `scripts/reproduce_release.sh core`. The core profile
+now mirrors the Python and Lean CI gates, reruns both RSE experiments in temporary directories,
+verifies both CDC and MSC conformance records, and fails if reproduction changes the worktree. The
+`face-open` profile additionally rebuilds the open face assets and registered face experiments. EraSeMap code
 is MIT licensed; third-party datasets and weights retain their own terms as documented in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

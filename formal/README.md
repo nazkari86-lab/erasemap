@@ -1,5 +1,15 @@
 # Machine-checked PCUG/CDC core
 
+## GhostGraph
+
+`EraseMapFormal/GhostGraph.lean` proves four bounded contracts used by active causal erasure
+discovery: a sound listed truth survives version-space filtering; a singleton survivor is the true
+listed graph; query-indistinguishable graphs have identical consistency decisions; and every emitted
+finite minimax certificate contains its selected query and its exact lexicographic minimum
+obligation. The proof deliberately assumes catalogue closure and observation soundness. It does not
+claim an unknown production graph lies in the catalogue or that one-step minimax minimizes the
+whole adaptive decision tree.
+
 ## Erasure Tomography v1
 
 `EraseMapFormal/ErasureTomography.lean` formalizes the exact zero-error boundary used by the frozen

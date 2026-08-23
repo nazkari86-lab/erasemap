@@ -5,3 +5,4 @@ import EraseMapFormal.RSE
 import EraseMapFormal.ExactMSC
 import EraseMapFormal.ExactTRE
 import EraseMapFormal.ErasureTomography
+import EraseMapFormal.GhostGraph

@@ -1,0 +1,113 @@
+{
+  "schema_version": "erasemap-ghostgraph-v1",
+  "title": "GhostGraph bounded active causal erasure discovery v1",
+  "domain_caps": {
+    "max_nodes": 8,
+    "max_optional_edges": 12,
+    "max_hypotheses": 4096,
+    "max_experiments": 32,
+    "max_checkpoints": 5,
+    "max_time_buckets": 3,
+    "trace_error_budget": 0
+  },
+  "node_ids": [
+    "backup",
+    "cache",
+    "database",
+    "telemetry",
+    "vector",
+    "worker"
+  ],
+  "edge_catalogue": [
+    {"edge_id": "alt-rebuild", "source_id": "cache", "target_id": "vector", "operation_id": "rebuild"},
+    {"edge_id": "alt-replay", "source_id": "backup", "target_id": "cache", "operation_id": "replay"},
+    {"edge_id": "direct", "source_id": "backup", "target_id": "vector", "operation_id": "direct"},
+    {"edge_id": "index", "source_id": "worker", "target_id": "vector", "operation_id": "index"},
+    {"edge_id": "log", "source_id": "database", "target_id": "telemetry", "operation_id": "log"},
+    {"edge_id": "restore", "source_id": "backup", "target_id": "database", "operation_id": "restore"},
+    {"edge_id": "sync", "source_id": "database", "target_id": "worker", "operation_id": "sync"}
+  ],
+  "hypotheses": [
+    {"graph_id": "g-alt", "edge_ids": ["alt-rebuild", "alt-replay"]},
+    {"graph_id": "g-combo", "edge_ids": ["direct", "index", "restore", "sync"]},
+    {"graph_id": "g-direct", "edge_ids": ["direct"]},
+    {"graph_id": "g-multi", "edge_ids": ["index", "restore", "sync"]},
+    {"graph_id": "g-multi-log", "edge_ids": ["index", "log", "restore", "sync"]},
+    {"graph_id": "g-safe", "edge_ids": []}
+  ],
+  "hypothesis_catalogue_sha256": "sha256:91e608f97f1110281d55a32d0f9cea12f65f5c2274e5da49c0b679f8a88b72b9",
+  "initial_node_ids": ["backup"],
+  "residual_node_ids": ["vector"],
+  "experiments": [
+    {"experiment_id": "q-all", "enabled_operation_ids": ["direct", "index", "log", "rebuild", "replay", "restore", "sync"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 7},
+    {"experiment_id": "q-alt", "enabled_operation_ids": ["rebuild", "replay"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 2},
+    {"experiment_id": "q-direct", "enabled_operation_ids": ["direct"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 1},
+    {"experiment_id": "q-index", "enabled_operation_ids": ["index"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 1},
+    {"experiment_id": "q-multi", "enabled_operation_ids": ["index", "restore", "sync"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 3},
+    {"experiment_id": "q-restore", "enabled_operation_ids": ["restore"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 1},
+    {"experiment_id": "q-sync", "enabled_operation_ids": ["sync"], "checkpoint_node_ids": ["cache", "database", "vector", "worker"], "time_buckets": 3, "declared_cost": 1}
+  ],
+  "case_ids": [
+    "alt",
+    "combo",
+    "cross-contamination",
+    "direct",
+    "multihop",
+    "outside",
+    "safe"
+  ],
+  "development_seeds": [101, 103],
+  "confirmatory_seed": 23082026,
+  "reveal_sha256": "sha256:917ce6de187f5a78beb2d81829be01500675e07f5c53646fb39d04c0df3f896c",
+  "stopping_rule": "stop only when the exact planner has no unused separating experiment or the version space becomes empty; a negative trace alone is not terminal",
+  "baselines": [
+    "passive-declared-lineage",
+    "frozen-random-feasible",
+    "greedy-separated-pairs",
+    "nonadaptive-exhaustive",
+    "flat-erasure-tomography"
+  ],
+  "primary_metrics": [
+    "false_confident_count",
+    "exact_unique_graph_recovery_count",
+    "path_class_recovery_count",
+    "true_graph_containment_count",
+    "out_of_hypothesis_detection_count",
+    "unverified_negative_count",
+    "adaptive_probe_count",
+    "exhaustive_probe_count",
+    "planner_oracle_mismatch_count",
+    "post_control_recurrence_count",
+    "retained_subject_loss_count"
+  ],
+  "gates": {
+    "false_confident_count_max": 0,
+    "exact_unique_graph_recovery_count_min": 3,
+    "path_class_recovery_count_min": 1,
+    "true_graph_containment_rate_min": 1.0,
+    "out_of_hypothesis_detection_count_min": 1,
+    "unverified_negative_count_min": 1,
+    "planner_oracle_mismatch_count_max": 0,
+    "post_control_recurrence_count_max": 0,
+    "retained_subject_loss_count_max": 0,
+    "adaptive_probe_count_must_be_less_than_exhaustive": true
+  },
+  "invalid_run_rules": [
+    "protocol or core hash drift",
+    "reveal commitment mismatch",
+    "duplicate experiment execution",
+    "incomplete observation trace",
+    "adapter or reset failure",
+    "case order or stopping-rule drift",
+    "output directory already contains evidence"
+  ],
+  "core_files": [
+    "src/erasemap/ghostgraph.py",
+    "src/erasemap/ghostgraph_planner.py",
+    "src/erasemap/ghostgraph_oracle.py",
+    "src/erasemap/ghostgraph_bridge.py",
+    "src/erasemap/ghostgraph_lab.py"
+  ],
+  "core_sha256": "sha256:eede4c6beb8e735ff882f95d937aad548331e4c14fa87496d0a1b3753998aa88",
+  "claim_boundary": "Project-authored bounded grammar and hidden cases; not independent, production, open-world, legal-compliance, or world-priority evidence."
+}

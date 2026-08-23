@@ -1,0 +1,1 @@
+{"inspected_image":"redis@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2","preregistration_commit":"5e5adc893e990983e49370f5e96fa9f786425bfb","protocol_sha256":"cc390f37f2136499e9f5764fac3c98d276840482b6db0d14076b2087c605fe92","runner":"experiments/run_erasure_tomography_redis_v1.py"}

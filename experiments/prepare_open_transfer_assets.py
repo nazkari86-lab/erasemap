@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import ssl
 import tempfile
 import urllib.request
 import zipfile
@@ -14,6 +15,17 @@ import numpy as np
 from scipy.io import loadmat  # type: ignore[import-untyped]
 
 from erasemap.open_transfer_evidence import canonical_json, sha256_bytes, sha256_file
+
+
+def _verified_https_context() -> ssl.SSLContext:
+    context = ssl.create_default_context()
+    for candidate in (
+        Path("/etc/ssl/cert.pem"),
+        Path("/opt/homebrew/etc/ca-certificates/cert.pem"),
+    ):
+        if candidate.is_file():
+            context.load_verify_locations(cafile=str(candidate))
+    return context
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,7 +125,9 @@ def prepare_assets(
     output.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="erasemap-open-transfer-source-") as directory:
         raw_path = Path(directory) / str(source["source_filename"])
-        with urllib.request.urlopen(str(source["source_url"]), timeout=60) as response:
+        with urllib.request.urlopen(
+            str(source["source_url"]), timeout=60, context=_verified_https_context()
+        ) as response:
             raw_path.write_bytes(response.read())
         observed_source_hash = sha256_file(raw_path)
         if observed_source_hash != source["source_sha256"]:

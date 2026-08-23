@@ -24,6 +24,7 @@ from erasemap.open_transfer_evidence import (
 
 _IMAGE = re.compile(r"^[^@\s]+@sha256:[0-9a-f]{64}$")
 _CONTAINER = re.compile(r"^[a-z0-9][a-z0-9_.-]+$")
+_DOCKER_COMMAND_TIMEOUT_SECONDS = 120
 
 
 def require_transfer_container_name(name: str) -> str:
@@ -49,7 +50,20 @@ def free_port() -> int:
 def run_command(
     args: list[str], *, input_bytes: bytes | None = None, check: bool = True
 ) -> subprocess.CompletedProcess[bytes]:
-    return subprocess.run(args, input=input_bytes, capture_output=True, check=check)
+    try:
+        return subprocess.run(
+            args,
+            input=input_bytes,
+            capture_output=True,
+            check=check,
+            timeout=_DOCKER_COMMAND_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        safe_command = " ".join(args[:3])
+        raise RuntimeError(
+            f"container command timed out after {_DOCKER_COMMAND_TIMEOUT_SECONDS}s: "
+            f"{safe_command}"
+        ) from exc
 
 
 CommandRunner = Callable[

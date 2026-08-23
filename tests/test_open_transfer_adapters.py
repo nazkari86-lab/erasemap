@@ -23,6 +23,7 @@ from experiments.open_transfer_services import (
     free_port,
     require_digest_image,
     require_transfer_container_name,
+    run_command,
 )
 from experiments.prepare_open_transfer_assets import build_vector_asset, write_deterministic_npz
 
@@ -110,6 +111,18 @@ def test_name_image_and_port_validation() -> None:
         require_transfer_container_name("erasemap-transfer-BAD SPACE")
     with pytest.raises(ValueError, match="immutable"):
         require_digest_image("registry.example/service:latest")
+
+
+def test_command_runner_has_a_bounded_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
+    observed: dict[str, Any] = {}
+
+    def fake_run(args: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        observed.update(kwargs)
+        return subprocess.CompletedProcess(args, 0, b"", b"")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    run_command(["docker", "image", "inspect"])
+    assert observed["timeout"] == 120
 
 
 def test_docker_service_builds_scoped_command_and_tears_down(tmp_path: Path) -> None:

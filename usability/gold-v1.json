@@ -1,0 +1,17 @@
+{
+  "schema_version": "erasemap-usability-gold-v1",
+  "answers": [
+    {"card_id":"c01","truth_class":"COMPLETE","explanation":"safe","verdict":"COMPLETE","path":"none","action":"close-request"},
+    {"card_id":"c02","truth_class":"INCOMPLETE","explanation":"residual","verdict":"INCOMPLETE","path":"primary-to-derivative","action":"delete-derivative"},
+    {"card_id":"c03","truth_class":"UNVERIFIED","explanation":"unknown","verdict":"UNVERIFIED","path":"unknown","action":"collect-missing-evidence"},
+    {"card_id":"c04","truth_class":"COMPLETE","explanation":"safe","verdict":"COMPLETE","path":"none","action":"close-request"},
+    {"card_id":"c05","truth_class":"INCOMPLETE","explanation":"residual","verdict":"INCOMPLETE","path":"backup-to-restore-to-primary","action":"block-recovery-and-replay"},
+    {"card_id":"c06","truth_class":"UNVERIFIED","explanation":"unknown","verdict":"UNVERIFIED","path":"unknown","action":"collect-missing-evidence"},
+    {"card_id":"c07","truth_class":"COMPLETE","explanation":"safe","verdict":"COMPLETE","path":"none","action":"close-request"},
+    {"card_id":"c08","truth_class":"INCOMPLETE","explanation":"residual","verdict":"INCOMPLETE","path":"primary-to-derivative","action":"delete-derivative"},
+    {"card_id":"c09","truth_class":"UNVERIFIED","explanation":"unknown","verdict":"UNVERIFIED","path":"unknown","action":"collect-missing-evidence"},
+    {"card_id":"c10","truth_class":"COMPLETE","explanation":"safe","verdict":"COMPLETE","path":"none","action":"close-request"},
+    {"card_id":"c11","truth_class":"INCOMPLETE","explanation":"residual","verdict":"INCOMPLETE","path":"backup-to-restore-to-primary","action":"block-recovery-and-replay"},
+    {"card_id":"c12","truth_class":"UNVERIFIED","explanation":"unknown","verdict":"UNVERIFIED","path":"unknown","action":"collect-missing-evidence"}
+  ]
+}

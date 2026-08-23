@@ -1,0 +1,12 @@
+{
+  "schema_version": "erasemap-usability-protocol-v1",
+  "card_count": 12,
+  "languages": ["en", "ru"],
+  "minimum_participants": 10,
+  "minimum_accuracy": 0.8,
+  "primary_endpoints": ["explanation", "verdict", "path", "action"],
+  "gold_sha256": "sha256:efb5e1cd3b8eda2d41a7c01379db464f58a356c4fcac636b87bde6fcf3c81072",
+  "decision_rule": "INSUFFICIENT_SAMPLE below 10 participants; otherwise PASS only when every primary endpoint accuracy is at least 0.8",
+  "privacy": "Collect a random participant id only. Do not collect names, contacts, biometrics, government identifiers, or free-text personal data.",
+  "claim_boundary": "Packet validation is engineering readiness. No usability claim exists until at least ten real unfamiliar participants complete the answer-blind packet."
+}

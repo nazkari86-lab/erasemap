@@ -457,20 +457,25 @@ def _mlflow_log_artifact(
 
 
 def _mlflow_gc(service: DockerService, run_id: str) -> None:
-    run_command(
+    result = run_command(
         [
             "docker",
             "exec",
             require_transfer_container_name(service.container_name),
             "mlflow",
             "gc",
+            "--backend-store-uri",
+            "sqlite:////mlflow/db/mlflow.db",
             "--tracking-uri",
             "http://127.0.0.1:5000",
             "--run-ids",
             run_id,
         ],
-        check=True,
+        check=False,
     )
+    if result.returncode != 0:
+        details = result.stderr.decode(errors="replace").strip()[-4000:]
+        raise RuntimeError(f"MLflow garbage collection failed: {details}")
 
 
 def run_mlflow_family(

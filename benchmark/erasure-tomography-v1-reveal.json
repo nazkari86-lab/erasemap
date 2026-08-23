@@ -1,0 +1,19 @@
+{
+  "schema_version": "erasemap-erasure-tomography-reveal-v1",
+  "cases": [
+    {"case_id": "valid-backup-3101", "kind": "valid", "seed": 3101, "active_ids": ["backup_restore"]},
+    {"case_id": "valid-backup-3102", "kind": "valid", "seed": 3102, "active_ids": ["backup_restore"]},
+    {"case_id": "valid-checkpoint-3103", "kind": "valid", "seed": 3103, "active_ids": ["checkpoint_redeploy"]},
+    {"case_id": "valid-checkpoint-3104", "kind": "valid", "seed": 3104, "active_ids": ["checkpoint_redeploy"]},
+    {"case_id": "valid-export-3105", "kind": "valid", "seed": 3105, "active_ids": ["legacy_export_import"]},
+    {"case_id": "valid-export-3106", "kind": "valid", "seed": 3106, "active_ids": ["legacy_export_import"]},
+    {"case_id": "valid-queue-3107", "kind": "valid", "seed": 3107, "active_ids": ["retry_queue_replay"]},
+    {"case_id": "valid-queue-3108", "kind": "valid", "seed": 3108, "active_ids": ["retry_queue_replay"]},
+    {"case_id": "safe-empty-3201", "kind": "safe", "seed": 3201, "active_ids": []},
+    {"case_id": "safe-empty-3202", "kind": "safe", "seed": 3202, "active_ids": []},
+    {"case_id": "invalid-over-bound-4101", "kind": "over_bound", "seed": 4101, "active_ids": ["backup_restore", "retry_queue_replay"]},
+    {"case_id": "invalid-unknown-4102", "kind": "unknown", "seed": 4102, "active_ids": ["undocumented_restore"]},
+    {"case_id": "invalid-skipped-4103", "kind": "skipped", "seed": 4103, "active_ids": ["backup_restore"], "skipped_probe_index": 1},
+    {"case_id": "invalid-contamination-4104", "kind": "contamination", "seed": 4104, "active_ids": ["backup_restore"], "contaminate_subjects": true}
+  ]
+}

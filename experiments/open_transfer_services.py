@@ -13,6 +13,7 @@ from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
+from urllib.parse import urlencode
 
 from erasemap.open_transfer_evidence import (
     EvidenceLedger,
@@ -175,11 +176,21 @@ class EvidenceHttpClient:
         *,
         headers: Mapping[str, str] | None = None,
         payload: object = None,
+        form: Mapping[str, str] | None = None,
         timeout: float = 15.0,
     ) -> HttpObservation:
+        if payload is not None and form is not None:
+            raise ValueError("HTTP request cannot contain both JSON and form bodies")
         selected_headers = dict(headers or {})
-        body = canonical_json(payload) if payload is not None else None
-        if body is not None:
+        body: bytes | None
+        if form is not None:
+            body = urlencode(form).encode()
+            evidence_body: object = dict(form)
+            selected_headers.setdefault("Content-Type", "application/x-www-form-urlencoded")
+        else:
+            body = canonical_json(payload) if payload is not None else None
+            evidence_body = payload
+        if payload is not None:
             selected_headers.setdefault("Content-Type", "application/json")
         request = urllib.request.Request(
             url,
@@ -205,7 +216,7 @@ class EvidenceHttpClient:
             method=method,
             url=url,
             request_headers=selected_headers,
-            request_body=payload,
+            request_body=evidence_body,
             status=status,
             response_body=response_body,
         )

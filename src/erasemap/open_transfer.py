@@ -4,6 +4,7 @@ import math
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
+from itertools import combinations
 from typing import Any
 
 FAMILIES = ("keycloak-identity", "mlflow-lineage", "qdrant-biometric")
@@ -20,6 +21,7 @@ TRUTH_BY_FAULT = {
     "coverage_fault": "UNVERIFIED",
 }
 VERDICTS = frozenset({"COMPLETE", "INCOMPLETE", "UNVERIFIED"})
+RISK_FACTS = frozenset({"primary", "derivative", "recovery"})
 _SHA256 = re.compile(r"^sha256:[0-9a-f]{64}$")
 _IMAGE = re.compile(r"^[^@\s]+@sha256:[0-9a-f]{64}$")
 
@@ -31,6 +33,149 @@ def expected_case_id(family: str, seed: int, fault_state: str) -> str:
 def _require_sha256(value: str, field: str) -> None:
     if _SHA256.fullmatch(value) is None:
         raise ValueError(f"{field} must be a canonical SHA-256 value")
+
+
+@dataclass(frozen=True, slots=True)
+class PhysicalOutcome:
+    primary_absent: bool
+    derivative_present: bool | None
+    recovery_recurrence: bool | None
+    coverage_complete: bool
+    retained_before: int
+    retained_after: int
+
+    def __post_init__(self) -> None:
+        if self.retained_before < 0 or self.retained_after < 0:
+            raise ValueError("retained counts cannot be negative")
+
+
+@dataclass(frozen=True, slots=True)
+class ControlCandidate:
+    id: str
+    cost: int
+    closes: frozenset[str]
+    permitted: bool = True
+
+    def __post_init__(self) -> None:
+        if not self.id:
+            raise ValueError("control id is required")
+        if self.cost < 0:
+            raise ValueError("control cost cannot be negative")
+        if not self.closes or not self.closes <= RISK_FACTS:
+            raise ValueError("control must close known risk facts")
+
+
+@dataclass(frozen=True, slots=True)
+class PhysicalDecision:
+    native_complete: bool
+    typed_complete: bool
+    erasemap_verdict: str
+    shortest_witness: tuple[str, ...] | None
+    selected_control_ids: tuple[str, ...]
+    selected_cost: int
+    oracle_control_ids: tuple[str, ...]
+    oracle_cost: int
+    retained_loss: bool
+
+
+def _required_risks(outcome: PhysicalOutcome) -> frozenset[str]:
+    required: set[str] = set()
+    if not outcome.primary_absent:
+        required.add("primary")
+    if outcome.derivative_present:
+        required.add("derivative")
+    if outcome.recovery_recurrence:
+        required.add("recovery")
+    return frozenset(required)
+
+
+def _exact_control_plan(
+    required: frozenset[str], controls: tuple[ControlCandidate, ...]
+) -> tuple[tuple[str, ...], int]:
+    permitted = tuple(sorted((item for item in controls if item.permitted), key=lambda x: x.id))
+    best: tuple[int, int, tuple[str, ...]] | None = None
+
+    def search(index: int, selected: tuple[ControlCandidate, ...], closed: frozenset[str]) -> None:
+        nonlocal best
+        cost = sum(item.cost for item in selected)
+        ids = tuple(item.id for item in selected)
+        if best is not None and (cost > best[0] or (cost == best[0] and len(ids) > best[1])):
+            return
+        if required <= closed:
+            key = (cost, len(ids), ids)
+            if best is None or key < best:
+                best = key
+            return
+        if index == len(permitted):
+            return
+        item = permitted[index]
+        search(index + 1, (*selected, item), closed | item.closes)
+        search(index + 1, selected, closed)
+
+    search(0, (), frozenset())
+    return (best[2], best[0]) if best is not None else ((), 0)
+
+
+def _brute_force_control_plan(
+    required: frozenset[str], controls: tuple[ControlCandidate, ...]
+) -> tuple[tuple[str, ...], int]:
+    permitted = tuple(item for item in controls if item.permitted)
+    best: tuple[int, int, tuple[str, ...]] | None = None
+    for size in range(len(permitted) + 1):
+        for selected in combinations(permitted, size):
+            closed = frozenset().union(*(item.closes for item in selected))
+            if not required <= closed:
+                continue
+            ids = tuple(sorted(item.id for item in selected))
+            key = (sum(item.cost for item in selected), len(ids), ids)
+            if best is None or key < best:
+                best = key
+    return (best[2], best[0]) if best is not None else ((), 0)
+
+
+def decide_physical_outcome(
+    outcome: PhysicalOutcome,
+    controls: tuple[ControlCandidate, ...],
+) -> PhysicalDecision:
+    control_ids = [item.id for item in controls]
+    if len(control_ids) != len(set(control_ids)):
+        raise ValueError("duplicate control id")
+    if len(controls) > 24:
+        raise ValueError("exact transfer control limit exceeded")
+    native_complete = outcome.primary_absent
+    typed_complete = outcome.primary_absent and outcome.derivative_present is False
+    if (
+        not outcome.coverage_complete
+        or outcome.derivative_present is None
+        or outcome.recovery_recurrence is None
+    ):
+        verdict = "UNVERIFIED"
+        witness: tuple[str, ...] | None = None
+        required: frozenset[str] = frozenset()
+    else:
+        required = _required_risks(outcome)
+        verdict = "INCOMPLETE" if required else "COMPLETE"
+        if "primary" in required:
+            witness = ("primary-object",)
+        elif "derivative" in required:
+            witness = ("materialized-derivative",)
+        elif "recovery" in required:
+            witness = ("recovery-carrier", "replay", "primary-object")
+        else:
+            witness = None
+    selected_ids, selected_cost = _exact_control_plan(required, controls)
+    oracle_ids, oracle_cost = _brute_force_control_plan(required, controls)
+    return PhysicalDecision(
+        native_complete=native_complete,
+        typed_complete=typed_complete,
+        erasemap_verdict=verdict,
+        shortest_witness=witness,
+        selected_control_ids=selected_ids,
+        selected_cost=selected_cost,
+        oracle_control_ids=oracle_ids,
+        oracle_cost=oracle_cost,
+        retained_loss=outcome.retained_after < outcome.retained_before,
+    )
 
 
 @dataclass(frozen=True, slots=True)

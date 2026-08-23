@@ -8,7 +8,10 @@ from typing import Any
 import pytest
 
 from erasemap.open_transfer import (
+    ControlCandidate,
+    PhysicalOutcome,
     TransferCaseRecord,
+    decide_physical_outcome,
     expected_case_id,
     summarize_transfer,
 )
@@ -149,3 +152,81 @@ def test_summary_fails_specificity_drop_and_missing_process_observation() -> Non
     assert summary.decision == "FAIL"
     assert summary.specificity_drop > 0
     assert summary.unobserved_process_count == 1
+
+
+CONTROLS = (
+    ControlCandidate("block-recovery", 3, frozenset({"recovery"})),
+    ControlCandidate("delete-primary", 1, frozenset({"primary"})),
+    ControlCandidate("erase-derivative", 3, frozenset({"derivative"})),
+    ControlCandidate(
+        "persistent-tombstone", 7, frozenset({"primary", "derivative", "recovery"})
+    ),
+)
+
+
+@pytest.mark.parametrize(
+    ("outcome", "verdict", "typed", "selected", "witness"),
+    [
+        (
+            PhysicalOutcome(True, False, False, True, 10, 10),
+            "COMPLETE",
+            True,
+            (),
+            None,
+        ),
+        (
+            PhysicalOutcome(True, True, False, True, 10, 10),
+            "INCOMPLETE",
+            False,
+            ("erase-derivative",),
+            ("materialized-derivative",),
+        ),
+        (
+            PhysicalOutcome(True, False, True, True, 10, 10),
+            "INCOMPLETE",
+            True,
+            ("block-recovery",),
+            ("recovery-carrier", "replay", "primary-object"),
+        ),
+        (
+            PhysicalOutcome(True, None, None, False, 10, 10),
+            "UNVERIFIED",
+            False,
+            (),
+            None,
+        ),
+    ],
+)
+def test_physical_outcome_decision_is_family_neutral_and_exact(
+    outcome: PhysicalOutcome,
+    verdict: str,
+    typed: bool,
+    selected: tuple[str, ...],
+    witness: tuple[str, ...] | None,
+) -> None:
+    decision = decide_physical_outcome(outcome, CONTROLS)
+    assert decision.erasemap_verdict == verdict
+    assert decision.native_complete is True
+    assert decision.typed_complete is typed
+    assert decision.selected_control_ids == selected
+    assert decision.oracle_control_ids == selected
+    assert decision.shortest_witness == witness
+
+
+def test_physical_outcome_selects_single_tombstone_on_three_way_tie() -> None:
+    decision = decide_physical_outcome(
+        PhysicalOutcome(False, True, True, True, 10, 10), CONTROLS
+    )
+    assert decision.selected_control_ids == ("persistent-tombstone",)
+    assert decision.selected_cost == 7
+    assert decision.oracle_control_ids == decision.selected_control_ids
+
+
+def test_physical_outcome_rejects_invalid_counts_and_controls() -> None:
+    with pytest.raises(ValueError, match="retained"):
+        PhysicalOutcome(True, False, False, True, -1, 0)
+    with pytest.raises(ValueError, match="control id"):
+        decide_physical_outcome(
+            PhysicalOutcome(True, True, False, True, 1, 1),
+            (*CONTROLS, CONTROLS[0]),
+        )

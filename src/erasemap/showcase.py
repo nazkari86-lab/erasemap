@@ -37,9 +37,12 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     tre_conformance_path = root / "formal/tre-conformance-v1.json"
     transfer_path = root / "outputs/open-transfer-v1/result.json"
     transfer_provenance_path = root / "outputs/open-transfer-v1/PROVENANCE.json"
-    ghostgraph_path = root / "outputs/ghostgraph-v1/result.json"
-    ghostgraph_trials_path = root / "outputs/ghostgraph-v1/trials.jsonl"
-    ghostgraph_provenance_path = root / "outputs/ghostgraph-v1/PROVENANCE.json"
+    ghostgraph_path = root / "outputs/ghostgraph-v2/result.json"
+    ghostgraph_trials_path = root / "outputs/ghostgraph-v2/trials.jsonl"
+    ghostgraph_provenance_path = root / "outputs/ghostgraph-v2/PROVENANCE.json"
+    ghostgraph_live_path = root / "outputs/ghostgraph-live-v2/result.json"
+    ghostgraph_live_trials_path = root / "outputs/ghostgraph-live-v2/trials.jsonl"
+    ghostgraph_live_provenance_path = root / "outputs/ghostgraph-live-v2/PROVENANCE.json"
     usability_protocol_path = root / "usability/protocol-v1.json"
 
     graph = graph_from_json(example_path.read_text())
@@ -148,18 +151,49 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
         ghostgraph_artifacts.get("trials.jsonl"),
         "GhostGraph trial hash",
     )
-    ghostgraph_summary = ghostgraph.get("summary")
-    if not isinstance(ghostgraph_summary, dict):
-        raise ValueError("GhostGraph summary must be an object")
-    _require_equal(ghostgraph_summary.get("decision"), "PASS", "GhostGraph decision")
-    _require_equal(ghostgraph_summary.get("false_confident_count"), 0, "GhostGraph false confidence")
-    _require_equal(ghostgraph_summary.get("exact_unique_graph_recovery_count"), 3, "GhostGraph exact recovery")
-    _require_equal(ghostgraph_summary.get("path_class_recovery_count"), 1, "GhostGraph path class")
-    _require_equal(ghostgraph_summary.get("adaptive_probe_count"), 6, "GhostGraph adaptive probes")
-    _require_equal(ghostgraph_summary.get("exhaustive_probe_count"), 49, "GhostGraph exhaustive probes")
+    _require_equal(ghostgraph.get("decision"), "PASS", "GhostGraph v2 decision")
+    strategies = ghostgraph.get("strategy_metrics")
+    if not isinstance(strategies, list):
+        raise ValueError("GhostGraph v2 strategy metrics must be a list")
+    strategy_by_id = {str(item["strategy_id"]): item for item in strategies}
+    active = strategy_by_id["active-minimax"]
+    random = strategy_by_id["frozen-random-feasible"]
+    exhaustive = strategy_by_id["nonadaptive-exhaustive"]
+    _require_equal(active.get("false_confident_count"), 0, "GhostGraph v2 false confidence")
+    _require_equal(active.get("exact_unique_graph_recovery_count"), 3, "GhostGraph v2 exact recovery")
+    _require_equal(active.get("path_class_recovery_count"), 2, "GhostGraph v2 path classes")
+    _require_equal(active.get("probe_count"), 7, "GhostGraph v2 active probes")
+    _require_equal(random.get("probe_count"), 13, "GhostGraph v2 random probes")
+    _require_equal(exhaustive.get("probe_count"), 49, "GhostGraph v2 exhaustive probes")
     ghostgraph_trials = [
-        json.loads(line) for line in ghostgraph_trials_path.read_text().splitlines() if line
+        item
+        for line in ghostgraph_trials_path.read_text().splitlines()
+        if line
+        for item in (json.loads(line),)
+        if item.get("strategy_id") == "active-minimax"
     ]
+    ghostgraph_live = _load_object(ghostgraph_live_path)
+    ghostgraph_live_provenance = _load_object(ghostgraph_live_provenance_path)
+    live_artifacts = ghostgraph_live_provenance.get("artifacts")
+    if not isinstance(live_artifacts, dict):
+        raise ValueError("GhostGraph live v2 provenance artifacts must be an object")
+    _require_equal(
+        "sha256:" + hashlib.sha256(ghostgraph_live_path.read_bytes()).hexdigest(),
+        live_artifacts.get("result.json"),
+        "GhostGraph live v2 result hash",
+    )
+    _require_equal(
+        "sha256:" + hashlib.sha256(ghostgraph_live_trials_path.read_bytes()).hexdigest(),
+        live_artifacts.get("trials.jsonl"),
+        "GhostGraph live v2 trial hash",
+    )
+    _require_equal(ghostgraph_live.get("decision"), "PASS", "GhostGraph live v2 decision")
+    live_metrics = ghostgraph_live.get("metrics")
+    if not isinstance(live_metrics, dict):
+        raise ValueError("GhostGraph live v2 metrics must be an object")
+    _require_equal(live_metrics.get("case_count"), 5, "GhostGraph live v2 case count")
+    _require_equal(live_metrics.get("false_confident_count"), 0, "GhostGraph live v2 false confidence")
+    _require_equal(live_metrics.get("cleanup_failure_count"), 0, "GhostGraph live v2 cleanup")
     usability_protocol = _load_object(usability_protocol_path)
     _require_equal(usability_protocol.get("card_count"), 12, "usability card count")
 
@@ -179,6 +213,9 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             ghostgraph_path,
             ghostgraph_trials_path,
             ghostgraph_provenance_path,
+            ghostgraph_live_path,
+            ghostgraph_live_trials_path,
+            ghostgraph_live_provenance_path,
             usability_protocol_path,
         )
     }
@@ -268,25 +305,38 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             },
             "ghostgraph": {
                 "scope": "PROJECT_AUTHORED_PREREGISTERED_BOUNDED_HIDDEN_GRAPHS",
-                "decision": str(ghostgraph_summary["decision"]),
+                "decision": str(ghostgraph["decision"]),
                 "cases": len(ghostgraph_trials),
-                "exact_graphs": int(ghostgraph_summary["exact_unique_graph_recovery_count"]),
-                "path_classes": int(ghostgraph_summary["path_class_recovery_count"]),
-                "false_confident": int(ghostgraph_summary["false_confident_count"]),
-                "adaptive_probes": int(ghostgraph_summary["adaptive_probe_count"]),
-                "exhaustive_probes": int(ghostgraph_summary["exhaustive_probe_count"]),
-                "planner_oracle_mismatches": int(
-                    ghostgraph_summary["planner_oracle_mismatch_count"]
-                ),
-                "post_control_recurrence": int(
-                    ghostgraph_summary["post_control_recurrence_count"]
-                ),
+                "exact_graphs": int(active["exact_unique_graph_recovery_count"]),
+                "path_classes": int(active["path_class_recovery_count"]),
+                "false_confident": int(active["false_confident_count"]),
+                "adaptive_probes": int(active["probe_count"]),
+                "random_probes": int(random["probe_count"]),
+                "exhaustive_probes": int(exhaustive["probe_count"]),
+                "planner_oracle_mismatches": int(active["planner_oracle_mismatch_count"]),
+                "post_control_recurrence": int(active["post_control_recurrence_count"]),
+                "live_four_service": {
+                    "decision": str(ghostgraph_live["decision"]),
+                    "cases": int(live_metrics["case_count"]),
+                    "probes": int(live_metrics["probe_count"]),
+                    "exact_or_path_class": int(
+                        live_metrics["exact_or_path_class_recovery_count"]
+                    ),
+                    "outside_detected": int(
+                        live_metrics["out_of_hypothesis_detection_count"]
+                    ),
+                    "safe_detected": int(live_metrics["safe_no_recurrence_count"]),
+                    "false_confident": int(live_metrics["false_confident_count"]),
+                    "cleanup_failures": int(live_metrics["cleanup_failure_count"]),
+                },
                 "external_status": "NOT_COLLECTED",
                 "trial_timeline": [
                     {
                         "case_id": item["case_id"],
                         "selected_experiments": [
-                            observation["experiment_id"] for observation in item["observations"]
+                            certificate["selected_experiment_id"]
+                            for certificate in item["certificates"]
+                            if certificate["selected_experiment_id"] is not None
                         ],
                         "verdict": item["verdict"],
                         "surviving_graph_ids": item["surviving_graph_ids"],
@@ -297,13 +347,13 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             },
         },
         "visual_story": [
-            "1. Запрос: удалить данные одного человека.",
-            "2. GhostGraph: активно включать допустимые операции и наблюдать временной trace.",
-            "3. Фильтрация: оставить все графы, совместимые с наблюдениями.",
-            "4. Планирование: выбрать exact minimax эксперимент, лучше всего разделяющий графы.",
-            "5. Fail-closed: вернуть граф, полный path/equivalence class, OUT или UNVERIFIED.",
-            "6. Действие: перевести найденные пути в TRE controls и повторить физический replay.",
-            "7. Доказательство: oracle, Lean и hashes; внешний результат явно NOT_COLLECTED.",
+            "Запрос: удалить данные одного человека.",
+            "GhostGraph: включать допустимые операции и наблюдать временной trace.",
+            "Фильтрация: оставить все графы, совместимые с наблюдениями.",
+            "Планирование: выбрать exact minimax эксперимент, лучше всего разделяющий графы.",
+            "Fail-closed: вернуть граф, полный path/equivalence class, OUT или UNVERIFIED.",
+            "Действие: перевести найденные пути в TRE controls и повторить физический replay.",
+            "Доказательство: oracle, Lean и hashes; внешний результат явно NOT_COLLECTED.",
         ],
         "usability_handoff": {
             "languages": list(usability_protocol["languages"]),
@@ -314,7 +364,7 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             "external_handoff": "external_transfer/README.md",
         },
         "claim_boundary": {
-            "supported": "EraSeMap объединяет зарегистрированные артефакты с активным bounded-поиском скрытых путей восстановления, полными equivalence classes, TRE replay и минимальной remediation в одном fail-closed контракте.",
+            "supported": "EraSeMap объединяет зарегистрированные артефакты с активным bounded-поиском скрытых путей, полными equivalence classes, OUT/UNVERIFIED, exact control и replay. GhostGraph v2 прошёл frozen strategy comparison и live transfer на четырёх stock-сервисах.",
             "not_supported": "Не заявляются production-внедрение в FaceID/eGov и завершённый независимый hidden challenge.",
             "independence_score": 7.8,
         },
@@ -396,8 +446,9 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <article><div class=\"eyebrow\">Open stock transfer</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
       <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; native-success: {transfer["native_false_complete"]}, typed audit: {transfer["typed_false_complete"]}; recurrence {transfer["post_control_recurrence"]}.</p>
       <div class=\"scope\">{html.escape(transfer["scope"])}</div></article>
-    <article><div class=\"eyebrow\">GhostGraph</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
-      <p>adaptive против exhaustive probes; exact graphs {ghostgraph["exact_graphs"]}, path classes {ghostgraph["path_classes"]}, false confident {ghostgraph["false_confident"]}; external {ghostgraph["external_status"]}.</p>
+    <article><div class=\"eyebrow\">GhostGraph v2</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["random_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
+      <p>active / frozen random / exhaustive probes; exact graphs {ghostgraph["exact_graphs"]}, path classes {ghostgraph["path_classes"]}, false confident {ghostgraph["false_confident"]}.</p>
+      <p>Live four-service: {ghostgraph["live_four_service"]["cases"]}/5 cases, {ghostgraph["live_four_service"]["probes"]} probes, cleanup failures {ghostgraph["live_four_service"]["cleanup_failures"]}; external {ghostgraph["external_status"]}.</p>
       <div class=\"scope\">{html.escape(ghostgraph["scope"])}</div></article>
   </section>
   <section class=\"path\"><strong>Answer-blind handoff</strong>

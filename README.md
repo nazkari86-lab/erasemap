@@ -23,9 +23,12 @@ discovery.
 The new **GhostGraph** layer goes one step further: it actively distinguishes a bounded catalogue of
 hidden recovery graphs from temporal synthetic-subject traces, preserves complete indistinguishable
 classes, detects traces outside the catalogue, and passes justified survivors to TRE controls. The
-preregistered v1 result used 6 adaptive probes instead of 49 exhaustive case-probes, recovered three
-unique graphs and one complete path class, and produced zero false confident outputs. This remains a
-project-authored bounded result, not open-world or production discovery.
+frozen v2 result used 7 active-minimax probes versus 13 for frozen random and 49 for nonadaptive
+exhaustive testing, recovered three exact graphs and two complete path classes, detected the
+outside-catalogue case, failed closed on missing evidence, and produced zero false confident
+outputs. A second run executed five cases with five probes through native APIs of digest-pinned
+Redis, Keycloak, MLflow, and Qdrant. Both remain project-authored bounded results, not open-world,
+independent, or production discovery.
 
 ## Quick demonstration
 
@@ -37,7 +40,9 @@ erasemap showcase --repo-root . --output outputs/jury-showcase-v1
 erasemap rse demo --seed 101
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_redis_v1.py
-PYTHONPATH=src:. python scripts/verify_ghostgraph_v1.py
+PYTHONPATH=src:. python scripts/verify_ghostgraph_v2.py
+PYTHONPATH=src:. python scripts/verify_ghostgraph_live_v2.py
+PYTHONPATH=src:. python -m external_ghostgraph_challenge.verify_v2 --help
 ```
 
 The fixed example contains an erased enrollment record with one still-active face template, so
@@ -53,7 +58,7 @@ hashes, and keeps the external-independence limitation visible. The evidence-anc
 Russian defense script, and adversarial Q&A are in
 [`docs/COMPETITION_EVIDENCE_SCORECARD.md`](docs/COMPETITION_EVIDENCE_SCORECARD.md),
 [`docs/JURY_DEFENSE_RU.md`](docs/JURY_DEFENSE_RU.md), and
-[`docs/JUDGE_QA_RU.md`](docs/JUDGE_QA_RU.md). The editable 11-slide PowerPoint with speaker notes is
+[`docs/JUDGE_QA_RU.md`](docs/JUDGE_QA_RU.md). The editable 13-slide PowerPoint is
 [`competition/EraSeMap_RKNP_ISEF_RU.pptx`](competition/EraSeMap_RKNP_ISEF_RU.pptx).
 
 ## Proof-Carrying Unlearning Graph
@@ -101,9 +106,9 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Topology-Robust Erasure v1 | Preregistered first run PASS: nominal MSC failed under 35/35 shifts, TRE had 0/35 recurrences; finite project-authored envelope |
 | Erasure Tomography v1 | Preregistered bounded first run PASS: 8/8 exact localization, 4/4 negative cases fail-closed, 3 probes versus 4 individual checks; project-authored |
 | Live Redis tomography transfer | Preregistered digest-pinned stock-service PASS: 4/4 exact localization, safe-case PASS, zero false localization/recurrence/retained loss; project-authored workflows |
-| GhostGraph v1 | Preregistered bounded PASS: 3 exact graphs, 1 complete path class, outside/invalid cases fail-closed, 6 adaptive vs 49 exhaustive probes, zero false confidence/oracle mismatch/recurrence/retained loss |
-| GhostGraph live four-service transfer | Protocol committed before runner; execution `NOT_COLLECTED` because Docker was unavailable |
-| External GhostGraph challenge | Seal/blind-run/reveal/Ed25519 verification kit ready; genuine evaluator result `NOT_COLLECTED` |
+| GhostGraph v2 | Frozen strategy comparison PASS: 3 exact graphs, 2 path classes, OUT/UNVERIFIED negatives, 7 active vs 13 random vs 49 exhaustive probes, zero false confidence/oracle mismatch/recurrence/retained loss |
+| GhostGraph live four-service v2 | First digest-pinned Docker run PASS: 5 cases, 5 probes, 3 exact/path recoveries, OUT and safe detected, zero false confidence/recurrence/retained loss/cleanup failure |
+| External GhostGraph challenge v2 | Interactive blind adapter, sealed truth, source-bound manifest, computed nine gates, and non-project Ed25519 verification ready; genuine evaluator result `NOT_COLLECTED` |
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
@@ -125,6 +130,29 @@ independence.
 See [`docs/ERASURE_TOMOGRAPHY_V1_REPORT.md`](docs/ERASURE_TOMOGRAPHY_V1_REPORT.md), the frozen
 protocols under [`benchmark/`](benchmark/), committed results under `outputs/erasure-tomography-*`,
 and the Lean boundary in `EraseMapFormal/ErasureTomography.lean`.
+
+## GhostGraph v2
+
+GhostGraph asks a different question from PCUG: if several registered recurrence topologies are
+still plausible, which safe synthetic intervention should be run next? Its exact planner partitions
+the current version space by predicted temporal trace and minimizes the largest surviving bucket,
+then squared bucket sizes, declared cost, and experiment ID. An independently implemented bitmask
+oracle recomputes every choice. The result is an exact graph, a complete erasure-relevant path
+class, `OUT_OF_HYPOTHESIS`, or `UNVERIFIED`—never confidence from missing evidence.
+
+The frozen v2 strategy comparison passed all gates with **7** active probes, compared with **13**
+for frozen random and **49** for exhaustive testing. A greedy separated-pairs baseline tied at 7 in
+this small catalogue, so global decision-tree optimality is not claimed. Passive declared lineage
+and flat tomography each produced one false-confident output. The live v2 run then reproduced the
+safety endpoints through native APIs of four stock services with no managed containers left after
+cleanup.
+
+The external v2 kit in [`external_ghostgraph_challenge/`](external_ghostgraph_challenge/) removes
+pre-disclosed traces: an outside evaluator authors and seals hidden graphs, and the frozen project
+runner adaptively requests one trace at a time. After reveal, the verifier recomputes the complete
+execution and checks source hashes, commitments, a clean commit declaration, and a non-project
+Ed25519 signature. This makes an external run executable; it does not make one exist. Current status
+remains `NOT_COLLECTED`, and evidence independence remains **7.8/10**.
 
 ## Open stock-service transfer challenge
 

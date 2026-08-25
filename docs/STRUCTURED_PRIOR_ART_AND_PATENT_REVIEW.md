@@ -138,9 +138,10 @@ must outperform the strongest complete typed-node/replay baseline on that untouc
 professional must conduct jurisdiction-specific claim analysis before any commercialization or
 patent filing.
 
-For GhostGraph, the external author must also choose hidden graph structure and traces without
-seeing project answers. The seal/blind-run/reveal/sign kit is readiness evidence; until a genuine
-bundle passes technical and identity/conflict review, its status remains `NOT_COLLECTED`.
+For GhostGraph, the external author must choose the hidden graph structure and operate the trace
+adapter without exposing truth or future traces to the project. The v2 seal/interactive-run/reveal/
+sign kit is readiness evidence; until a genuine bundle passes technical and identity/conflict
+review, its status remains `NOT_COLLECTED`.
 
 ## Primary links
 

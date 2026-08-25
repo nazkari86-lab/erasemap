@@ -144,8 +144,11 @@ temporal deletion/recovery interventions; exact full-version-space filtering; on
 selection checked by an independently structured oracle; fail-closed graph/path/equivalence-class
 outputs; and translation of every justified survivor into TRE controls followed by physical replay.
 
-The v1 result raises internal scientific completion because protocol, source hashes, stopping rule,
-reveal, and gates were frozen prospectively and the key conditional properties are Lean-checked. It
-does not establish world priority: a systematic multi-database literature and professional patent
-review remains necessary. It also does not raise independence because hypotheses and execution were
-project-authored; the external challenge status is `NOT_COLLECTED`.
+The v2 result raises internal scientific completion because protocol, source hashes, stopping rule,
+reveal, six equal-input strategies, full planner certificates, and gates were frozen prospectively
+and the key conditional properties are Lean-checked. Active minimax used 7 probes versus 13 random
+and 49 exhaustive, but tied greedy at 7; no superiority over greedy is claimed. A separate
+digest-pinned Redis/Keycloak/MLflow/Qdrant execution supports stock-service transfer only. Neither
+result establishes world priority: a systematic multi-database literature and professional patent
+review remains necessary. Neither raises independence because hypotheses and execution were
+project-authored; the external interactive challenge status is `NOT_COLLECTED`.

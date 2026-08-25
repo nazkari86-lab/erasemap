@@ -181,7 +181,7 @@ EraSeMap реализован как воспроизводимый Python-па�
 
 Proof bundle включает идентификаторы запроса и протокола, commitment зарегистрированного графа, трёхзначный вердикт, кратчайший остаточный путь, решения каналов, выбранные действия и стоимости, replay-result, хэши evidence и цепочку Ed25519 receipts. Подпись покрывает минимальный envelope и намеренно исключает идентификаторы субъекта, биометрию, сырые пути и свободный текст. Вычислитель пересчитывает вердикт и план из evidence, а не доверяет сохранённой метке.
 
-Репозиторий содержит 265 тестов с покрытием не ниже 90% по полной CI-equivalent команде, pinned build backend, exact runtime/test constraints, SHA-pinned workflow actions, locked protocols, raw records, manifests, preregistrations, отчёты об отрицательных результатах, Lean-проект, CLI-демонстрации и CI gates. Инженерная проверка повышает воспроизводимость, но не считается независимой научной валидацией.
+Репозиторий содержит 445 собранных тестов с покрытием не ниже 90% по полной CI-equivalent команде, pinned build backend, exact runtime/test constraints, SHA-pinned workflow actions, locked protocols, raw records, manifests, preregistrations, отчёты об отрицательных результатах, Lean-проект, CLI-демонстрации и CI gates. Инженерная проверка повышает воспроизводимость, но не считается независимой научной валидацией.
 
 ## 7. Методика экспериментов
 

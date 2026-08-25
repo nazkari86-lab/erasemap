@@ -181,7 +181,7 @@ EraSeMap is implemented as a reproducible Python package with canonical JSON inp
 
 The output proof bundle includes the request and protocol identifiers, registered graph commitment, three-valued verdict, shortest residual path, verifier-channel decisions, selected actions and costs, replay result, evidence hashes, and an Ed25519 receipt chain. The signature covers a minimal envelope and intentionally excludes subject identifiers, biometric values, raw paths, and free text. The evaluator recomputes the verdict and plan from the evidence rather than trusting cached labels.
 
-The repository includes 265 tests with at least 90% measured coverage in the full CI-equivalent test command, a pinned build backend, exact runtime/test constraints, SHA-pinned workflow actions, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
+The repository includes 445 collected tests with at least 90% measured coverage in the full CI-equivalent test command, a pinned build backend, exact runtime/test constraints, SHA-pinned workflow actions, locked protocols, raw records, manifests, preregistrations, negative-result reports, a Lean project, command-line demonstrations, and CI gates. Engineering verification increases reproducibility but is not counted as independent scientific validation.
 
 ## 7. Experimental Methodology
 

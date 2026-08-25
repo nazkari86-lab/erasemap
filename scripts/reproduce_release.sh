@@ -93,7 +93,10 @@ esac
   --output "$release_temp/ghostgraph-v1"
 "$python_bin" scripts/verify_ghostgraph_v1.py \
   --output "$release_temp/ghostgraph-v1"
+"$python_bin" scripts/verify_ghostgraph_v2.py
+"$python_bin" scripts/verify_ghostgraph_live_v2.py
 "$python_bin" -m external_ghostgraph_challenge.verify
+"$python_bin" -m external_ghostgraph_challenge.verify_v2 --help >/dev/null
 "$python_bin" scripts/verify_formal_conformance.py \
   --expected formal/conformance-v1.json \
   --output "$release_temp/formal-conformance.json"
@@ -146,8 +149,16 @@ if [[ "$profile" == "transfer-live" ]]; then
   assert_worktree_unchanged
   exit 0
 fi
+if [[ "$profile" == "ghostgraph-live" ]]; then
+  "$python_bin" experiments/run_ghostgraph_live_v2.py \
+    --output "$release_temp/ghostgraph-live-v2"
+  "$python_bin" scripts/verify_ghostgraph_live_v2.py \
+    --output "$release_temp/ghostgraph-live-v2"
+  assert_worktree_unchanged
+  exit 0
+fi
 if [[ "$profile" != "face-open" ]]; then
-  echo "Unknown profile: $profile (expected core, tomography-redis-live, transfer-live, or face-open)" >&2
+  echo "Unknown profile: $profile (expected core, tomography-redis-live, transfer-live, ghostgraph-live, or face-open)" >&2
   exit 2
 fi
 

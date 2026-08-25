@@ -119,7 +119,10 @@ EraSeMap не обещает магически найти любую секре
 Он выбирает эксперимент, который в худшем случае оставит минимальную неоднозначность, сохраняет
 полный equivalence class и переводит найденные пути в TRE-контроли.
 
-В preregistered v1: 3 exact graph recoveries, 1 полный path class, 1 OUT, 1 UNVERIFIED, safe case;
-0 false confident, 0 planner/oracle mismatches, 0 post-control recurrence, 0 retained loss, 6 probes
-против 49 exhaustive. Это сильный prospective внутренний результат, но не независимая или
-production-валидация. Внешний challenge kit готов, результат `NOT_COLLECTED`.
+В preregistered v2: 3 exact graph recoveries, 2 полных path classes, 1 OUT и 1 UNVERIFIED;
+0 false confident, 0 planner/oracle mismatches, 0 post-control recurrence и 0 retained loss.
+Активная стратегия использовала 7 probes против 13 у frozen-random и 49 у exhaustive; greedy
+честно связал её с результатом 7. Отдельный digest-pinned запуск на Redis, Keycloak, MLflow и
+Qdrant прошёл 5/5 случаев за 5 probes и удалил все управляемые контейнеры. Это сильный prospective
+внутренний и live-transfer результат, но не независимая или production-валидация. Интерактивный
+внешний challenge v2 готов, результат `NOT_COLLECTED`.

@@ -29,10 +29,13 @@ def test_showcase_binds_live_and_frozen_evidence() -> None:
     assert report["evidence"]["open_stock_transfer"]["retained_loss"] == 0
     assert report["evidence"]["open_stock_transfer"]["result_sha256"].startswith("sha256:")
     assert report["evidence"]["ghostgraph"]["decision"] == "PASS"
-    assert report["evidence"]["ghostgraph"]["adaptive_probes"] == 6
+    assert report["evidence"]["ghostgraph"]["adaptive_probes"] == 7
+    assert report["evidence"]["ghostgraph"]["random_probes"] == 13
     assert report["evidence"]["ghostgraph"]["exhaustive_probes"] == 49
     assert report["evidence"]["ghostgraph"]["false_confident"] == 0
     assert report["evidence"]["ghostgraph"]["external_status"] == "NOT_COLLECTED"
+    assert report["evidence"]["ghostgraph"]["live_four_service"]["decision"] == "PASS"
+    assert report["evidence"]["ghostgraph"]["live_four_service"]["cases"] == 5
     path_class = next(
         item
         for item in report["evidence"]["ghostgraph"]["trial_timeline"]
@@ -42,7 +45,7 @@ def test_showcase_binds_live_and_frozen_evidence() -> None:
     assert len(report["visual_story"]) == 7
     assert report["usability_handoff"]["human_result_status"] == "NOT_COLLECTED"
     assert report["claim_boundary"]["independence_score"] == 7.8
-    assert len(report["source_sha256"]) == 14
+    assert len(report["source_sha256"]) == 17
 
 
 def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
@@ -54,7 +57,7 @@ def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
     assert "PROJECT_AUTHORED_LIVE_STOCK_SERVICES" in rendered
     assert "NOT_COLLECTED" in rendered
     assert "GhostGraph" in rendered
-    assert "6 / 49" in rendered
+    assert "7 / 13 / 49" in rendered
     assert "Одна понятная история из семи шагов" in rendered
     assert "7.8/10" in rendered
 
@@ -72,9 +75,12 @@ def test_showcase_fails_closed_on_tampered_result(tmp_path: Path) -> None:
         "formal/tre-conformance-v1.json",
         "outputs/open-transfer-v1/result.json",
         "outputs/open-transfer-v1/PROVENANCE.json",
-        "outputs/ghostgraph-v1/result.json",
-        "outputs/ghostgraph-v1/trials.jsonl",
-        "outputs/ghostgraph-v1/PROVENANCE.json",
+        "outputs/ghostgraph-v2/result.json",
+        "outputs/ghostgraph-v2/trials.jsonl",
+        "outputs/ghostgraph-v2/PROVENANCE.json",
+        "outputs/ghostgraph-live-v2/result.json",
+        "outputs/ghostgraph-live-v2/trials.jsonl",
+        "outputs/ghostgraph-live-v2/PROVENANCE.json",
         "usability/protocol-v1.json",
     ):
         destination = copied / source

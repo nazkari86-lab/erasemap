@@ -1,5 +1,9 @@
 # GhostGraph v1 — active causal erasure discovery
 
+> Immutable historical first-run report. GhostGraph v2 supersedes the strategy comparison and
+> closes the v1 certificate/baseline omissions; see `docs/GHOSTGRAPH_V2_REPORT.md`. The v1 data and
+> claims remain unchanged for auditability.
+
 ## Plain-language problem
 
 A deletion audit can check every storage path it already knows. It cannot name a recovery path that

@@ -1,6 +1,6 @@
 # EraSeMap competition evidence scorecard
 
-Snapshot: 2026-08-23. This is a fixed evidence map, not an official RKNP or ISEF score and not a
+Snapshot: 2026-08-25. This is a fixed evidence map, not an official RKNP or ISEF score and not a
 probability of winning. A number may move only after the named evidence event occurs.
 
 ## Thirty-second explanation
@@ -19,20 +19,20 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 
 | Dimension | Current | Observable evidence | Next score-changing event |
 |---|---:|---|---|
-| Problem clarity | 9.8/10 | Erasure Tomography adds an intuitive coded-test story to the seven-step showcase; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
+| Problem clarity | 9.8/10 | GhostGraph now gives one direct story: run a safe synthetic probe, remove incompatible maps, then repair every surviving path; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
 | Practical relevance | 9.7/10 | Frozen failures and remediation now execute on stock identity, ML-lineage, and biometric-vector services | Authorized organization pilot on actual deletion workflow |
 | Narrow scientific novelty | 9.9/10 | GhostGraph adds active hidden recovery-graph discovery, full equivalence classes, exact minimax certificates, and discovery-to-TRE replay to the prior ET/PCUG stack | Systematic/patent review plus independently authored topology |
-| Experimental methodology | 9.9/10 | GhostGraph protocol/core preceded runner, runner preceded reveal, first output is append-only; separate oracle, OUT/UNVERIFIED negatives, and 367-case conformance | Independently authored preregistered holdout |
-| Scientific claim completion | 9.9/10 | Formal PCUG/RSE/TRE/ET/GhostGraph boundaries, measured optimization, and frozen GhostGraph PASS with 3 exact graphs, 1 path class, 6 vs 49 probes | External hidden challenge plus materially different live replication |
-| Real inputs and transfer | 9.4/10 | Public Olivetti vectors and real stock Keycloak/MLflow/Qdrant processes; identities/commitments and faults remain project-authored | Authorized real records or redacted production instrumentation |
-| Independence of evidence | 7.8/10 | Executable signed challenge exists, but `external_results/` has no accepted external result | One verified evaluator passes all 9.5 rubric gates |
+| Experimental methodology | 9.9/10 | Frozen v2 compares six strategies under one budget; separate oracle, OUT/UNVERIFIED negatives, exact certificates, append-only outputs, and an independent live protocol/reveal sequence | Independently authored preregistered holdout |
+| Scientific claim completion | 9.9/10 | Formal PCUG/RSE/TRE/ET/GhostGraph boundaries; v2 PASS with 3 exact + 2 path classes and 7/13/49 probes; live four-service PASS | Independently authored hidden execution |
+| Real inputs and transfer | 9.5/10 | Public Olivetti vectors plus real Redis, Keycloak, MLflow, Qdrant, PostgreSQL, cache, vector, backup, and model processes; hidden graphs/faults remain project-authored | Authorized real records or redacted production instrumentation |
+| Independence of evidence | 7.8/10 | Interactive blind v2 kit computes nine gates and blocks the project key, but no accepted outside submission exists | One verified evaluator passes all 9.5 rubric gates |
 | Formal justification | 9.9/10 | Lean PCUG/RSE/TRE/ET plus GhostGraph truth-survival, singleton-soundness, inseparability, and finite minimax certificate; no unchecked proof escapes | Independent proof review or machine-checked noisy-trace refinement |
-| Engineering | 9.9/10 | Strict typing, append-only GhostGraph provenance, independent recomputation, digest-pinned live preregistration, signed external handoff, and fail-safe boundaries | Reproducible external deployment or release audit |
+| Engineering | 9.9/10 | Strict typing, append-only v2/live provenance, digest-pinned four-service cleanup, source-bound blind adapter, computed evidence gates, and non-project signature enforcement | Reproducible external deployment or release audit |
 | Reproducibility | 9.9/10 | Committed protocol, first-run trials, 9.6 MiB raw evidence, public asset provenance, and standalone offline recomputation | Independent clean-machine reproduction |
 | FaceID/eGov/KYC applicability | 9.5/10 | One contract now runs on stock identity and biometric-vector services, not only display adapters | Authorized domain-specific instrumentation and evaluation |
-| Competition presentation readiness | 9.8/10 | Evidence-bound seven-step showcase, Russian defense/Q&A, and answer-blind bilingual handoff | Timed rehearsal with an unfamiliar reviewer |
+| Competition presentation readiness | 9.8/10 | Evidence-bound v2 showcase, synchronized bilingual papers, 13-slide Russian deck, defense/Q&A, and answer-blind handoff | Timed rehearsal with an unfamiliar reviewer |
 | RKNP competitiveness | 9.8/10 | Formal result plus measured multi-service result satisfy the frozen 9.8 trigger | External PASS or organization confirmation for a defensible 9.9 |
-| ISEF-level readiness | 9.7/10 | Distinct ET research question, formal boundary, prospective local and live Redis results, raw reproducibility, and explicit limitations | External PASS raises evidence readiness toward 9.8–9.9 |
+| ISEF-level readiness | 9.7/10 | Distinct active-discovery question, formal boundary, prospective comparison, four-service live result, raw reproducibility, and explicit limitations | External PASS raises evidence readiness toward 9.8–9.9 |
 
 The independence row is deliberately not averaged away. More project-authored code cannot move it
 above 7.8.
@@ -86,6 +86,13 @@ above 7.8.
     erasure-specific composition, not a superior general code. Both executions remain
     project-authored; independence stays 7.8 and overall RKNP remains 9.8 until the named external
     evidence event.
+12. **GhostGraph v2 and live transfer:** under one frozen budget, active minimax used 7 probes,
+    frozen random 13, and nonadaptive exhaustive 49; active recovered 3 exact graphs and 2 path
+    classes, detected OUT and UNVERIFIED negatives, and had zero false confidence or control loss.
+    Greedy tied active at 7, which is preserved as a negative result. A separate digest-pinned run
+    used 5 probes over Redis, Keycloak, MLflow, and Qdrant, passed 5/5 cases, and left no managed
+    containers. The interactive external v2 route is executable but still `NOT_COLLECTED`, so
+    independence remains 7.8 and RKNP remains 9.8.
 
 ## Reproduce the jury artifact
 

@@ -66,7 +66,16 @@ if [[ "$action" == "collect" ]]; then
     fi
   }
   trap cleanup_download_temp EXIT
-  kaggle kernels output "$kernel_id" -p "$download_temp"
+  kaggle_executable="$(command -v kaggle)"
+  kaggle_python="$(head -n 1 "$kaggle_executable" | sed 's/^#!//')"
+  if [[ ! -x "$kaggle_python" ]]; then
+    echo "Cannot resolve the Python interpreter used by $kaggle_executable" >&2
+    exit 2
+  fi
+  "$kaggle_python" "$project_root/scripts/download_kaggle_kernel_output.py" \
+    "$kernel_id" \
+    --destination "$download_temp" \
+    --prefix "qwen-tofu-v1/"
   source_result="$download_temp/qwen-tofu-v1"
   if [[ ! -f "$source_result/summary.json" ]]; then
     echo "Completed output does not contain qwen-tofu-v1/summary.json" >&2

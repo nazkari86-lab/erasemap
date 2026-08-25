@@ -24,6 +24,8 @@ GhostGraph adds active topology discovery when the registered recurrence map its
 
 GhostGraph-T changes the target from exact graph identity to the complete set of minimum erasure-operation cuts. A separately frozen 300-case benchmark achieved 300/300 correct action-or-OOD decisions, 50/50 held-out-family detections, zero false-confident outputs, and 1.28 mean probes versus 8.0 exhaustive. Exact graph recovery left 170 action-safe irrelevant-topology twins unresolved. Lean checks action-homogeneous stopping soundness and the impossibility of identifying different actions for query-indistinguishable graphs. Global optimization matched a separate recursive oracle but tied one-step minimax and greedy, so adaptive-baseline superiority is not claimed.
 
+A preregistered three-seed NF4 QLoRA study on Qwen2.5-1.5B and TOFU produced a retained negative result. The paired-gradient candidate passed seven of nine gates but missed the all-seed forgetting minimum and failed world-fact utility, while exact adapter retraining passed its forgetting gate. EraSeMap therefore kept the model channel incomplete. This is real-model project-operated evidence, not successful approximate unlearning or independent validation.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -256,6 +258,10 @@ The live transfer freezes four digest-pinned stock services—Redis, Keycloak, M
 
 The v1 protocol and core were committed before the first result. It freezes 120 instance-held-out, 80 composition-held-out, 50 family-held-out, and 50 temporal-shift cases; eight strategies; source and case-manifest hashes; Wilson intervals; and seven success gates. A held-out family is evaluated only for `OUT_OF_HYPOTHESIS`, never for impossible post-hoc localization. The exact global policy minimizes worst-case declared cost over the full finite decision tree and is checked against a separately structured recursive oracle.
 
+### 7.12 Layer K: real Qwen–TOFU model channel
+
+Before the first valid GPU run, the protocol froze a pinned Qwen2.5-1.5B base, TOFU revision, three seeds, NF4 QLoRA configuration, target/exact/candidate procedures, six evaluation sets, nine conjunctive gates, and artifact hashes. The exact reference retrains an adapter on `retain99`; it does not alter Qwen pretraining. Offline verification recomputes per-example losses, membership AUC, reload recurrence, all gates, and the decision from downloaded arrays.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -336,6 +342,12 @@ The digest-pinned four-service run used **5** probes across five cases, recovere
 The first locked run passed all frozen gates: **300/300** correct action-or-OOD decisions, **50/50** held-out-family detections, zero false-confident outputs (Wilson 95% upper bound 0.01265), and zero global-policy/oracle mismatches. The global policy used 1.28 mean probes at declared cost 8.84, compared with 8.0 probes and cost 28.0 for exhaustive testing. Exact-graph minimax resolved only 130/300 and returned UNVERIFIED for 170 irrelevant-topology twins; sink-only observation left 41 temporal cases unresolved; passive lineage produced 265 false-confident actions.
 
 Global, one-step minimax, and greedy all achieved the same correctness, probes, and cost. This is a negative result against a superiority claim: the experiment supports action-equivalence stopping and bounded OOD rejection, not empirical dominance over the strongest adaptive baseline.
+
+### 8.11 Qwen–TOFU model-channel result
+
+The first valid Tesla P100 run completed all three frozen seeds and returned **FAIL**. Seven of nine gates passed. Minimum target memorization gain was 0.59827 and minimum exact forgetting lift was 0.14026. The candidate stayed close to exact retraining on forget NLL (maximum gap 0.09454), retained NLL (0.00920), and membership AUC (0.05750), with zero save/reload recurrence.
+
+However, minimum candidate forgetting lift was **0.04837**, below the frozen 0.05 gate, and maximum world-fact NLL degradation was **0.45300**, above the 0.20 gate; two of three seeds failed the utility endpoint. The result falsifies the v1 candidate's conjunctive success claim while demonstrating that EraSeMap does not convert partial metric agreement into completion.
 
 ## 9. Discussion
 

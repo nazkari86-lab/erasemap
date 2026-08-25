@@ -24,7 +24,7 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 | Narrow scientific novelty | 9.9/10 | GhostGraph adds active hidden recovery-graph discovery, full equivalence classes, exact minimax certificates, and discovery-to-TRE replay to the prior ET/PCUG stack | Systematic/patent review plus independently authored topology |
 | Experimental methodology | 9.9/10 | Frozen v2 compares six strategies under one budget; separate oracle, OUT/UNVERIFIED negatives, exact certificates, append-only outputs, and an independent live protocol/reveal sequence | Independently authored preregistered holdout |
 | Scientific claim completion | 9.9/10 | Formal PCUG/RSE/TRE/ET/GhostGraph boundaries; v2 PASS with 3 exact + 2 path classes and 7/13/49 probes; live four-service PASS | Independently authored hidden execution |
-| Real inputs and transfer | 9.5/10 | Public Olivetti vectors plus real Redis, Keycloak, MLflow, Qdrant, PostgreSQL, cache, vector, backup, and model processes; hidden graphs/faults remain project-authored | Authorized real records or redacted production instrumentation |
+| Real inputs and transfer | 9.5/10 | Public Olivetti vectors, pinned TOFU/Qwen2.5-1.5B GPU evidence, and real Redis, Keycloak, MLflow, Qdrant, PostgreSQL, cache, vector, backup, and model processes; execution and faults remain project-authored | Authorized real records or redacted production instrumentation |
 | Independence of evidence | 7.8/10 | Interactive blind v2 kit computes nine gates and blocks the project key, but no accepted outside submission exists | One verified evaluator passes all 9.5 rubric gates |
 | Formal justification | 9.9/10 | Lean PCUG/RSE/TRE/ET plus GhostGraph truth-survival, singleton-soundness, inseparability, and finite minimax certificate; no unchecked proof escapes | Independent proof review or machine-checked noisy-trace refinement |
 | Engineering | 9.9/10 | Strict typing, append-only v2/live provenance, digest-pinned four-service cleanup, source-bound blind adapter, computed evidence gates, and non-project signature enforcement | Reproducible external deployment or release audit |
@@ -100,6 +100,12 @@ above 7.8.
     action-equivalence objective. One-step minimax and greedy tied the global policy, so this adds a
     formal sufficient-action result and broader controlled evidence, not adaptive-baseline
     superiority or external independence. The stable RKNP score remains 9.8.
+14. **Real Qwen–TOFU model channel:** the preregistered three-seed P100 run is a retained negative
+    result. Seven of nine gates passed, but minimum candidate forgetting was 0.04837 against 0.05
+    and maximum world-fact degradation was 0.45300 against 0.20. Exact adapter retraining passed its
+    forgetting gate and reload recurrence was zero. This strengthens real-model input evidence and
+    the fail-closed demonstration; it does not validate the approximate method, raise independence,
+    or change the stable 9.8 RKNP score.
 
 ## Reproduce the jury artifact
 

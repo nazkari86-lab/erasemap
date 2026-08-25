@@ -392,8 +392,12 @@ gradient-difference candidate across three seeds. Direct, perturbed, retained, h
 membership-AUC, and save/reload recurrence channels are conjunctive. The exact reference applies to
 the registered adapter procedure only; no removal from Qwen pretraining is claimed.
 
-The protocol is preregistered, but the first Kaggle GPU result is currently `NOT_COLLECTED`.
-Seven pre-training infrastructure attempts and the remaining CUDA-account blocker are recorded in
+The first valid three-seed Kaggle GPU result is a frozen **FAIL**, not a successful unlearning
+claim. Seven of nine gates passed, but one seed missed the candidate forgetting minimum
+(`0.04837 < 0.05`) and world-fact degradation reached `0.45300` against the `0.20` maximum. Exact
+adapter retraining passed its forgetting gate and save/reload recurrence was zero. EraSeMap
+therefore correctly keeps the model channel incomplete. The result and earlier infrastructure
+attempts are recorded in
 [`docs/QWEN_TOFU_KAGGLE_V1_RUN_LOG.md`](docs/QWEN_TOFU_KAGGLE_V1_RUN_LOG.md):
 
 ```bash
@@ -402,7 +406,8 @@ scripts/kaggle_qwen_tofu_v1.sh status
 scripts/kaggle_qwen_tofu_v1.sh collect
 ```
 
-See [`docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md).
+See [`docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md)
+and [`docs/QWEN_TOFU_KAGGLE_V1_REPORT.md`](docs/QWEN_TOFU_KAGGLE_V1_REPORT.md).
 
 See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for the locked results,
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict

@@ -24,6 +24,8 @@ GhostGraph добавляет активное обнаружение топол
 
 GhostGraph-T меняет цель с точной идентичности графа на полный набор минимальных erasure-operation cuts. Отдельно frozen benchmark из 300 случаев дал 300/300 корректных action-or-OOD решений, 50/50 обнаружений held-out family, ноль false-confident outputs и в среднем 1,28 probes против 8,0 exhaustive. Exact graph recovery оставил 170 action-safe twins с нерелевантной топологией неразрешёнными. Lean проверяет soundness остановки на action-homogeneous version space и невозможность определить разные действия для query-indistinguishable графов. Global optimization совпал с отдельным recursive oracle, но разделил результат с one-step minimax и greedy, поэтому превосходство над adaptive baselines не заявляется.
 
+Preregistered three-seed NF4 QLoRA исследование Qwen2.5-1.5B и TOFU дало сохранённый отрицательный результат. Paired-gradient candidate прошёл семь из девяти gates, но не достиг all-seed forgetting minimum и провалил world-fact utility, тогда как exact adapter retraining прошёл свой forgetting gate. Поэтому EraSeMap оставил model channel незавершённым. Это project-operated evidence на реальной модели, а не успешное approximate unlearning или независимая validation.
+
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
 ## 1. Введение
@@ -256,6 +258,10 @@ Live transfer фиксирует четыре digest-pinned stock-сервиса
 
 Протокол и core v1 были закоммичены до первого результата. Зафиксированы 120 instance-held-out, 80 composition-held-out, 50 family-held-out и 50 temporal-shift случаев; восемь стратегий; hashes кода и case manifest; Wilson intervals; семь gates. Held-out family оценивается только по `OUT_OF_HYPOTHESIS`, а не по невозможной post-hoc localization. Exact global policy минимизирует worst-case declared cost полного конечного decision tree и проверяется отдельно структурированным recursive oracle.
 
+### 7.12 Уровень K: model channel на реальных Qwen–TOFU
+
+До первого валидного GPU run протокол зафиксировал Qwen2.5-1.5B base, TOFU revision, три seeds, NF4 QLoRA configuration, target/exact/candidate procedures, шесть evaluation sets, девять conjunctive gates и hashes artifacts. Exact reference переобучает adapter на `retain99`, но не изменяет Qwen pretraining. Offline verifier пересчитывает per-example losses, membership AUC, reload recurrence, все gates и решение из скачанных arrays.
+
 ## 8. Результаты
 
 ### 8.1 Механизм и перенос
@@ -336,6 +342,12 @@ Digest-pinned four-service run использовал **5** probes в пяти �
 Первый locked run прошёл все gates: **300/300** корректных action-or-OOD решений, **50/50** held-out-family detections, ноль false-confident outputs (верхняя Wilson 95% граница 0,01265) и ноль global-policy/oracle mismatches. Global policy использовал в среднем 1,28 probes стоимостью 8,84 против 8,0 probes и стоимости 28,0 у exhaustive. Exact-graph minimax разрешил только 130/300 и вернул UNVERIFIED для 170 irrelevant-topology twins; sink-only observation оставил 41 temporal case неразрешённым; passive lineage дал 265 false-confident actions.
 
 Global, one-step minimax и greedy получили одинаковые correctness, число probes и cost. Это отрицательный результат против claim о превосходстве: эксперимент поддерживает action-equivalence stopping и bounded OOD rejection, но не empirical dominance над сильнейшим adaptive baseline.
+
+### 8.11 Результат model channel Qwen–TOFU
+
+Первый валидный run на Tesla P100 завершил все три frozen seeds и вернул **FAIL**. Пройдено семь из девяти gates. Минимальный target memorization gain равен 0,59827, а minimum exact forgetting lift — 0,14026. Candidate близок к exact retraining по forget NLL (максимальный gap 0,09454), retained NLL (0,00920) и membership AUC (0,05750); save/reload recurrence равен нулю.
+
+Однако minimum candidate forgetting lift равен **0,04837**, ниже frozen gate 0,05, а maximum world-fact NLL degradation равен **0,45300**, выше gate 0,20; два из трёх seeds провалили utility endpoint. Результат опровергает conjunctive success claim кандидата v1 и показывает, что EraSeMap не превращает частичное совпадение метрик в завершение.
 
 ## 9. Обсуждение
 

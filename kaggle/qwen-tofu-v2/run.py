@@ -6,12 +6,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-ASSETS = Path("/kaggle/input/erasemap-qwen-tofu-v1-assets")
 SOURCE_DATASET = Path("/kaggle/input/erasemap-qwen-tofu-v2-source")
 INPUTS = Path("/kaggle/input")
 CHECKOUT = Path("/kaggle/working/erasemap-source")
-WHEELS = ASSETS / "pinned-wheels" / "wheels"
-TOFU = ASSETS / "tofu-324592d" / "tofu-source"
 OUTPUT = Path("/kaggle/working/qwen-tofu-v2")
 
 
@@ -19,11 +16,23 @@ def run(*command: str, cwd: Path | None = None) -> None:
     subprocess.run(command, cwd=cwd, check=True)
 
 
-def locate_model() -> Path:
+def locate_assets() -> tuple[Path, Path, Path, Path]:
+    torch_wheels = list(INPUTS.rglob("torch-2.5.1*cu121*.whl"))
+    if len(torch_wheels) != 1:
+        raise RuntimeError(f"expected one frozen CUDA Torch wheel, found {torch_wheels}")
+    assets = torch_wheels[0].parent
+    wheels = assets / "pinned-wheels" / "wheels"
+    tofu = assets / "tofu-324592d" / "tofu-source"
+    if not wheels.is_dir() or not tofu.is_dir():
+        raise RuntimeError("attached frozen wheels or TOFU snapshot are absent")
+    return assets, wheels, tofu, torch_wheels[0]
+
+
+def locate_model(assets: Path) -> Path:
     candidates = [
         config.parent
         for config in INPUTS.rglob("config.json")
-        if ASSETS not in config.parents
+        if assets not in config.parents
         and SOURCE_DATASET not in config.parents
         and "qwen2.5" in str(config).lower()
     ]
@@ -46,15 +55,13 @@ def locate_source() -> tuple[Path, str]:
 
 
 def main() -> int:
-    model = locate_model()
+    assets, wheels, tofu, frozen_torch_wheel = locate_assets()
+    model = locate_model(assets)
     source, revision = locate_source()
-    torch_wheels = list(ASSETS.glob("torch-2.5.1*cu121*.whl"))
-    if len(torch_wheels) != 1:
-        raise RuntimeError(f"expected one frozen CUDA Torch wheel, found {torch_wheels}")
     os.environ.update(
         {
             "ERASEMAP_MODEL_PATH": str(model),
-            "ERASEMAP_TOFU_PATH": str(TOFU),
+            "ERASEMAP_TOFU_PATH": str(tofu),
             "HF_DATASETS_CACHE": "/tmp/erasemap-hf/datasets",
             "HF_HOME": "/tmp/erasemap-hf",
             "HF_HUB_OFFLINE": "1",
@@ -67,10 +74,8 @@ def main() -> int:
         if directory.exists():
             shutil.rmtree(directory)
     shutil.copytree(source, CHECKOUT)
-    if not WHEELS.is_dir() or not TOFU.is_dir():
-        raise RuntimeError("attached frozen wheels or TOFU snapshot are absent")
     torch_wheel = Path("/kaggle/working/torch-2.5.1+cu121-cp312-cp312-linux_x86_64.whl")
-    shutil.copy2(torch_wheels[0], torch_wheel)
+    shutil.copy2(frozen_torch_wheel, torch_wheel)
     run(
         sys.executable,
         "-m",
@@ -94,7 +99,7 @@ def main() -> int:
         "--no-index",
         "--no-deps",
         "--find-links",
-        str(WHEELS),
+        str(wheels),
         "transformers==4.48.3",
         "peft==0.14.0",
         "datasets==3.2.0",

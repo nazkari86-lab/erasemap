@@ -67,6 +67,7 @@ def main() -> int:
         str(torch_wheel),
     )
     torch_wheel.unlink()
+    run(sys.executable, "-m", "pip", "uninstall", "--yes", "torchvision")
     run(
         sys.executable,
         "-m",

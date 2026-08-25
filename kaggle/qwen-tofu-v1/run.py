@@ -4,15 +4,14 @@ import os
 import shutil
 import subprocess
 import sys
-import tarfile
 from pathlib import Path
 
 CODE_REVISION = "50305b8931ef915a6de3242d5220e1b2b25d9841"
 ASSETS = Path("/kaggle/input/erasemap-qwen-tofu-v1-assets")
-MODEL = Path("/kaggle/input/qwen2.5/transformers/1.5b/1")
+INPUTS = Path("/kaggle/input")
 CHECKOUT = Path("/kaggle/working/erasemap-source")
-WHEELS = Path("/kaggle/working/pinned-wheels")
-TOFU = Path("/kaggle/working/tofu-source")
+WHEELS = ASSETS / "pinned-wheels"
+TOFU = ASSETS / "tofu-324592d" / "tofu-source"
 OUTPUT = Path("/kaggle/working/qwen-tofu-v1")
 
 
@@ -20,16 +19,22 @@ def run(*command: str, cwd: Path | None = None) -> None:
     subprocess.run(command, cwd=cwd, check=True)
 
 
-def extract(archive: Path, destination: Path) -> None:
-    destination.mkdir(parents=True, exist_ok=False)
-    with tarfile.open(archive) as stream:
-        stream.extractall(destination, filter="data")
+def locate_model() -> Path:
+    candidates = [
+        config.parent
+        for config in INPUTS.rglob("config.json")
+        if ASSETS not in config.parents and "qwen2.5" in str(config).lower()
+    ]
+    if len(candidates) != 1:
+        raise RuntimeError(f"expected one attached Qwen model, found {candidates}")
+    return candidates[0]
 
 
 def main() -> int:
+    model = locate_model()
     os.environ.update(
         {
-            "ERASEMAP_MODEL_PATH": str(MODEL),
+            "ERASEMAP_MODEL_PATH": str(model),
             "ERASEMAP_TOFU_PATH": str(TOFU),
             "HF_DATASETS_CACHE": "/tmp/erasemap-hf/datasets",
             "HF_HOME": "/tmp/erasemap-hf",
@@ -38,19 +43,12 @@ def main() -> int:
             "TRANSFORMERS_CACHE": "/tmp/erasemap-hf/transformers",
         }
     )
-    for directory in (CHECKOUT, WHEELS, TOFU, OUTPUT):
+    for directory in (CHECKOUT, OUTPUT):
         if directory.exists():
             shutil.rmtree(directory)
-    extract(ASSETS / "erasemap-50305b8.tar.gz", CHECKOUT)
-    extract(ASSETS / "pinned-wheels.tar.gz", WHEELS)
-    tofu_container = TOFU.parent / "tofu-container"
-    if tofu_container.exists():
-        shutil.rmtree(tofu_container)
-    extract(ASSETS / "tofu-324592d.tar.gz", tofu_container)
-    shutil.move(str(tofu_container / "tofu-source"), TOFU)
-    shutil.rmtree(tofu_container)
-    if not (MODEL / "config.json").is_file():
-        raise RuntimeError(f"attached Qwen model is absent at {MODEL}")
+    shutil.copytree(ASSETS / "erasemap-50305b8", CHECKOUT)
+    if not WHEELS.is_dir() or not TOFU.is_dir():
+        raise RuntimeError("attached frozen wheels or TOFU snapshot are absent")
     run(
         sys.executable,
         "-m",

@@ -1,0 +1,23 @@
+{
+  "claim_boundary": "Project-operated local transfer over four digest-pinned stock services using synthetic commitments and orchestrated operations; not independent, production FaceID/eGov, or open-world evidence.",
+  "decision": "PASS",
+  "images": {
+    "identity": "quay.io/keycloak/keycloak@sha256:f1f1f01e472c8a78df40d8f2a49a925274eda4d3d80d5f6edbb5c880ee3c01c6",
+    "lineage": "ghcr.io/mlflow/mlflow@sha256:9f9276e57cda1593cfa0fe8519145cd49328e119e85951851b9244e82e3769be",
+    "source": "redis@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+    "vector": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1"
+  },
+  "metrics": {
+    "case_count": 5,
+    "cleanup_failure_count": 0,
+    "exact_or_path_class_recovery_count": 3,
+    "false_confident_count": 0,
+    "out_of_hypothesis_detection_count": 1,
+    "planner_oracle_mismatch_count": 0,
+    "post_control_recurrence_count": 0,
+    "probe_count": 5,
+    "retained_subject_loss_count": 0,
+    "safe_no_recurrence_count": 1
+  },
+  "schema_version": "erasemap-ghostgraph-live-result-v2"
+}

@@ -32,6 +32,9 @@ def locate_model() -> Path:
 
 def main() -> int:
     model = locate_model()
+    torch_wheels = list(ASSETS.glob("torch-2.5.1*cu121*.whl"))
+    if len(torch_wheels) != 1:
+        raise RuntimeError(f"expected one frozen CUDA Torch wheel, found {torch_wheels}")
     os.environ.update(
         {
             "ERASEMAP_MODEL_PATH": str(model),
@@ -61,6 +64,7 @@ def main() -> int:
         "--no-deps",
         "--find-links",
         str(WHEELS),
+        str(torch_wheels[0]),
         "transformers==4.48.3",
         "peft==0.14.0",
         "datasets==3.2.0",

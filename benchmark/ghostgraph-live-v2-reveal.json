@@ -1,0 +1,35 @@
+{
+  "schema_version": "erasemap-ghostgraph-live-reveal-v2",
+  "protocol_schema_version": "erasemap-ghostgraph-live-v2",
+  "cases": [
+    {"case_id": "live-direct", "truth_graph_id": "g-live-direct"},
+    {"case_id": "live-multihop", "truth_graph_id": "g-live-multi"},
+    {
+      "case_id": "live-outside",
+      "truth_graph": {
+        "edges": [
+          {
+            "edge_id": "unknown-restore",
+            "operation_id": "restore",
+            "source_id": "source",
+            "target_id": "lineage"
+          },
+          {
+            "edge_id": "unknown-index",
+            "operation_id": "index",
+            "source_id": "lineage",
+            "target_id": "vector"
+          }
+        ],
+        "graph_id": "truth-live-outside",
+        "initial_node_ids": ["source"],
+        "residual_node_ids": ["vector"]
+      }
+    },
+    {
+      "case_id": "live-path-equivalent",
+      "truth_graph_id": "g-live-multi-audit"
+    },
+    {"case_id": "live-safe", "truth_graph_id": "g-live-safe"}
+  ]
+}

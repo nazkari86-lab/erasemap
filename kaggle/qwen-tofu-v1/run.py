@@ -39,6 +39,7 @@ def main() -> int:
             "HF_DATASETS_CACHE": "/tmp/erasemap-hf/datasets",
             "HF_HOME": "/tmp/erasemap-hf",
             "HF_HUB_OFFLINE": "1",
+            "PYTHONPATH": f"{CHECKOUT / 'src'}:{CHECKOUT}",
             "TOKENIZERS_PARALLELISM": "false",
             "TRANSFORMERS_CACHE": "/tmp/erasemap-hf/transformers",
         }
@@ -66,7 +67,6 @@ def main() -> int:
         "accelerate==1.3.0",
         "bitsandbytes==0.45.2",
     )
-    run(sys.executable, "-m", "pip", "install", "--no-deps", "-e", str(CHECKOUT))
     run(
         sys.executable,
         "experiments/run_qwen_tofu_kaggle_v1.py",

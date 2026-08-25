@@ -10,6 +10,14 @@ obligation. The proof deliberately assumes catalogue closure and observation sou
 claim an unknown production graph lies in the catalogue or that one-step minimax minimizes the
 whole adaptive decision tree.
 
+GhostGraph-T adds the erasure-action boundary. `homogeneous_action_sound` proves that any survivor
+prescribes the real listed graph's action when the sound survivor set is action-homogeneous, even
+if exact graph identity is impossible. `different_actions_inseparable_not_identifiable` constructs
+the complementary impossibility result: two listed graphs needing different actions but producing
+the same trace for every declared query refute action-identifiability for any policy over those
+queries. The executable global-policy optimizer is checked against a separately structured finite
+recursive oracle; Lean does not certify the Python runtime or claim open-world catalogue coverage.
+
 ## Erasure Tomography v1
 
 `EraseMapFormal/ErasureTomography.lean` formalizes the exact zero-error boundary used by the frozen

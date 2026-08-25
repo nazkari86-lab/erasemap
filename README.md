@@ -30,6 +30,13 @@ outputs. A second run executed five cases with five probes through native APIs o
 Redis, Keycloak, MLflow, and Qdrant. Both remain project-authored bounded results, not open-world,
 independent, or production discovery.
 
+The new **GhostGraph-T** study changes the target from exact graph identity to the minimum erasure
+action. Its separately frozen 300-case benchmark passed 300/300 action-or-OOD decisions with zero
+false-confident outputs and 1.28 mean probes versus 8.0 exhaustive. Exact-graph identification left
+170 action-safe graph twins unresolved, while the action objective resolved them without inventing
+graph identity. Global, one-step minimax, and greedy policies tied on this catalogue, so no adaptive-
+baseline superiority is claimed.
+
 ## Quick demonstration
 
 ```bash
@@ -42,6 +49,7 @@ PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_redis_v1.py
 PYTHONPATH=src:. python scripts/verify_ghostgraph_v2.py
 PYTHONPATH=src:. python scripts/verify_ghostgraph_live_v2.py
+PYTHONPATH=src:. python scripts/verify_ghostgraph_t_v1.py
 PYTHONPATH=src:. python -m external_ghostgraph_challenge.verify_v2 --help
 ```
 
@@ -108,6 +116,8 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Live Redis tomography transfer | Preregistered digest-pinned stock-service PASS: 4/4 exact localization, safe-case PASS, zero false localization/recurrence/retained loss; project-authored workflows |
 | GhostGraph v2 | Frozen strategy comparison PASS: 3 exact graphs, 2 path classes, OUT/UNVERIFIED negatives, 7 active vs 13 random vs 49 exhaustive probes, zero false confidence/oracle mismatch/recurrence/retained loss |
 | GhostGraph live four-service v2 | First digest-pinned Docker run PASS: 5 cases, 5 probes, 3 exact/path recoveries, OUT and safe detected, zero false confidence/recurrence/retained loss/cleanup failure |
+| GhostGraph-T v1 | Separately frozen 300-case action-identification run PASS: 300/300 correct, 50/50 family-OOD, 0 false confidence, 1.28 vs 8.0 exhaustive probes; strong adaptive baselines tied |
+| Time-bound erasure certificate | Independent replay context, topology/envelope/model commitments, expiry and drift invalidation implemented and tested; not a production attestation |
 | External GhostGraph challenge v2 | Interactive blind adapter, sealed truth, source-bound manifest, computed nine gates, and non-project Ed25519 verification ready; genuine evaluator result `NOT_COLLECTED` |
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
@@ -153,6 +163,24 @@ runner adaptively requests one trace at a time. After reveal, the verifier recom
 execution and checks source hashes, commitments, a clean commit declaration, and a non-project
 Ed25519 signature. This makes an external run executable; it does not make one exist. Current status
 remains `NOT_COLLECTED`, and evidence independence remains **7.8/10**.
+
+## GhostGraph-T v1
+
+GhostGraph-T groups hidden graphs by their complete set of minimum operation cuts. The exact global
+policy stops when all survivors require the same action, even if irrelevant topology remains
+indistinguishable. Lean proves the conditional soundness of that stopping rule and constructs the
+finite impossibility boundary for two query-indistinguishable graphs requiring different actions.
+
+The protocol was committed before its first result. The locked run covered 120 unseen instances,
+80 unseen two-family compositions, 50 fully held-out retry-replay cases, and 50 declared temporal
+shifts. A held-out family can only receive `OUT_OF_HYPOTHESIS`; it is not falsely localized. The
+global policy matched the recursive oracle on all three catalogue problems. It tied one-step
+minimax and greedy, beat frozen random and exhaustive, and exposed why exact graph identity is too
+strong for action-safe stopping.
+
+See [`docs/GHOSTGRAPH_T_V1_REPORT.md`](docs/GHOSTGRAPH_T_V1_REPORT.md), the frozen protocol at
+[`benchmark/ghostgraph-t-v1.json`](benchmark/ghostgraph-t-v1.json), and the committed result under
+[`outputs/ghostgraph-t-v1/`](outputs/ghostgraph-t-v1/).
 
 ## Open stock-service transfer challenge
 

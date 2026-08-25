@@ -87,6 +87,13 @@ jobs:
           --output /tmp/erasemap-ghostgraph-v1
       - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_v2.py
       - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_live_v2.py
+      - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_t_v1.py
+      - run: >-
+          PYTHONPATH=src:. python experiments/run_ghostgraph_t_v1.py
+          --output /tmp/erasemap-ghostgraph-t-v1
+      - run: >-
+          PYTHONPATH=src:. python scripts/verify_ghostgraph_t_v1.py
+          --result /tmp/erasemap-ghostgraph-t-v1/result.json
       - run: python -m external_ghostgraph_challenge.verify
       - run: python -m external_ghostgraph_challenge.verify_v2 --help
       - run: >-

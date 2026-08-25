@@ -124,6 +124,20 @@ repair. The current review has not established that this exact erasure-specific 
 absent from every paper or patent claim. The repository therefore claims an implemented working
 composition and testable hypothesis, not world priority, patentability, or freedom to operate.
 
+GhostGraph-T narrows the fifth composition hypothesis:
+
+> Inside an explicitly closed temporal recovery grammar, stop active discovery when every sound
+> survivor has the same complete set of minimum erasure-operation cuts; otherwise emit an exact
+> indistinguishable-pair witness, optimize the full finite decision tree by worst-case declared
+> cost, and bind the bounded result to a time- and topology-scoped certificate.
+
+This does not claim invention of decision trees, active causal discovery, minimax experiment
+design, group testing, hitting sets, graph cuts, proof of deletion, or signed/expiring certificates.
+The first 300-case run tied one-step minimax and greedy on the adaptive metrics, so it supports the
+action-equivalence stopping rule and bounded OOD behavior but not empirical superiority over the
+strongest adaptive baseline. A systematic literature and patent review is still required before
+any stronger novelty claim.
+
 The project must demonstrate that the composition catches failures missed by strong component
 baselines. The source-locked v1 holdout showed transfer but tied typed-node audit. The separately
 labelled mechanism stress test exposes cases where all physical node states look complete while a

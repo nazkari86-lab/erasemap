@@ -11,5 +11,6 @@ scripts/kaggle_qwen_tofu_v2.sh collect
 ```
 
 `submit` refuses a dirty worktree, publishes the exact committed source as a private Kaggle dataset,
-and only then submits the GPU kernel. `collect` refuses to overwrite an existing result and runs the
-offline verifier after downloading every paginated output file.
+waits for Kaggle to report that source as ready, and only then submits the GPU kernel. `collect`
+refuses to overwrite an existing result and runs the offline verifier after downloading every
+paginated output file.

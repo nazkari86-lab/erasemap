@@ -31,6 +31,20 @@ fi
 kernel_id="$kaggle_username/$kernel_slug"
 source_id="$kaggle_username/$source_slug"
 
+wait_for_source_dataset() {
+  for _ in {1..60}; do
+    source_status="$(kaggle datasets status "$source_id" 2>/dev/null || true)"
+    if [[ "$source_status" == "ready" ]] \
+      && kaggle datasets files "$source_id" --page-size 5 2>/dev/null \
+        | grep -q 'ERASEMAP_CODE_REVISION'; then
+      return 0
+    fi
+    sleep 5
+  done
+  echo "Source dataset did not become ready: $source_id" >&2
+  return 1
+}
+
 if [[ "$action" == "status" ]]; then
   kaggle kernels status "$kernel_id"
   exit 0
@@ -64,6 +78,7 @@ if [[ "$action" == "submit" ]]; then
   else
     kaggle datasets create -p "$source_temp" --dir-mode zip
   fi
+  wait_for_source_dataset
   jq --arg username "$kaggle_username" \
     '.id = ($username + "/erasemap-qwen-tofu-v2")
      | .dataset_sources = ["hijima/erasemap-qwen-tofu-v1-assets", ($username + "/erasemap-qwen-tofu-v2-source")]' \

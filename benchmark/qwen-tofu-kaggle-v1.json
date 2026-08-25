@@ -1,0 +1,64 @@
+{
+  "schema_version": "erasemap-qwen-tofu-kaggle-protocol-v1",
+  "status": "PREREGISTERED_BEFORE_FIRST_GPU_RUN",
+  "research_question": "Can a subject-scoped LLM unlearning candidate approach exact adapter retraining while preserving retained and general utility, and can EraSeMap fail closed when any registered model channel is insufficient?",
+  "model": {
+    "repository": "Qwen/Qwen2.5-1.5B",
+    "revision": "8faed761d45a263340a0528343f099c05c9a4323",
+    "training_stage": "base_pretraining",
+    "quantization": "4bit_nf4",
+    "compute_dtype": "float16"
+  },
+  "dataset": {
+    "repository": "locuslab/TOFU",
+    "revision": "324592d84ae4f482ac7249b9285c2ecdb53e3a68",
+    "full": "full",
+    "forget": "forget01",
+    "forget_perturbed": "forget01_perturbed",
+    "holdout": "holdout01",
+    "retain": "retain99",
+    "retain_perturbed": "retain_perturbed",
+    "world_facts": "world_facts"
+  },
+  "random_seeds": [20260825, 20260826, 20260827],
+  "training": {
+    "max_length": 256,
+    "micro_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "target_epochs": 3,
+    "exact_epochs": 3,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0,
+    "lora_rank": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.0,
+    "target_modules": ["q_proj", "v_proj"]
+  },
+  "candidate": {
+    "method": "paired_gradient_difference",
+    "steps": 120,
+    "forget_weight": 0.1,
+    "learning_rate": 0.00005,
+    "gradient_clip_norm": 1.0
+  },
+  "evaluation": {
+    "forget_rows": 40,
+    "forget_perturbed_rows": 40,
+    "holdout_rows": 40,
+    "retain_rows": 200,
+    "retain_perturbed_rows": 200,
+    "world_facts_rows": 100
+  },
+  "success_criteria": {
+    "target_memorization_gain_min": 0.1,
+    "exact_forgetting_lift_min": 0.05,
+    "candidate_forgetting_lift_min": 0.05,
+    "candidate_exact_forget_nll_gap_max": 0.3,
+    "candidate_exact_perturbed_nll_gap_max": 0.35,
+    "candidate_exact_retain_nll_gap_max": 0.15,
+    "candidate_exact_mia_auc_gap_max": 0.1,
+    "candidate_world_utility_nll_degradation_max": 0.2,
+    "retained_recurrence_after_reload_max": 0.000001
+  },
+  "evidence_boundary": "A three-seed project-authored TOFU QLoRA experiment on a real open LLM. It tests adapter-level learned influence and deployment recurrence, not removal from Qwen pretraining, certified privacy, independent evidence, or production FaceID/eGov infrastructure."
+}

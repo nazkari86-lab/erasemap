@@ -1,0 +1,62 @@
+{
+  "schema_version": "erasemap-ghostgraph-live-v2",
+  "title": "GhostGraph live four-service active discovery v2",
+  "images": {
+    "identity": "quay.io/keycloak/keycloak@sha256:f1f1f01e472c8a78df40d8f2a49a925274eda4d3d80d5f6edbb5c880ee3c01c6",
+    "lineage": "ghcr.io/mlflow/mlflow@sha256:9f9276e57cda1593cfa0fe8519145cd49328e119e85951851b9244e82e3769be",
+    "source": "redis@sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+    "vector": "qdrant/qdrant@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1"
+  },
+  "node_ids": ["identity", "lineage", "source", "vector"],
+  "edge_catalogue": [
+    {"edge_id": "audit", "source_id": "identity", "target_id": "source", "operation_id": "audit"},
+    {"edge_id": "direct", "source_id": "source", "target_id": "vector", "operation_id": "direct"},
+    {"edge_id": "index", "source_id": "lineage", "target_id": "vector", "operation_id": "index"},
+    {"edge_id": "lineage", "source_id": "identity", "target_id": "lineage", "operation_id": "lineage"},
+    {"edge_id": "restore", "source_id": "source", "target_id": "identity", "operation_id": "restore"}
+  ],
+  "hypotheses": [
+    {"graph_id": "g-live-combo", "edge_ids": ["direct", "index", "lineage", "restore"]},
+    {"graph_id": "g-live-direct", "edge_ids": ["direct"]},
+    {"graph_id": "g-live-multi", "edge_ids": ["index", "lineage", "restore"]},
+    {"graph_id": "g-live-multi-audit", "edge_ids": ["audit", "index", "lineage", "restore"]},
+    {"graph_id": "g-live-safe", "edge_ids": []}
+  ],
+  "initial_node_ids": ["source"],
+  "residual_node_ids": ["vector"],
+  "experiments": [
+    {"experiment_id": "q-all", "enabled_operation_ids": ["audit", "direct", "index", "lineage", "restore"], "checkpoint_node_ids": ["identity", "lineage", "source", "vector"], "time_buckets": 3, "declared_cost": 5},
+    {"experiment_id": "q-direct", "enabled_operation_ids": ["direct"], "checkpoint_node_ids": ["identity", "lineage", "source", "vector"], "time_buckets": 3, "declared_cost": 1},
+    {"experiment_id": "q-index", "enabled_operation_ids": ["index"], "checkpoint_node_ids": ["identity", "lineage", "source", "vector"], "time_buckets": 3, "declared_cost": 1},
+    {"experiment_id": "q-lineage", "enabled_operation_ids": ["lineage"], "checkpoint_node_ids": ["identity", "lineage", "source", "vector"], "time_buckets": 3, "declared_cost": 1},
+    {"experiment_id": "q-multi", "enabled_operation_ids": ["index", "lineage", "restore"], "checkpoint_node_ids": ["identity", "lineage", "source", "vector"], "time_buckets": 3, "declared_cost": 3},
+    {"experiment_id": "q-restore", "enabled_operation_ids": ["restore"], "checkpoint_node_ids": ["identity", "lineage", "source", "vector"], "time_buckets": 3, "declared_cost": 1}
+  ],
+  "case_ids": ["live-direct", "live-multihop", "live-outside", "live-path-equivalent", "live-safe"],
+  "reveal_sha256": "sha256:c55e54268d2545f1896fc0b9c8907fe7378f25472746bcafeed9222d03c88e21",
+  "network_binding": "127.0.0.1",
+  "container_prefix": "erasemap-ghostgraph-",
+  "synthetic_subjects_only": true,
+  "observation_timeout_seconds": 120,
+  "cleanup_timeout_seconds": 30,
+  "confirmatory_seed": 25082026,
+  "gates": {
+    "false_confident_count_max": 0,
+    "exact_or_path_class_recovery_count_min": 3,
+    "out_of_hypothesis_detection_count_min": 1,
+    "safe_no_recurrence_count_min": 1,
+    "planner_oracle_mismatch_count_max": 0,
+    "post_control_recurrence_count_max": 0,
+    "retained_subject_loss_count_max": 0,
+    "cleanup_failure_count_max": 0
+  },
+  "evidence_contract": [
+    "inspect every pinned image digest before start",
+    "bind every published port to loopback",
+    "seed and observe only synthetic commitments through native service APIs",
+    "record every selected experiment and native observation trace",
+    "verify retained commitment after every control",
+    "remove every managed container even after failure"
+  ],
+  "claim_boundary": "Project-operated local transfer over four digest-pinned stock services using synthetic commitments and orchestrated operations; not independent, production FaceID/eGov, or open-world evidence."
+}

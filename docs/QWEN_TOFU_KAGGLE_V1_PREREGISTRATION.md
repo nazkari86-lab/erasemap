@@ -2,6 +2,11 @@
 
 Date frozen: 2026-08-25, before the first GPU execution.
 
+> Post-result erratum: the frozen intent below included a perturbed-query channel, but the v1
+> implementation evaluated the ordinary `answer` field from the perturbed split. That gate is
+> therefore unevaluable, not a valid pass. The protocol and negative result remain unchanged; the
+> corrected semantic evaluator is frozen separately as v2.
+
 ## Question
 
 Can a bounded unlearning update to a Qwen2.5-1.5B LoRA adapter approach an adapter trained from the

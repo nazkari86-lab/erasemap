@@ -20,7 +20,9 @@ trial or evidence about unlearning quality.
 | 8 | `COMPLETE` | Valid three-seed Tesla P100 execution | Collected and independently recomputed offline; frozen decision `FAIL` |
 
 Version 7 successfully reached the experiment's fail-closed CUDA gate. Version 8 then ran the full
-three-seed protocol on a Tesla P100. Seven of nine scientific gates passed. The candidate missed the
+three-seed protocol on a Tesla P100. The original verifier reported seven of nine gates passed. A
+later semantic audit found that the perturbed-answer channel reused the ordinary answer, so the
+post-audit accounting is six valid passes, two failures, and one unevaluable gate. The candidate missed the
 all-seed forgetting minimum (`0.04837 < 0.05`) and exceeded the world-fact degradation maximum
 (`0.45300 > 0.20`), so the conjunctive decision is `FAIL`. Exact adapter retraining passed its
 forgetting gate, and reload recurrence was zero. See

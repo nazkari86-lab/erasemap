@@ -1,0 +1,94 @@
+{
+  "schema_version": "erasemap-qwen-tofu-kaggle-protocol-v2",
+  "status": "FROZEN_BEFORE_FIRST_V2_GPU_RUN",
+  "adaptation_disclosure": "Adaptive follow-up designed after the v1 FAIL. V1 artifacts and thresholds remain unchanged. Candidate selection is permitted only on author-disjoint development deletions; confirmation seeds and final forget01 rows never affect selection.",
+  "research_question": "Can utility-constrained selective gradient projection recover at least 80% of exact adapter-retraining forgetting while preserving retained profiles, real authors, world facts, paraphrase behavior, false-answer separation, and deployment persistence at lower training cost?",
+  "model": {
+    "repository": "Qwen/Qwen2.5-1.5B",
+    "revision": "8faed761d45a263340a0528343f099c05c9a4323",
+    "quantization": "4bit_nf4",
+    "compute_dtype": "float16"
+  },
+  "dataset": {
+    "repository": "locuslab/TOFU",
+    "revision": "324592d84ae4f482ac7249b9285c2ecdb53e3a68",
+    "full": "full",
+    "development_forget": "forget05",
+    "development_forget_perturbed": "forget05_perturbed",
+    "development_retain": "retain95",
+    "confirmation_forget": "forget01",
+    "confirmation_forget_perturbed": "forget01_perturbed",
+    "confirmation_retain": "retain99",
+    "holdout": "holdout01",
+    "world_facts": "world_facts",
+    "real_authors": "real_authors"
+  },
+  "development_seeds": [20260828, 20260829],
+  "confirmation_seeds": [20260901, 20260902, 20260903, 20260904, 20260905],
+  "training": {
+    "max_length": 256,
+    "micro_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "target_epochs": 3,
+    "exact_epochs": 3,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0,
+    "lora_rank": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.0,
+    "target_modules": ["q_proj", "v_proj"]
+  },
+  "candidate": {
+    "method": "utility_constrained_selective_gradient_projection",
+    "steps": 120,
+    "learning_rate": 0.00005,
+    "gradient_clip_norm": 1.0,
+    "selective_token_fraction": 0.5,
+    "minimum_forget_token_frequency": 2,
+    "development_grid": [
+      {"id": "ucsgp-f010-a025", "forget_weight": 0.1, "anchor_weight": 0.25},
+      {"id": "ucsgp-f010-a075", "forget_weight": 0.1, "anchor_weight": 0.75},
+      {"id": "ucsgp-f020-a025", "forget_weight": 0.2, "anchor_weight": 0.25},
+      {"id": "ucsgp-f020-a075", "forget_weight": 0.2, "anchor_weight": 0.75},
+      {"id": "ucsgp-f035-a025", "forget_weight": 0.35, "anchor_weight": 0.25},
+      {"id": "ucsgp-f035-a075", "forget_weight": 0.35, "anchor_weight": 0.75}
+    ]
+  },
+  "baseline": {
+    "id": "paired-gradient-difference-v1-recipe",
+    "steps": 120,
+    "forget_weight": 0.1,
+    "learning_rate": 0.00005,
+    "gradient_clip_norm": 1.0
+  },
+  "evaluation": {
+    "batch_size": 8,
+    "forget_rows": 40,
+    "holdout_rows": 40,
+    "retain_rows": 200,
+    "world_facts_rows": 100,
+    "real_author_anchor_rows": 50,
+    "real_author_test_rows": 50,
+    "perturbed_answers_per_row": 5
+  },
+  "development_selection_criteria": {
+    "candidate_exact_normalized_recovery_min": 0.8,
+    "candidate_world_utility_nll_degradation_max": 0.2,
+    "candidate_real_author_nll_degradation_max": 0.2
+  },
+  "success_criteria": {
+    "target_memorization_gain_min": 0.1,
+    "exact_forgetting_lift_min": 0.05,
+    "candidate_exact_normalized_recovery_min": 0.8,
+    "candidate_exact_normalized_recovery_max": 1.25,
+    "candidate_exact_paraphrase_nll_gap_max": 0.2,
+    "candidate_exact_truth_margin_gap_max": 0.2,
+    "candidate_exact_retain_nll_gap_max": 0.15,
+    "candidate_world_utility_nll_degradation_max": 0.2,
+    "candidate_real_author_nll_degradation_max": 0.2,
+    "candidate_exact_mia_auc_gap_max": 0.1,
+    "candidate_speedup_vs_exact_min": 1.5,
+    "retained_recurrence_after_reload_max": 0.000001
+  },
+  "evidence_boundary": "A project-authored adaptive follow-up with author-disjoint development selection and a locked five-seed confirmation on a real open 1.5B model. It evaluates adapter-level influence only, not Qwen pretraining deletion, certified privacy, independent validation, or production infrastructure."
+}

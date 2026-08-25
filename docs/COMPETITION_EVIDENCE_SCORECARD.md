@@ -101,11 +101,13 @@ above 7.8.
     formal sufficient-action result and broader controlled evidence, not adaptive-baseline
     superiority or external independence. The stable RKNP score remains 9.8.
 14. **Real Qwen–TOFU model channel:** the preregistered three-seed P100 run is a retained negative
-    result. Seven of nine gates passed, but minimum candidate forgetting was 0.04837 against 0.05
+    result. Post-audit accounting is six valid passes, two failures, and one unevaluable perturbed
+    gate. Minimum candidate forgetting was 0.04837 against 0.05
     and maximum world-fact degradation was 0.45300 against 0.20. Exact adapter retraining passed its
     forgetting gate and reload recurrence was zero. This strengthens real-model input evidence and
     the fail-closed demonstration; it does not validate the approximate method, raise independence,
-    or change the stable 9.8 RKNP score.
+    or change the stable 9.8 RKNP score. A separate frozen v2 corrects the evaluator and introduces
+    author-disjoint development selection, but remains prospective until its GPU result is collected.
 
 ## Reproduce the jury artifact
 

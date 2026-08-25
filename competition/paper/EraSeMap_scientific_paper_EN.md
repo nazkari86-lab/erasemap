@@ -24,7 +24,7 @@ GhostGraph adds active topology discovery when the registered recurrence map its
 
 GhostGraph-T changes the target from exact graph identity to the complete set of minimum erasure-operation cuts. A separately frozen 300-case benchmark achieved 300/300 correct action-or-OOD decisions, 50/50 held-out-family detections, zero false-confident outputs, and 1.28 mean probes versus 8.0 exhaustive. Exact graph recovery left 170 action-safe irrelevant-topology twins unresolved. Lean checks action-homogeneous stopping soundness and the impossibility of identifying different actions for query-indistinguishable graphs. Global optimization matched a separate recursive oracle but tied one-step minimax and greedy, so adaptive-baseline superiority is not claimed.
 
-A preregistered three-seed NF4 QLoRA study on Qwen2.5-1.5B and TOFU produced a retained negative result. The paired-gradient candidate passed seven of nine gates but missed the all-seed forgetting minimum and failed world-fact utility, while exact adapter retraining passed its forgetting gate. EraSeMap therefore kept the model channel incomplete. This is real-model project-operated evidence, not successful approximate unlearning or independent validation.
+A preregistered three-seed NF4 QLoRA study on Qwen2.5-1.5B and TOFU produced a retained negative result. Post-audit accounting is six valid passes, two failures, and one semantically unevaluable perturbed-answer gate. The paired-gradient candidate missed the all-seed forgetting minimum, recovered only 33.8–39.1% of exact-reference forgetting, and failed world-fact utility. EraSeMap therefore kept the model channel incomplete. This is real-model project-operated evidence, not successful approximate unlearning or independent validation.
 
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
@@ -262,6 +262,10 @@ The v1 protocol and core were committed before the first result. It freezes 120 
 
 Before the first valid GPU run, the protocol froze a pinned Qwen2.5-1.5B base, TOFU revision, three seeds, NF4 QLoRA configuration, target/exact/candidate procedures, six evaluation sets, nine conjunctive gates, and artifact hashes. The exact reference retrains an adapter on `retain99`; it does not alter Qwen pretraining. Offline verification recomputes per-example losses, membership AUC, reload recurrence, all gates, and the decision from downloaded arrays.
 
+### 7.13 Prospective Qwen–TOFU v2 correction
+
+After the v1 result, a semantic audit found that the perturbed split had been read through its ordinary `answer` field. The adaptive v2 protocol therefore remains separate from v1 and correctly evaluates paraphrased and five false answers. Six declared UCSGP configurations are selected using only `forget05` rows outside `forget01`, `retain95` utility rows that exclude all reserved authors, and two development seeds. The chosen configuration is then locked for five untouched confirmation seeds. Its primary endpoint is normalized exact-retraining recovery, with a required per-seed interval of 0.8–1.25, plus retained, real-author, world-fact, truth-margin, membership-proxy, speed, and reload gates. This is a prospective method until GPU evidence is collected.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -345,7 +349,7 @@ Global, one-step minimax, and greedy all achieved the same correctness, probes, 
 
 ### 8.11 Qwen–TOFU model-channel result
 
-The first valid Tesla P100 run completed all three frozen seeds and returned **FAIL**. Seven of nine gates passed. Minimum target memorization gain was 0.59827 and minimum exact forgetting lift was 0.14026. The candidate stayed close to exact retraining on forget NLL (maximum gap 0.09454), retained NLL (0.00920), and membership AUC (0.05750), with zero save/reload recurrence.
+The first valid Tesla P100 run completed all three frozen seeds and returned **FAIL**. The original verifier reported seven of nine gates passed, but a later semantic audit found that the perturbed split was evaluated through its ordinary `answer` field. The corrected accounting is six valid passes, two failures, and one unevaluable gate. Minimum target memorization gain was 0.59827 and minimum exact forgetting lift was 0.14026. The candidate recovered 33.8–39.1% of exact-reference forgetting, stayed close on retained NLL (0.00920) and membership AUC (0.05750), and had zero save/reload recurrence.
 
 However, minimum candidate forgetting lift was **0.04837**, below the frozen 0.05 gate, and maximum world-fact NLL degradation was **0.45300**, above the 0.20 gate; two of three seeds failed the utility endpoint. The result falsifies the v1 candidate's conjunctive success claim while demonstrating that EraSeMap does not convert partial metric agreement into completion.
 

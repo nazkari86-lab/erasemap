@@ -1,0 +1,121 @@
+from __future__ import annotations
+
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+ASSETS = Path("/kaggle/input/erasemap-qwen-tofu-v1-assets")
+SOURCE_DATASET = Path("/kaggle/input/erasemap-qwen-tofu-v2-source")
+INPUTS = Path("/kaggle/input")
+CHECKOUT = Path("/kaggle/working/erasemap-source")
+WHEELS = ASSETS / "pinned-wheels" / "wheels"
+TOFU = ASSETS / "tofu-324592d" / "tofu-source"
+OUTPUT = Path("/kaggle/working/qwen-tofu-v2")
+
+
+def run(*command: str, cwd: Path | None = None) -> None:
+    subprocess.run(command, cwd=cwd, check=True)
+
+
+def locate_model() -> Path:
+    candidates = [
+        config.parent
+        for config in INPUTS.rglob("config.json")
+        if ASSETS not in config.parents
+        and SOURCE_DATASET not in config.parents
+        and "qwen2.5" in str(config).lower()
+    ]
+    if len(candidates) != 1:
+        raise RuntimeError(f"expected one attached Qwen model, found {candidates}")
+    return candidates[0]
+
+
+def locate_source() -> tuple[Path, str]:
+    markers = list(SOURCE_DATASET.rglob("ERASEMAP_CODE_REVISION"))
+    if len(markers) != 1:
+        raise RuntimeError(f"expected one source revision marker, found {markers}")
+    revision = markers[0].read_text().strip()
+    if len(revision) != 40 or any(value not in "0123456789abcdef" for value in revision):
+        raise RuntimeError("source revision marker is malformed")
+    source = markers[0].parent / "erasemap-source"
+    if not (source / "benchmark/qwen-tofu-kaggle-v2.json").is_file():
+        raise RuntimeError("v2 source snapshot is incomplete")
+    return source, revision
+
+
+def main() -> int:
+    model = locate_model()
+    source, revision = locate_source()
+    torch_wheels = list(ASSETS.glob("torch-2.5.1*cu121*.whl"))
+    if len(torch_wheels) != 1:
+        raise RuntimeError(f"expected one frozen CUDA Torch wheel, found {torch_wheels}")
+    os.environ.update(
+        {
+            "ERASEMAP_MODEL_PATH": str(model),
+            "ERASEMAP_TOFU_PATH": str(TOFU),
+            "HF_DATASETS_CACHE": "/tmp/erasemap-hf/datasets",
+            "HF_HOME": "/tmp/erasemap-hf",
+            "HF_HUB_OFFLINE": "1",
+            "PYTHONPATH": f"{CHECKOUT / 'src'}:{CHECKOUT}",
+            "TOKENIZERS_PARALLELISM": "false",
+            "TRANSFORMERS_CACHE": "/tmp/erasemap-hf/transformers",
+        }
+    )
+    for directory in (CHECKOUT, OUTPUT):
+        if directory.exists():
+            shutil.rmtree(directory)
+    shutil.copytree(source, CHECKOUT)
+    if not WHEELS.is_dir() or not TOFU.is_dir():
+        raise RuntimeError("attached frozen wheels or TOFU snapshot are absent")
+    torch_wheel = Path("/kaggle/working/torch-2.5.1+cu121-cp312-cp312-linux_x86_64.whl")
+    shutil.copy2(torch_wheels[0], torch_wheel)
+    run(
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+        "--no-input",
+        "--no-index",
+        "--no-deps",
+        str(torch_wheel),
+    )
+    torch_wheel.unlink()
+    run(sys.executable, "-m", "pip", "uninstall", "--yes", "torchvision")
+    run(
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+        "--no-input",
+        "--no-index",
+        "--no-deps",
+        "--find-links",
+        str(WHEELS),
+        "transformers==4.48.3",
+        "peft==0.14.0",
+        "datasets==3.2.0",
+        "accelerate==1.3.0",
+        "bitsandbytes==0.45.2",
+        "tokenizers==0.21.4",
+        "huggingface-hub==0.28.1",
+    )
+    run(
+        sys.executable,
+        "experiments/run_qwen_tofu_kaggle_v2.py",
+        "--protocol",
+        "benchmark/qwen-tofu-kaggle-v2.json",
+        "--output",
+        str(OUTPUT),
+        "--code-revision",
+        revision,
+        cwd=CHECKOUT,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -388,12 +388,13 @@ python scripts/verify_regeneration_safe_erasure_v2.py
 A frozen GPU protocol extends the model channel to the real open
 [`Qwen/Qwen2.5-1.5B`](https://huggingface.co/Qwen/Qwen2.5-1.5B) base model and the external TOFU
 benchmark. It compares a full-data QLoRA target, exact adapter retraining on `retain99`, and a paired
-gradient-difference candidate across three seeds. Direct, perturbed, retained, holdout, world-fact,
-membership-AUC, and save/reload recurrence channels are conjunctive. The exact reference applies to
-the registered adapter procedure only; no removal from Qwen pretraining is claimed.
+gradient-difference candidate across three seeds. The exact reference applies to the registered
+adapter procedure only; no removal from Qwen pretraining is claimed.
 
 The first valid three-seed Kaggle GPU result is a frozen **FAIL**, not a successful unlearning
-claim. Seven of nine gates passed, but one seed missed the candidate forgetting minimum
+claim. Six gates validly passed, two failed, and the apparent perturbed-answer pass was later found
+unevaluable because v1 read the ordinary `answer` field instead of TOFU's `paraphrased_answer` and
+`perturbed_answer` fields. One seed missed the candidate forgetting minimum
 (`0.04837 < 0.05`) and world-fact degradation reached `0.45300` against the `0.20` maximum. Exact
 adapter retraining passed its forgetting gate and save/reload recurrence was zero. EraSeMap
 therefore correctly keeps the model channel incomplete. The result and earlier infrastructure
@@ -408,6 +409,19 @@ scripts/kaggle_qwen_tofu_v1.sh collect
 
 See [`docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md)
 and [`docs/QWEN_TOFU_KAGGLE_V1_REPORT.md`](docs/QWEN_TOFU_KAGGLE_V1_REPORT.md).
+
+The frozen adaptive v2 follow-up corrects the semantic evaluator, replaces the loose absolute
+forget-gap rule with normalized recovery against exact retraining, adds disjoint real-author
+anchors, and selects a utility-constrained selective-gradient candidate using only author-disjoint
+development deletions. Its five-seed confirmation remains unexecuted until the committed protocol
+is submitted to Kaggle; no v2 performance claim is made yet. See
+[`docs/QWEN_TOFU_KAGGLE_V2_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V2_PREREGISTRATION.md).
+
+```bash
+scripts/kaggle_qwen_tofu_v2.sh submit
+scripts/kaggle_qwen_tofu_v2.sh status
+scripts/kaggle_qwen_tofu_v2.sh collect
+```
 
 See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for the locked results,
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict

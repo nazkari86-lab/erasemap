@@ -10,10 +10,12 @@ from typing import Any
 
 from erasemap.ghostgraph import (
     DiscoveryEvidence,
+    DiscoveryReport,
     DiscoveryVerdict,
     ExecutedObservation,
     GraphHypothesis,
     ObservationTrace,
+    relevant_signature,
     update_version_space,
 )
 from erasemap.ghostgraph_bridge import build_controls, build_topology_envelope
@@ -62,6 +64,34 @@ def _control_graph(graph: GraphHypothesis, control_ids: tuple[str, ...]) -> Grap
     )
 
 
+def _live_report(
+    hypotheses: tuple[GraphHypothesis, ...],
+    observations: tuple[ExecutedObservation, ...],
+    evidence: DiscoveryEvidence,
+) -> DiscoveryReport:
+    report = update_version_space(hypotheses, observations, evidence)
+    if observations:
+        residual_seen = any(
+            bit
+            for observation in observations
+            for checkpoint, bit in zip(
+                observation.trace.checkpoint_node_ids * observation.trace.time_buckets,
+                observation.trace.bits,
+                strict=True,
+            )
+            if checkpoint == "vector"
+        )
+        if not residual_seen and report.surviving_graph_ids == ("g-live-safe",):
+            return report.__class__(
+                DiscoveryVerdict.NO_OBSERVED_RECURRENCE,
+                report.surviving_graph_ids,
+                report.path_signatures,
+                report.evidence,
+                report.inconsistency,
+            )
+    return report
+
+
 def _run_live_case(
     services: GhostGraphServices,
     case: dict[str, Any],
@@ -76,7 +106,7 @@ def _run_live_case(
     used: tuple[str, ...] = ()
     steps: list[dict[str, object]] = []
     while True:
-        report = update_version_space(hypotheses, observations, evidence)
+        report = _live_report(hypotheses, observations, evidence)
         if report.verdict is DiscoveryVerdict.OUT_OF_HYPOTHESIS:
             stopping_reason = "EMPTY_VERSION_SPACE"
             break
@@ -113,7 +143,7 @@ def _run_live_case(
         )
         observations = (*observations, observation)
         used = (*used, selected)
-        after = update_version_space(hypotheses, observations, evidence)
+        after = _live_report(hypotheses, observations, evidence)
         steps.append(
             {
                 "version_space_before": report.surviving_graph_ids,
@@ -124,7 +154,7 @@ def _run_live_case(
                 "version_space_after": after.surviving_graph_ids,
             }
         )
-    report = update_version_space(hypotheses, observations, evidence)
+    report = _live_report(hypotheses, observations, evidence)
     truth_known = truth.graph_id in graph_by_id
     actionable = report.verdict in {
         DiscoveryVerdict.GRAPH_DISCOVERED,
@@ -138,7 +168,7 @@ def _run_live_case(
     uncontrolled_recurrence: bool | None = None
     post_control_recurrence: bool | None = None
     retained_loss: bool | None = None
-    if actionable and truth_known:
+    if actionable and truth_known and relevant_signature(truth).edge_paths:
         envelope = build_topology_envelope(report, graph_by_id)
         plan = exact_robust_stabilization_cut(envelope, build_controls(envelope))
         control_ids = plan.control_ids
@@ -182,7 +212,7 @@ def score_records(
         observations: tuple[ExecutedObservation, ...] = ()
         used: tuple[str, ...] = ()
         for step in trial["steps"]:
-            report = update_version_space(
+            report = _live_report(
                 hypotheses, observations, DiscoveryEvidence.complete()
             )
             selected = step["selected_experiment_id"]
@@ -219,12 +249,12 @@ def score_records(
             )
             observations = (*observations, observation)
             used = (*used, str(selected))
-            after = update_version_space(
+            after = _live_report(
                 hypotheses, observations, DiscoveryEvidence.complete()
             )
             if step["version_space_after"] != list(after.surviving_graph_ids):
                 raise ValueError("GhostGraph live version-space-after mismatch")
-        final = update_version_space(hypotheses, observations, DiscoveryEvidence.complete())
+        final = _live_report(hypotheses, observations, DiscoveryEvidence.complete())
         if trial["verdict"] != final.verdict.value:
             raise ValueError("GhostGraph live final verdict mismatch")
         if trial["surviving_graph_ids"] != list(final.surviving_graph_ids):

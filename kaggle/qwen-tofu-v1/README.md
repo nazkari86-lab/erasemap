@@ -11,6 +11,7 @@ scripts/kaggle_qwen_tofu_v1.sh status
 scripts/kaggle_qwen_tofu_v1.sh collect
 ```
 
-The submission helper refuses to run if the legacy `~/.kaggle/kaggle.json` has no username. It also
-refuses to overwrite a previously collected result. Collection invokes the offline EraSeMap
-verifier before accepting the output.
+The helper supports either `~/.kaggle/access_token` (Bearer token) or legacy
+`~/.kaggle/kaggle.json`. A username must be supplied through `KAGGLE_USERNAME` or the `username`
+field in `kaggle.json`. It refuses to overwrite a previously collected result. Collection invokes
+the offline EraSeMap verifier before accepting the output.

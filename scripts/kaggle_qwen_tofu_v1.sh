@@ -4,18 +4,28 @@ set -euo pipefail
 project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 kernel_slug="erasemap-qwen-tofu-v1"
 action="${1:-status}"
-credential_file="${KAGGLE_CONFIG_DIR:-$HOME/.kaggle}/kaggle.json"
+credential_dir="${KAGGLE_CONFIG_DIR:-$HOME/.kaggle}"
+credential_file="$credential_dir/kaggle.json"
+access_token_file="$credential_dir/access_token"
 
-if [[ ! -f "$credential_file" ]]; then
-  echo "Kaggle credentials are absent: $credential_file" >&2
-  echo "Create a fresh legacy API token in Kaggle Settings and place kaggle.json there." >&2
+if [[ -z "${KAGGLE_API_TOKEN:-}" && -s "$access_token_file" ]]; then
+  KAGGLE_API_TOKEN="$(tr -d '\r\n' < "$access_token_file")"
+  export KAGGLE_API_TOKEN
+fi
+
+if [[ -z "${KAGGLE_API_TOKEN:-}" && ! -f "$credential_file" ]]; then
+  echo "Kaggle credentials are absent in $credential_dir." >&2
+  echo "Create an API token in Kaggle Settings and save it as access_token or kaggle.json." >&2
   exit 2
 fi
 
-kaggle_username="$(jq -r '.username // empty' "$credential_file")"
+kaggle_username="${KAGGLE_USERNAME:-}"
+if [[ -z "$kaggle_username" && -f "$credential_file" ]]; then
+  kaggle_username="$(jq -r '.username // empty' "$credential_file")"
+fi
 if [[ -z "$kaggle_username" ]]; then
-  echo "Kaggle username is empty in $credential_file." >&2
-  echo "Replace it with a fresh kaggle.json from Kaggle Settings > API > Create Legacy API Key." >&2
+  echo "Kaggle username is not configured." >&2
+  echo "Set KAGGLE_USERNAME or add username to $credential_file." >&2
   exit 2
 fi
 kernel_id="$kaggle_username/$kernel_slug"

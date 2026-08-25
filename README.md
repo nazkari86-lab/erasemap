@@ -364,7 +364,9 @@ gradient-difference candidate across three seeds. Direct, perturbed, retained, h
 membership-AUC, and save/reload recurrence channels are conjunctive. The exact reference applies to
 the registered adapter procedure only; no removal from Qwen pretraining is claimed.
 
-The protocol is preregistered, but the first Kaggle GPU result is currently `NOT_COLLECTED`:
+The protocol is preregistered, but the first Kaggle GPU result is currently `NOT_COLLECTED`.
+Seven pre-training infrastructure attempts and the remaining CUDA-account blocker are recorded in
+[`docs/QWEN_TOFU_KAGGLE_V1_RUN_LOG.md`](docs/QWEN_TOFU_KAGGLE_V1_RUN_LOG.md):
 
 ```bash
 scripts/kaggle_qwen_tofu_v1.sh submit

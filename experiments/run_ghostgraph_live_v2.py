@@ -230,7 +230,7 @@ def score_records(
                 selected == certificate.selected_experiment_id == oracle_id
                 and production_score == oracle_score
             )
-            if step["version_space_before"] != list(report.surviving_graph_ids):
+            if tuple(step["version_space_before"]) != report.surviving_graph_ids:
                 raise ValueError("GhostGraph live version-space-before mismatch")
             if bool(step["oracle_match"]) != expected_match:
                 raise ValueError("GhostGraph live planner/oracle record mismatch")
@@ -252,12 +252,12 @@ def score_records(
             after = _live_report(
                 hypotheses, observations, DiscoveryEvidence.complete()
             )
-            if step["version_space_after"] != list(after.surviving_graph_ids):
+            if tuple(step["version_space_after"]) != after.surviving_graph_ids:
                 raise ValueError("GhostGraph live version-space-after mismatch")
         final = _live_report(hypotheses, observations, DiscoveryEvidence.complete())
         if trial["verdict"] != final.verdict.value:
             raise ValueError("GhostGraph live final verdict mismatch")
-        if trial["surviving_graph_ids"] != list(final.surviving_graph_ids):
+        if tuple(trial["surviving_graph_ids"]) != final.surviving_graph_ids:
             raise ValueError("GhostGraph live final survivor mismatch")
         truth = _truth_graph(case, hypotheses, protocol)
         if trial["truth_graph_id"] != truth.graph_id:

@@ -66,6 +66,8 @@ def main() -> int:
         "datasets==3.2.0",
         "accelerate==1.3.0",
         "bitsandbytes==0.45.2",
+        "tokenizers==0.21.4",
+        "huggingface-hub==0.28.1",
     )
     run(
         sys.executable,

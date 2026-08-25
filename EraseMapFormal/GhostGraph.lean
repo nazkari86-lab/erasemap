@@ -69,4 +69,51 @@ theorem selected_query_minimax [LE Score] (certificate : MinimaxCertificate Quer
         certificate.score certificate.selected ≤ certificate.score candidate := by
   exact ⟨certificate.selectedListed, certificate.minimum⟩
 
+/-- Graph identity is stronger than necessary: erasure discovery only needs every survivor to
+    imply the same remediation action. -/
+def ActionHomogeneous [DecidableEq Hypothesis] [DecidableEq Trace]
+    (problem : Problem Hypothesis Query Trace)
+    (action : Hypothesis → Action) : Prop :=
+  ∀ left, left ∈ survivors problem → ∀ right, right ∈ survivors problem →
+    action left = action right
+
+/-- If the sound version space is action-homogeneous, any listed survivor prescribes the real
+    graph's action even when the exact graph remains unidentified. -/
+theorem homogeneous_action_sound [DecidableEq Hypothesis] [DecidableEq Trace]
+    (problem : Problem Hypothesis Query Trace)
+    (action : Hypothesis → Action)
+    (homogeneous : ActionHomogeneous problem action)
+    (candidate : Hypothesis)
+    (candidateSurvives : candidate ∈ survivors problem) :
+    action candidate = action problem.actual := by
+  exact homogeneous candidate candidateSurvives problem.actual (true_graph_survives problem)
+
+/-- Finite action-identifiability requires every listed pair needing different actions to be
+    separated by at least one admissible query. -/
+def ActionIdentifiable [DecidableEq Hypothesis] (problem : Problem Hypothesis Query Trace)
+    (queries : List Query) (action : Hypothesis → Action) : Prop :=
+  ∀ left, left ∈ problem.hypotheses → ∀ right, right ∈ problem.hypotheses →
+    action left ≠ action right →
+      ∃ query, query ∈ queries ∧ problem.predict left query ≠ problem.predict right query
+
+/-- Constructive impossibility boundary: two listed, query-indistinguishable graphs requiring
+    different actions refute action-identifiability for every policy over the declared queries. -/
+theorem different_actions_inseparable_not_identifiable
+    [DecidableEq Hypothesis]
+    (problem : Problem Hypothesis Query Trace)
+    (queries : List Query)
+    (action : Hypothesis → Action)
+    (left right : Hypothesis)
+    (leftListed : left ∈ problem.hypotheses)
+    (rightListed : right ∈ problem.hypotheses)
+    (differentActions : action left ≠ action right)
+    (indistinguishable : ∀ query, query ∈ queries →
+      problem.predict left query = problem.predict right query) :
+    ¬ ActionIdentifiable problem queries action := by
+  intro identifiable
+  unfold ActionIdentifiable at identifiable
+  obtain ⟨query, queryListed, separated⟩ :=
+    identifiable left leftListed right rightListed differentActions
+  exact separated (indistinguishable query queryListed)
+
 end EraSeMap.GhostGraph

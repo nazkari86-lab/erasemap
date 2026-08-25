@@ -1,0 +1,67 @@
+{
+  "schema_version": "erasemap-ghostgraph-t-v1",
+  "title": "GhostGraph-T action-identifiable temporal recovery benchmark v1",
+  "freeze_date": "2026-08-25",
+  "status": "FROZEN_BEFORE_FIRST_RUN",
+  "research_question": "Can a globally optimized active policy identify the minimum erasure-action equivalence class, or fail closed on a family outside its catalogue, with fewer probes than exhaustive testing?",
+  "case_count": 300,
+  "split_counts": {
+    "instance-held-out": 120,
+    "composition-held-out": 80,
+    "family-held-out": 50,
+    "temporal-shift-held-out": 50
+  },
+  "known_families": [
+    "async-etl",
+    "backup-restore",
+    "cache-warming",
+    "index-rebuild",
+    "model-rebuild",
+    "replica-lag"
+  ],
+  "family_held_out_from_catalogue": "retry-replay",
+  "strategies": [
+    "global-action-policy",
+    "one-step-minimax",
+    "greedy-separated-pairs",
+    "frozen-random",
+    "nonadaptive-exhaustive",
+    "exact-graph-minimax-ablation",
+    "sink-only-ablation",
+    "passive-lineage-ablation"
+  ],
+  "primary_metrics": [
+    "false_confident_count",
+    "action_correct_count",
+    "out_of_hypothesis_detection_count",
+    "probe_count",
+    "probe_cost",
+    "exact_policy_oracle_mismatch_count"
+  ],
+  "gates": {
+    "global_false_confident_count_max": 0,
+    "global_correct_count_min": 300,
+    "global_ood_detection_count_min": 50,
+    "global_oracle_mismatch_count_max": 0,
+    "global_mean_probe_count_must_be_below_exhaustive": true,
+    "global_mean_probe_cost_must_be_below_exhaustive": true,
+    "action_objective_must_resolve_more_than_exact_graph_ablation": true
+  },
+  "statistics": {
+    "proportion_interval": "Wilson 95%",
+    "aggregation": "report every strategy and split separately; no blended novelty score",
+    "zero_event_interpretation": "report the Wilson upper bound; zero observed errors is not proof of zero population risk"
+  },
+  "random_seed": 20260825,
+  "case_manifest_sha256": "sha256:b42414dfc23901b6af3217d5285024bcd1143972ed161ea4f362187cdee0d804",
+  "core_sha256": "sha256:530304c2e69f794ff430221a10195e035f59c9bcc17518f20033ee117ef9fcd9",
+  "invalid_run_rules": [
+    "core source hash drift",
+    "generated case manifest drift",
+    "case or strategy count drift",
+    "post-reveal algorithm, threshold, split, seed, or gate change",
+    "overwriting a prior evidence directory",
+    "omitting a negative or failed result"
+  ],
+  "claim_boundary": "Project-authored finite temporal graph grammar and deterministic 300-case locked benchmark. Instance holdout tests new structures inside known families; composition holdout tests new combinations; family holdout tests only OUT_OF_HYPOTHESIS detection, not localization of the unknown family. Passing does not prove arbitrary open-world coverage, independent evidence, production FaceID/eGov behavior, legal compliance, patentability, or global novelty."
+}

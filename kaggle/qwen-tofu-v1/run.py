@@ -10,7 +10,7 @@ CODE_REVISION = "50305b8931ef915a6de3242d5220e1b2b25d9841"
 ASSETS = Path("/kaggle/input/erasemap-qwen-tofu-v1-assets")
 INPUTS = Path("/kaggle/input")
 CHECKOUT = Path("/kaggle/working/erasemap-source")
-WHEELS = ASSETS / "pinned-wheels"
+WHEELS = ASSETS / "pinned-wheels" / "wheels"
 TOFU = ASSETS / "tofu-324592d" / "tofu-source"
 OUTPUT = Path("/kaggle/working/qwen-tofu-v1")
 

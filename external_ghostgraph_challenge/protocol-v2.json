@@ -1,0 +1,38 @@
+{
+  "schema_version": "erasemap-external-ghostgraph-protocol-v2",
+  "public_core_protocol": "benchmark/ghostgraph-live-v2.json",
+  "required_case_count_min": 5,
+  "required_case_kinds": [
+    "in-catalogue-recurrence",
+    "missing-evidence",
+    "outside-catalogue",
+    "path-equivalent",
+    "safe"
+  ],
+  "required_source_files": [
+    "benchmark/ghostgraph-live-v2.json",
+    "src/erasemap/ghostgraph.py",
+    "src/erasemap/ghostgraph_oracle.py",
+    "src/erasemap/ghostgraph_planner.py",
+    "external_ghostgraph_challenge/active.py",
+    "external_ghostgraph_challenge/adapter_server.py",
+    "external_ghostgraph_challenge/schema.py",
+    "external_ghostgraph_challenge/verify_v2.py"
+  ],
+  "project_public_key_blocklist": [
+    "/nWaA+Gu+lC7Liefp8lt1CxX1mUbBgD2RL0DdNxD0g0="
+  ],
+  "required_evidence_gates": [
+    "adapter_responses_match_reveal",
+    "author_not_project_member",
+    "case_authorship_declared",
+    "clean_commit_declared",
+    "evaluator_identity_declared",
+    "planner_recomputed",
+    "source_hashes_verified",
+    "signature_verified",
+    "truth_commitment_verified"
+  ],
+  "status_without_valid_submission": "NOT_COLLECTED",
+  "claim_boundary": "Technical validity proves bundle integrity, frozen active execution, and key control. Human identity, independence, conflicts, authorization, and production relevance still require review."
+}

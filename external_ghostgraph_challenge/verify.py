@@ -88,9 +88,7 @@ def verify_submission(root: Path) -> dict[str, object]:
         raise ValueError("attestation does not bind manifest")
     try:
         public_key = Ed25519PublicKey.from_public_bytes(base64.b64decode(public_key_text))
-        public_key.verify(
-            base64.b64decode(str(attestation["signature"])), canonical(manifest)
-        )
+        public_key.verify(base64.b64decode(str(attestation["signature"])), canonical(manifest))
     except (InvalidSignature, KeyError, TypeError, ValueError) as exc:
         raise ValueError("external GhostGraph signature is invalid") from exc
     if false_confident:

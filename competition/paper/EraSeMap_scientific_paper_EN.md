@@ -20,6 +20,8 @@ Erasure Tomography (ET) adds a bounded topology-acquisition layer. Three coded s
 
 A further preregistered transfer study executed one frozen contract in 60 cases on digest-pinned stock Keycloak, MLflow, and Qdrant services. EraSeMap produced 0 false-complete decisions, failed closed on 15/15 coverage faults, matched a separate exhaustive control oracle in 60/60 cases, and produced no retained-subject loss or post-control recurrence. Native-success produced 45 false completes and the typed-node snapshot audit produced 5. Qdrant used preregistered public Olivetti face vectors; identities, commitments, mappings, faults, and execution remained project-authored, so this is live stock-service transfer evidence rather than independent or production validation.
 
+GhostGraph adds active topology discovery when the registered recurrence map itself is uncertain. It maintains a finite version space of candidate graphs and selects the next synthetic intervention by an exact minimax partition rule. In the frozen v2 comparison, active minimax used 7 probes, returned 3 exact graph and 2 path-class recoveries, detected the outside-catalogue case, failed closed on missing evidence, and produced no false-confident output, oracle mismatch, recurrence after control, or retained-subject loss. Frozen random required 13 probes and exhaustive nonadaptive testing 49; passive declared lineage and flat tomography each produced one false-confident output. A separate run over digest-pinned Redis, Keycloak, MLflow, and Qdrant used 5 probes across 5 cases with the same safety endpoints. These remain project-authored bounded and local results. An independently signable blind challenge v2 is executable but has status `NOT_COLLECTED` until an outside evaluator authors and runs it.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -48,9 +50,11 @@ The research question is:
 
 **Hypothesis H4.** Across a finite declared topology envelope, one exact TRE plan can prevent every registered regeneration path at lower declared cost than blanket destruction, while a nominal MSC can fail after topology shift. The null hypothesis is that robust replay offers no safety/cost advantage over the fixed baselines.
 
+**Hypothesis H6.** Within a frozen finite candidate catalogue, adaptive minimax interventions can recover an exact graph or erasure-relevant path class with fewer probes than frozen random or exhaustive testing while failing closed on missing evidence and outside-catalogue behavior. The null hypothesis is that active selection provides no probe or safety advantage under the same catalogue and evidence contract.
+
 The tasks are to formalize residual completion, implement the evaluator and optimizer, machine-check the bounded guarantees, compare against fixed baselines, measure a real-process system, and state the external-validity boundary.
 
-The paper makes six bounded contributions:
+The paper makes seven bounded contributions:
 
 1. A typed residual-path model that keeps physical artifacts, model influence, unknown evidence, and policy blocks semantically distinct.
 2. A three-valued completion rule that fails closed, returns the shortest counterexample, and requires successful replay before accepting a correction.
@@ -58,6 +62,7 @@ The paper makes six bounded contributions:
 4. A layered evaluation covering controlled faults, official external structures, real local services, and a bounded face-unlearning channel, with negative results and independence limits preserved.
 5. A temporal RSE layer that computes registered reachable closure, returns a shortest regeneration witness, fails closed on transition-coverage gaps, and selects an exact minimum-cost stabilization cut.
 6. A topology-robust TRE layer that selects one minimum-cost plan across a finite declared uncertainty envelope and reports the shortest adversarial witness and robustness premium over nominal MSC.
+7. A GhostGraph layer that actively shrinks a finite topology version space, independently checks each minimax choice against a separate oracle, and exposes a blind signed protocol for future external evaluation.
 
 ## 2. Related Work and Novelty Boundary
 
@@ -235,6 +240,12 @@ Before implementation and the first complete run, v1 froze three immutable conta
 
 The Qdrant confirmatory split uses five preregistered subjects from public Olivetti Faces, preserving the normalized 64×64 samples as untrained 4,096-dimensional vectors. Keycloak names and MLflow subject commitments are deterministic synthetic inputs. Every HTTP observation is redacted before append-only persistence; a provenance manifest hashes the public asset, all evidence ledgers, trials, and result. An offline verifier reparses the serialized trials, recomputes every gate, and rejects missing, extra, changed, or core-drifted artifacts.
 
+### 7.10 Layer I: active GhostGraph topology discovery
+
+The v2 protocol freezes five graph hypotheses, six allowed experiments, seven hidden cases, an exact trace model, an evidence contract, and six strategies before reveal. At each step, active minimax partitions the version space by predicted trace and minimizes, in order, the largest remaining bucket, squared bucket sizes, declared cost, and experiment ID. A separately implemented bitmask oracle recomputes each choice. The runner stops with an exact graph, erasure-relevant path class, OUT_OF_HYPOTHESIS, or UNVERIFIED; incomplete evidence never becomes confidence.
+
+The live transfer freezes four digest-pinned stock services—Redis, Keycloak, MLflow, and Qdrant—and executes native API observations using isolated synthetic commitments. Five cases cover direct recurrence, multi-hop recurrence, an outside-catalogue graph, a path-equivalent graph, and a safe graph. The external v2 protocol removes pre-disclosed traces: the project receives case IDs and evidence flags, sends one adaptively selected experiment to an evaluator-controlled adapter, and receives only its trace. After reveal, verification recomputes every trace, version space, planner/oracle choice, source hash, commitment, and Ed25519 signature. No external submission is currently claimed.
+
 ## 8. Results
 
 ### 8.1 Mechanism and transfer
@@ -304,6 +315,12 @@ from coded Boolean outcomes [19,20], and dependency-aware P2E2 computes meaningf
 erasure when semantic rules are supplied [21]. The targeted review found no identical end-to-end ET
 contract, but this is not a world-priority or patentability claim.
 
+### 8.9 GhostGraph active discovery
+
+The frozen v2 run passed every gate. Active minimax required **7** probes across seven cases, achieved **3** exact graph and **2** path-class recoveries, detected **1/1** outside-catalogue case, returned UNVERIFIED for missing evidence, and recorded zero false confidence, planner/oracle mismatch, post-control recurrence, or retained-subject loss. Frozen random required **13** probes for the same endpoints; nonadaptive exhaustive testing required **49**. Greedy separated-pairs tied active minimax at 7 probes in this small catalogue, so global query optimality is not claimed. Passive declared lineage and flat tomography each produced **1** false-confident output; flat tomography also missed the outside-catalogue case.
+
+The digest-pinned four-service run used **5** probes across five cases, recovered three exact-or-path-class cases, detected the outside-catalogue case, recognized the safe case, and recorded zero false confidence, mismatch, recurrence, retained loss, or cleanup failure. This is stronger transfer evidence than an in-memory simulator but remains a project-operated local test. The external blind protocol is technically complete and adversarially tested, but its evidence status remains **NOT_COLLECTED**.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -315,6 +332,8 @@ The formal theorem clarifies rather than eliminates operational risk. It shows t
 RSE adds a time dimension to the same principle. A recoverable carrier is not automatically a current residual, and current absence is not automatically stable. The shortest regeneration witness explains how a normal future operation can reopen the subject; MSC separates safe guarded retention from destructive carrier removal.
 
 TRE addresses a different boundary: a plan optimized for one correct nominal map can be brittle when the map evolves. Optimizing one plan over an explicit scenario envelope makes that uncertainty auditable and quantifies its cost, but does not turn bounded scenarios into knowledge of arbitrary unknown infrastructure.
+
+GhostGraph addresses how to reduce a declared topology uncertainty envelope before repair. Its value is not a promise to discover arbitrary hidden infrastructure; it makes every intervention, version-space reduction, stopping decision, and outside-catalogue failure inspectable. The greedy tie shows that the present catalogue is too small to establish a universal adaptive advantage, while the false-confidence failures show why passive declarations and closed-catalogue localization require explicit fail-closed checks.
 
 The strongest current evidence for added composition value remains internal: the mechanism stress set was designed to exercise mandatory channels and replay. The external-structure benchmark tied the strongest typed audit. Therefore, the next decisive experiment is not another feature or larger project-authored simulator. It is an independently authored hidden challenge containing edge, channel, replay, and hidden-artifact interactions, executed once against a frozen evaluator.
 
@@ -340,6 +359,8 @@ service-family portability without establishing operational deployment or extern
 
 **Topology-uncertainty scope.** TRE uses eight project-authored scenarios, a three-transition mutation catalogue, and declared costs. The solver sees the complete finite envelope before selection. Zero recurrence inside this envelope is not evidence of safety outside it or of the probability that a real organization satisfies the envelope.
 
+**Active-discovery scope.** GhostGraph uses a finite project-authored catalogue, deterministic traces, and declared experiment costs. The live services are real processes, but their hidden graphs and orchestration are internal. Active minimax tied one greedy baseline and has no global decision-tree optimality theorem. The external blind challenge is protocol-ready but not yet independently authored or executed.
+
 **Novelty search.** The review is structured but not a complete systematic review or legal freedom-to-operate opinion. New publications and patents can narrow the claim.
 
 ## 11. Ethics and Responsible Use
@@ -362,6 +383,9 @@ python scripts/verify_tre_conformance.py --expected formal/tre-conformance-v1.js
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
+python scripts/verify_ghostgraph_v2.py
+python scripts/verify_ghostgraph_live_v2.py
+python -m external_ghostgraph_challenge.verify_v2
 scripts/reproduce_release.sh core
 ```
 
@@ -437,6 +461,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | MSC | Minimum-cost Stabilization Cut blocking every registered regeneration witness |
 | TRE | Topology-Robust Erasure: one exact plan for every topology in a declared uncertainty envelope |
 | ET | Erasure Tomography: bounded coded deletion probes for recurrence-mechanism localization |
+| GhostGraph | Active finite version-space discovery of deletion-regeneration topology |
 
 ## Appendix B. Claim–Evidence Map
 
@@ -455,3 +480,4 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | RSE distinguishes future risk from guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC recurrences | Prospective but project-authored local multi-path lab |
 | TRE survives the frozen topology shifts | Nominal 35/35 recurrences; TRE 0/35; cost 7 versus blanket 60 | Prospective but finite, visible, project-authored envelope |
 | ET localizes bounded recurrence mechanisms | 8/8 supports; 4/4 negative fail-closed; 3,584/3,584 oracle; Redis 4/4 | `k=1`, `e=0`, project-authored catalogue/workflows; no arbitrary discovery |
+| GhostGraph actively reduces topology uncertainty | 7 probes; 3 exact + 2 path-class; OUT and UNVERIFIED detected; live 5/5 cases with zero false confidence | Finite project-authored catalogue; greedy tied; external blind run is `NOT_COLLECTED` |

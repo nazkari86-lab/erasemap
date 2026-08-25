@@ -20,6 +20,8 @@ Erasure Tomography (ET) добавляет bounded topology-acquisition layer. �
 
 Дополнительное пререгистрированное исследование переноса выполнило один frozen-контракт в 60 случаях на digest-pinned stock Keycloak, MLflow и Qdrant. EraSeMap дал 0 ложных COMPLETE, fail-closed обработал 15/15 coverage faults, совпал с отдельным exhaustive control oracle в 60/60 случаях и не допустил retained loss или recurrence после controls. Native-success дал 45 ложных COMPLETE, typed-node snapshot audit — 5. Qdrant использовал заранее выбранные публичные Olivetti face vectors; identities, commitments, mappings, faults и запуск остались авторскими, поэтому это live stock-service transfer, а не независимая или production validation.
 
+GhostGraph добавляет активное обнаружение топологии, когда сама зарегистрированная карта повторного появления неизвестна. Он поддерживает конечное пространство графов-кандидатов и выбирает следующее синтетическое вмешательство точным minimax-разбиением. В frozen v2 сравнении active minimax использовал 7 probes, дал 3 точных восстановления графа и 2 восстановления класса путей, обнаружил outside-catalogue случай, fail-closed обработал недостающие evidence и не дал false-confident output, oracle mismatch, recurrence после control или потери retained subject. Frozen random потребовал 13 probes, exhaustive nonadaptive — 49; passive declared lineage и flat tomography дали по одному false-confident результату. Отдельный запуск на digest-pinned Redis, Keycloak, MLflow и Qdrant использовал 5 probes в 5 случаях с теми же safety endpoints. Это авторские bounded и local результаты. Независимо подписываемый blind challenge v2 исполним, но имеет статус `NOT_COLLECTED`, пока внешний evaluator сам не создаст и не запустит случаи.
+
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
 ## 1. Введение
@@ -48,9 +50,11 @@ Machine unlearning изучает устранение влияния обуча
 
 **Гипотеза H4.** В конечном заявленном topology envelope единый exact TRE-план предотвращает каждый зарегистрированный путь регенерации с меньшей заявленной стоимостью, чем blanket destruction, тогда как nominal MSC может провалиться после topology shift. Нулевая гипотеза: robust replay не даёт преимущества по безопасности и стоимости.
 
+**Гипотеза H6.** В зафиксированном конечном каталоге adaptive minimax interventions восстанавливают точный граф или значимый для удаления класс путей меньшим числом probes, чем frozen random или exhaustive testing, одновременно fail-closed обрабатывая недостающие evidence и outside-catalogue поведение. Нулевая гипотеза: active selection не даёт преимущества по probes или безопасности при одинаковом каталоге и evidence contract.
+
 Задачи работы: формализовать завершённость удаления; реализовать evaluator и optimizer; машинно проверить ограниченные гарантии; сравнить фиксированные baselines; измерить систему с реальными процессами; явно определить границу внешней валидности.
 
-Ограниченный вклад работы состоит из шести частей:
+Ограниченный вклад работы состоит из семи частей:
 
 1. Типизированная модель остаточных путей, в которой физические объекты, влияние на модель, неизвестное доказательство и блокировка политикой имеют разные смыслы.
 2. Трёхзначное правило завершения, работающее fail-closed, возвращающее кратчайший контрпример и требующее успешного replay после исправления.
@@ -58,6 +62,7 @@ Machine unlearning изучает устранение влияния обуча
 4. Многоуровневая оценка на контролируемых ошибках, официальных внешних структурах, реальных локальных сервисах и ограниченном канале face unlearning с сохранением отрицательных результатов и границ независимости.
 5. Временной слой RSE, вычисляющий registered reachable closure, кратчайший regeneration witness, fail-closed transition coverage и точный минимальный стабилизирующий разрез.
 6. Topology-robust слой TRE, выбирающий единый минимальный план по конечному uncertainty envelope и возвращающий кратчайший adversarial witness и robustness premium относительно nominal MSC.
+7. Слой GhostGraph, активно сужающий конечное пространство топологий, независимо проверяющий каждый minimax-выбор отдельным oracle и предоставляющий blind signed protocol для будущей внешней оценки.
 
 ## 2. Предшествующие работы и граница новизны
 
@@ -235,6 +240,12 @@ TRE v1 зафиксирован коммитом `320e437` до реализац
 
 Confirmatory split Qdrant использует пять заранее выбранных субъектов публичного Olivetti Faces: нормализованные изображения 64×64 сохраняются как необученные 4096-мерные векторы. Keycloak names и MLflow subject commitments детерминированно синтетические. Каждое HTTP-наблюдение редактируется до append-only записи; provenance manifest хэширует public asset, evidence ledgers, trials и result. Offline verifier заново разбирает сериализованные trials, пересчитывает gates и отклоняет missing, extra, changed или core-drifted artifacts.
 
+### 7.10 Уровень I: активное обнаружение топологии GhostGraph
+
+Протокол v2 до reveal фиксирует пять гипотез графа, шесть допустимых экспериментов, семь скрытых случаев, точную trace-модель, evidence contract и шесть стратегий. На каждом шаге active minimax разбивает пространство версий по ожидаемому trace и последовательно минимизирует крупнейшую оставшуюся группу, сумму квадратов размеров групп, заявленную стоимость и ID эксперимента. Отдельно реализованный bitmask oracle пересчитывает каждый выбор. Runner останавливается с точным графом, значимым для удаления классом путей, OUT_OF_HYPOTHESIS или UNVERIFIED; неполные evidence никогда не превращаются в уверенность.
+
+Live transfer фиксирует четыре digest-pinned stock-сервиса — Redis, Keycloak, MLflow и Qdrant — и выполняет native API observations над изолированными синтетическими commitments. Пять случаев покрывают direct recurrence, multi-hop recurrence, outside-catalogue граф, path-equivalent граф и safe граф. Внешний протокол v2 исключает заранее раскрытые traces: проект получает ID случаев и evidence flags, отправляет один адаптивно выбранный experiment в adapter под контролем evaluator и получает только его trace. После reveal verifier пересчитывает каждый trace, пространство версий, planner/oracle choice, source hash, commitment и Ed25519 signature. Внешняя submission пока не заявляется.
+
 ## 8. Результаты
 
 ### 8.1 Механизм и перенос
@@ -304,6 +315,12 @@ Boolean outcomes [19,20], а dependency-aware P2E2 вычисляет meaningful
 заданных semantic rules [21]. Targeted review не нашёл идентичного end-to-end ET contract, но это не
 world-priority или patentability claim.
 
+### 8.9 Активное обнаружение GhostGraph
+
+Frozen v2 run прошёл все gates. Active minimax использовал **7** probes в семи случаях, дал **3** точных восстановления графа и **2** восстановления класса путей, обнаружил **1/1** outside-catalogue случай, вернул UNVERIFIED при недостающих evidence и не допустил false confidence, planner/oracle mismatch, post-control recurrence или retained-subject loss. Frozen random потребовал **13** probes для тех же endpoints; nonadaptive exhaustive testing — **49**. Greedy separated-pairs сравнялся с active minimax на 7 probes в этом малом каталоге, поэтому глобальная query optimality не заявляется. Passive declared lineage и flat tomography дали по **1** false-confident результату; flat tomography также не обнаружил outside-catalogue случай.
+
+Digest-pinned four-service run использовал **5** probes в пяти случаях, восстановил три exact-or-path-class случая, обнаружил outside-catalogue случай, распознал safe случай и дал ноль false confidence, mismatch, recurrence, retained loss и cleanup failure. Это сильнее in-memory simulator как доказательство переноса, но остаётся project-operated local test. Внешний blind protocol технически завершён и adversarially протестирован, однако его evidence status остаётся **NOT_COLLECTED**.
+
 ## 9. Обсуждение
 
 Практический результат — не только обнаружение ошибки. Полезная система удаления должна в одной воспроизводимой цепочке ответить: что осталось; почему завершение заблокировано; какой самый дешёвый разрешённый набор действий действительно приводит к завершению. Остаточный путь отвечает на первые два вопроса, CDC и replay — на третий.
@@ -315,6 +332,8 @@ world-priority или patentability claim.
 RSE добавляет временное измерение к тому же принципу. Recoverable carrier не обязательно является текущим residual, а текущее отсутствие не обязательно стабильно. Кратчайший regeneration witness объясняет, как обычная будущая операция возвращает субъекта; MSC отделяет безопасное guarded retention от разрушения carrier.
 
 TRE закрывает другую границу: план, оптимальный для одной nominal-карты, может оказаться хрупким при развитии системы. Один план по явному scenario envelope делает эту неопределённость проверяемой и измеряет её стоимость, но не превращает конечные сценарии в знание произвольной скрытой инфраструктуры.
+
+GhostGraph отвечает на вопрос, как уменьшить заявленную неопределённость топологии до ремонта. Его ценность не в обещании найти произвольную скрытую инфраструктуру, а в проверяемости каждого intervention, сокращения version space, stopping decision и outside-catalogue failure. Ничья с greedy показывает, что текущий каталог слишком мал для универсального преимущества adaptive selection, а false-confident ошибки показывают, почему passive declarations и closed-catalogue localization требуют явного fail-closed контроля.
 
 Сильнейшее текущее доказательство дополнительной ценности композиции остаётся внутренним: stress set специально создан для mandatory channels и replay. На внешних структурах сильнейший typed audit не проиграл. Поэтому решающий следующий эксперимент — не новая функция и не увеличенный авторский simulator, а independently authored hidden challenge с взаимодействиями edge, channel, replay и hidden artifact, однократно запущенный против frozen evaluator.
 
@@ -341,6 +360,8 @@ Open-transfer исследование использует реальные sto
 
 **Область topology uncertainty.** TRE использует восемь project-authored scenarios, каталог из трёх optional transitions и заявленные стоимости. Solver видит полный конечный envelope до выбора. Ноль возвратов внутри envelope не доказывает безопасность вне него или вероятность соответствия ему реальной организации.
 
+**Область active discovery.** GhostGraph использует конечный авторский каталог, детерминированные traces и заявленные experiment costs. Live-сервисы являются реальными процессами, но hidden graphs и orchestration созданы внутри проекта. Active minimax сравнялся с одним greedy baseline и не имеет глобальной теоремы optimal decision tree. External blind challenge protocol-ready, но ещё не независимо создан и исполнен.
+
 **Поиск новизны.** Обзор структурирован, но не является полным systematic review или юридическим freedom-to-operate заключением. Новые работы и патенты могут сузить claim.
 
 ## 11. Этика и ответственное применение
@@ -363,6 +384,9 @@ python scripts/verify_tre_conformance.py --expected formal/tre-conformance-v1.js
 python scripts/verify_measured_multiservice_v1.py
 python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
+python scripts/verify_ghostgraph_v2.py
+python scripts/verify_ghostgraph_live_v2.py
+python -m external_ghostgraph_challenge.verify_v2
 scripts/reproduce_release.sh core
 ```
 
@@ -438,6 +462,7 @@ EraSeMap показывает практический и математичес
 | MSC | Минимальный стабилизирующий разрез, блокирующий все зарегистрированные regeneration witnesses |
 | TRE | Topology-Robust Erasure: единый exact-план для каждой топологии заявленного uncertainty envelope |
 | ET | Erasure Tomography: bounded coded deletion probes для localization recurrence-механизма |
+| GhostGraph | Активное обнаружение deletion-regeneration topology в конечном пространстве версий |
 
 ## Приложение B. Карта claim–evidence
 
@@ -456,3 +481,4 @@ EraSeMap показывает практический и математичес
 | RSE отличает будущий риск от guarded latent carriers | 30/30 risks; 10/10 safe; 10/10 coverage faults; 0/30 post-MSC повторов | Prospective, но project-authored local multi-path lab |
 | TRE переживает frozen topology shifts | Nominal 35/35 возвратов; TRE 0/35; стоимость 7 против blanket 60 | Prospective, но finite visible project-authored envelope |
 | ET локализует bounded recurrence mechanisms | 8/8 supports; 4/4 negative fail-closed; 3584/3584 oracle; Redis 4/4 | `k=1`, `e=0`, project-authored catalogue/workflows; не arbitrary discovery |
+| GhostGraph активно уменьшает неопределённость топологии | 7 probes; 3 exact + 2 path-class; OUT и UNVERIFIED обнаружены; live 5/5 с нулём false confidence | Конечный авторский каталог; greedy дал ничью; внешний blind run — `NOT_COLLECTED` |

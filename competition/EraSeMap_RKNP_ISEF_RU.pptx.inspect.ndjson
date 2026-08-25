@@ -1,0 +1,209 @@
+{"kind":"deck","id":"pr/kvsr4l","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/y90nupkv","slide":1,"title":"ERASEMAP","textShapes":7}
+{"kind":"textbox","id":"sh/hofulsf2","slide":1,"name":"cover-eyebrow","text":"ERASEMAP","textPreview":"ERASEMAP","textChars":8,"textLines":1,"bbox":[42,38,300,28]}
+{"kind":"textbox","id":"sh/547294r6","slide":1,"name":"cover-title","text":"Удалить запись\nнедостаточно.","textPreview":"Удалить запись | недостаточно.","textChars":28,"textLines":2,"bbox":[42,124,830,215]}
+{"kind":"shape","id":"sh/k3yl0zql","slide":1,"name":"cover-band","bbox":[0,405,1280,315]}
+{"kind":"textbox","id":"sh/7qp4be9c","slide":1,"name":"cover-method","text":"Proof-Carrying Unlearning Graph","textPreview":"Proof-Carrying Unlearning Graph","textChars":31,"textLines":1,"bbox":[42,460,520,42]}
+{"kind":"textbox","id":"sh/65g3298r","slide":1,"name":"cover-subtitle","text":"Проверяем остаточные копии, влияние на модель и минимальный путь к безопасному удалению.","textPreview":"Проверяем остаточные копии, влияние на модель и минимальный путь к безопасному удалению.","textChars":88,"textLines":1,"bbox":[42,526,700,86]}
+{"kind":"shape","id":"sh/ts7md4r2","slide":1,"name":"cover-mark-a","bbox":[902,456,34,34]}
+{"kind":"shape","id":"sh/sryl4zqx","slide":1,"name":"cover-mark-b","bbox":[902,522,34,34]}
+{"kind":"textbox","id":"sh/fu94fe98","slide":1,"name":"cover-event","text":"RKNP / ISEF","textPreview":"RKNP / ISEF","textChars":11,"textLines":1,"bbox":[970,458,220,42]}
+{"kind":"textbox","id":"sh/utg3698n","slide":1,"name":"cover-note","text":"Evidence-led defense","textPreview":"Evidence-led defense","textChars":20,"textLines":1,"bbox":[970,524,240,42]}
+{"kind":"textbox","id":"sh/wn6dc7eh","slide":1,"name":"slide-number-1","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/y90nupkv","slide":1,"text":"Откройте с проблемы: запись может исчезнуть из основной базы, но человек всё ещё распознаётся по производным данным."}
+{"kind":"slide","id":"sl/hwbqtkby","slide":2,"title":"01  Проблема","textShapes":12}
+{"kind":"textbox","id":"sh/hcvy14ne","slide":2,"name":"text-42-38","text":"01  Проблема","textPreview":"01  Проблема","textChars":12,"textLines":1,"bbox":[42,38,300,28]}
+{"kind":"textbox","id":"sh/9072xkry","slide":2,"name":"problem-title","text":"Удалить запись ≠ удалить данные человека","textPreview":"Удалить запись ≠ удалить данные человека","textChars":40,"textLines":1,"bbox":[42,85,1050,72]}
+{"kind":"shape","id":"sh/ozy1ofad","slide":2,"name":"problem-source","bbox":[78,278,160,86]}
+{"kind":"shape","id":"sh/b29kza94","slide":2,"name":"problem-template","bbox":[318,210,165,86]}
+{"kind":"shape","id":"sh/a10jqpsj","slide":2,"name":"problem-cache","bbox":[318,340,165,86]}
+{"kind":"shape","id":"sh/x4r21kru","slide":2,"name":"problem-vector","bbox":[565,210,165,86]}
+{"kind":"shape","id":"sh/w3i1sfa9","slide":2,"name":"problem-backup","bbox":[565,340,165,86]}
+{"kind":"shape","id":"sh/r65knqtk","slide":2,"name":"problem-model","bbox":[812,278,165,86]}
+{"kind":"shape","id":"sh/q5wjelsz","slide":2,"name":"edge-source-a","bbox":[238,315,80,6]}
+{"kind":"shape","id":"sh/ove9o7yd","slide":2,"name":"edge-a-b","bbox":[483,250,82,6]}
+{"kind":"shape","id":"sh/9wnqhczy","slide":2,"name":"edge-c-d","bbox":[483,380,82,6]}
+{"kind":"shape","id":"sh/mtwrmxg7","slide":2,"name":"edge-b-model","bbox":[730,315,82,6]}
+{"kind":"textbox","id":"sh/nu58f2hs","slide":2,"name":"text-96-305","text":"SOURCE","textPreview":"SOURCE","textChars":6,"textLines":1,"bbox":[96,305,125,34]}
+{"kind":"textbox","id":"sh/wjy9sry9","slide":2,"name":"text-336-229","text":"FACE\nTEMPLATE","textPreview":"FACE | TEMPLATE","textChars":13,"textLines":2,"bbox":[336,229,128,52]}
+{"kind":"textbox","id":"sh/xk7qlczu","slide":2,"name":"text-336-366","text":"CACHE","textPreview":"CACHE","textChars":5,"textLines":1,"bbox":[336,366,128,30]}
+{"kind":"textbox","id":"sh/ahwrqhgj","slide":2,"name":"text-583-229","text":"VECTOR\nINDEX","textPreview":"VECTOR | INDEX","textChars":12,"textLines":2,"bbox":[583,229,128,52]}
+{"kind":"textbox","id":"sh/bip8jmho","slide":2,"name":"text-583-366","text":"BACKUP","textPreview":"BACKUP","textChars":6,"textLines":1,"bbox":[583,366,128,30]}
+{"kind":"textbox","id":"sh/cnupgny5","slide":2,"name":"text-830-297","text":"MODEL\nINFLUENCE","textPreview":"MODEL | INFLUENCE","textChars":15,"textLines":2,"bbox":[830,297,129,52]}
+{"kind":"shape","id":"sh/do3q9szq","slide":2,"name":"problem-rule","bbox":[1028,206,7,285]}
+{"kind":"textbox","id":"sh/t8byxkn2","slide":2,"name":"text-1060-208","text":"Вопрос EraSeMap","textPreview":"Вопрос EraSeMap","textChars":15,"textLines":1,"bbox":[1060,208,180,30]}
+{"kind":"textbox","id":"sh/s72xofmh","slide":2,"name":"text-1060-264","text":"Какая копия или производная всё ещё может использовать данные?","textPreview":"Какая копия или производная всё ещё может использовать данные?","textChars":62,"textLines":1,"bbox":[1060,264,180,198]}
+{"kind":"textbox","id":"sh/76twva5c","slide":2,"name":"text-42-628","text":"Гарантия ограничена зарегистрированной инфраструктурой.","textPreview":"Гарантия ограничена зарегистрированной инфраструктурой.","textChars":55,"textLines":1,"bbox":[42,628,800,32]}
+{"kind":"textbox","id":"sh/65kfmpor","slide":2,"name":"slide-number-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/hwbqtkby","slide":2,"text":"Спросите жюри: если source удалён, но template активен, завершён ли запрос? Ответ — нет."}
+{"kind":"slide","id":"sl/ofy9wn61","slide":3,"title":"02  Живая проверка","textShapes":17}
+{"kind":"textbox","id":"sh/i9w3u58v","slide":3,"name":"text-42-38","text":"02  Живая проверка","textPreview":"02  Живая проверка","textChars":18,"textLines":1,"bbox":[42,38,330,28]}
+{"kind":"textbox","id":"sh/cza94vmx","slide":3,"name":"live-verdict","text":"INCOMPLETE","textPreview":"INCOMPLETE","textChars":10,"textLines":1,"bbox":[42,91,500,80]}
+{"kind":"textbox","id":"sh/d0jax03i","slide":3,"name":"text-42-208","text":"Кратчайший остаточный путь","textPreview":"Кратчайший остаточный путь","textChars":26,"textLines":1,"bbox":[42,208,480,38]}
+{"kind":"shape","id":"sh/298ryl4v","slide":3,"name":"live-path-band","bbox":[42,280,1120,170]}
+{"kind":"textbox","id":"sh/3ah8rqlg","slide":3,"name":"text-85-332","text":"source","textPreview":"source","textChars":6,"textLines":1,"bbox":[85,332,210,56]}
+{"kind":"textbox","id":"sh/obq90bml","slide":3,"name":"text-330-324","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[330,324,80,72]}
+{"kind":"textbox","id":"sh/pcjqtg36","slide":3,"name":"text-440-332","text":"template","textPreview":"template","textChars":8,"textLines":1,"bbox":[440,332,250,56]}
+{"kind":"textbox","id":"sh/m5cra54z","slide":3,"name":"text-85-470","text":"Основная запись удалена","textPreview":"Основная запись удалена","textChars":23,"textLines":1,"bbox":[85,470,280,42]}
+{"kind":"textbox","id":"sh/n6ls3alk","slide":3,"name":"text-430-470","text":"Активный шаблон остаётся","textPreview":"Активный шаблон остаётся","textChars":24,"textLines":1,"bbox":[430,470,280,42]}
+{"kind":"textbox","id":"sh/n2l4fq98","slide":3,"name":"text-824-104","text":"Не скрывает неизвестное","textPreview":"Не скрывает неизвестное","textChars":23,"textLines":1,"bbox":[824,104,350,44]}
+{"kind":"textbox","id":"sh/m1c3mlsn","slide":3,"name":"text-824-190","text":"COMPLETE","textPreview":"COMPLETE","textChars":8,"textLines":1,"bbox":[824,190,220,34]}
+{"kind":"textbox","id":"sh/943mhgre","slide":3,"name":"text-824-226","text":"все пути закрыты","textPreview":"все пути закрыты","textChars":16,"textLines":1,"bbox":[824,226,300,30]}
+{"kind":"textbox","id":"sh/83ulovat","slide":3,"name":"text-824-290","text":"INCOMPLETE","textPreview":"INCOMPLETE","textChars":10,"textLines":1,"bbox":[824,290,220,34]}
+{"kind":"textbox","id":"sh/v6l4jq94","slide":3,"name":"text-824-326","text":"остаток найден","textPreview":"остаток найден","textChars":14,"textLines":1,"bbox":[824,326,300,30]}
+{"kind":"textbox","id":"sh/a5c3ql8z","slide":3,"name":"text-824-390","text":"UNVERIFIED","textPreview":"UNVERIFIED","textChars":10,"textLines":1,"bbox":[824,390,220,34]}
+{"kind":"textbox","id":"sh/x8nml0ra","slide":3,"name":"text-824-426","text":"доказательств недостаточно","textPreview":"доказательств недостаточно","textChars":26,"textLines":1,"bbox":[824,426,340,30]}
+{"kind":"textbox","id":"sh/w7ulsvqp","slide":3,"name":"text-42-607","text":"Команда: erasemap showcase --repo-root .","textPreview":"Команда: erasemap showcase --repo-root .","textChars":40,"textLines":1,"bbox":[42,607,760,32]}
+{"kind":"textbox","id":"sh/ja54na9g","slide":3,"name":"slide-number-3","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/ofy9wn61","slide":3,"text":"Покажите, что отрицательный и неопределённый результаты являются валидными результатами, а не ошибками программы."}
+{"kind":"slide","id":"sl/jyx0ra1s","slide":4,"title":"03  Метод","textShapes":13}
+{"kind":"textbox","id":"sh/v6tsv2xo","slide":4,"name":"text-42-38","text":"03  Метод","textPreview":"03  Метод","textChars":9,"textLines":1,"bbox":[42,38,250,28]}
+{"kind":"textbox","id":"sh/1cj2d8b6","slide":4,"name":"text-42-84","text":"Один fail-closed контракт","textPreview":"Один fail-closed контракт","textChars":25,"textLines":1,"bbox":[42,84,840,70]}
+{"kind":"shape","id":"sh/0ba143al","slide":4,"name":"method-graph","bbox":[42,213,355,365]}
+{"kind":"shape","id":"sh/rm1k7yt4","slide":4,"name":"method-proof","bbox":[462,213,355,365]}
+{"kind":"shape","id":"sh/ql8jytsj","slide":4,"name":"method-cut","bbox":[882,213,355,365]}
+{"kind":"textbox","id":"sh/doj29oba","slide":4,"name":"text-69-238","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[69,238,50,58]}
+{"kind":"textbox","id":"sh/sna103ap","slide":4,"name":"text-69-310","text":"PCUG","textPreview":"PCUG","textChars":4,"textLines":1,"bbox":[69,310,280,48]}
+{"kind":"textbox","id":"sh/3ihk3et8","slide":4,"name":"text-69-378","text":"Физические копии + request-scoped model influence + обязательные verifier-каналы.","textPreview":"Физические копии + request-scoped model influence + обязательные verifier-каналы.","textChars":81,"textLines":1,"bbox":[69,378,280,130]}
+{"kind":"textbox","id":"sh/ih8ju9sn","slide":4,"name":"text-489-238","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[489,238,50,58]}
+{"kind":"textbox","id":"sh/kbm987y5","slide":4,"name":"text-489-310","text":"Proof bundle","textPreview":"Proof bundle","textChars":12,"textLines":1,"bbox":[489,310,280,48]}
+{"kind":"textbox","id":"sh/5cva1cfq","slide":4,"name":"text-489-378","text":"Commitments, raw evidence, replay, signature и independently recomputed verdict.","textPreview":"Commitments, raw evidence, replay, signature и independently recomputed verdict.","textChars":80,"textLines":1,"bbox":[489,378,280,130]}
+{"kind":"textbox","id":"sh/i94r6xgz","slide":4,"name":"text-909-238","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[909,238,50,58]}
+{"kind":"textbox","id":"sh/jadsz2xk","slide":4,"name":"text-909-310","text":"Exact CDC","textPreview":"Exact CDC","textChars":9,"textLines":1,"bbox":[909,310,280,48]}
+{"kind":"textbox","id":"sh/w72947yt","slide":4,"name":"text-909-378","text":"Минимальная по стоимости разрешённая remediation, закрывающая представленные пути.","textPreview":"Минимальная по стоимости разрешённая remediation, закрывающая представленные пути.","textChars":82,"textLines":1,"bbox":[909,378,280,130]}
+{"kind":"textbox","id":"sh/x8vaxsfe","slide":4,"name":"text-42-624","text":"Не отдельный unlearning algorithm — системный слой принятия и проверки решения.","textPreview":"Не отдельный unlearning algorithm — системный слой принятия и проверки решения.","textChars":79,"textLines":1,"bbox":[42,624,1100,36]}
+{"kind":"textbox","id":"sh/a5kr2xg3","slide":4,"name":"slide-number-4","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/jyx0ra1s","slide":4,"text":"Сформулируйте вклад как композицию. Не заявляйте изобретение lineage, подписи, min-cut или machine unlearning по отдельности."}
+{"kind":"slide","id":"sl/i107q5of","slide":5,"title":"04  Зачем PCUG","textShapes":8}
+{"kind":"textbox","id":"sh/x4vedgvm","slide":5,"name":"text-42-38","text":"04  Зачем PCUG","textPreview":"04  Зачем PCUG","textChars":14,"textLines":1,"bbox":[42,38,300,28]}
+{"kind":"textbox","id":"sh/dgbulwnm","slide":5,"name":"text-42-84","text":"Node-state audit пропускает взаимодействия","textPreview":"Node-state audit пропускает взаимодействия","textChars":42,"textLines":1,"bbox":[42,84,1120,68]}
+{"kind":"shape","id":"sh/cf2tcr61","slide":5,"name":"stress-chart-frame","bbox":[42,180,710,460]}
+{"kind":"textbox","id":"sh/z2tcnm5s","slide":5,"name":"text-824-224","text":"0 / 75","textPreview":"0 / 75","textChars":6,"textLines":1,"bbox":[824,224,360,90]}
+{"kind":"textbox","id":"sh/yhkbe1o7","slide":5,"name":"text-824-316","text":"ложных COMPLETE у PCUG","textPreview":"ложных COMPLETE у PCUG","textChars":22,"textLines":1,"bbox":[824,316,350,48]}
+{"kind":"textbox","id":"sh/l4bupwny","slide":5,"name":"text-824-410","text":"75 / 75","textPreview":"75 / 75","textChars":7,"textLines":1,"bbox":[824,410,360,90]}
+{"kind":"textbox","id":"sh/032tgr6d","slide":5,"name":"text-824-502","text":"у node-only typed audit","textPreview":"у node-only typed audit","textChars":23,"textLines":1,"bbox":[824,502,350,48]}
+{"kind":"textbox","id":"sh/n6dcr65o","slide":5,"name":"text-824-588","text":"Project-authored mechanism stress test — не внешний holdout.","textPreview":"Project-authored mechanism stress test — не внешний holdout.","textChars":60,"textLines":1,"bbox":[824,588,360,45]}
+{"kind":"textbox","id":"sh/m5kbi1oj","slide":5,"name":"slide-number-5","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"chart","id":"ch/u54je10j","slide":5,"name":"Chart","chartType":"bar","bbox":[85,235,620,340]}
+{"kind":"notes","id":"nt/i107q5of","slide":5,"text":"Это механизмный stress test. Подчеркните ограничение: на source-locked holdout сильный typed baseline связал PCUG."}
+{"kind":"slide","id":"sl/x8f69ofe","slide":6,"title":"05  Формальная часть","textShapes":11}
+{"kind":"textbox","id":"sh/47mt0b6x","slide":6,"name":"text-42-38","text":"05  Формальная часть","textPreview":"05  Формальная часть","textChars":20,"textLines":1,"bbox":[42,38,360,28]}
+{"kind":"textbox","id":"sh/yhg7epsj","slide":6,"name":"text-42-104","text":"3 072 / 3 072","textPreview":"3 072 / 3 072","textChars":13,"textLines":1,"bbox":[42,104,690,110]}
+{"kind":"textbox","id":"sh/zi98nu94","slide":6,"name":"text-42-226","text":"production exact CDC = exhaustive oracle","textPreview":"production exact CDC = exhaustive oracle","textChars":40,"textLines":1,"bbox":[42,226,720,46]}
+{"kind":"shape","id":"sh/87ipkzal","slide":6,"name":"formal-soundness","bbox":[42,342,366,226]}
+{"kind":"shape","id":"sh/98rqt4r6","slide":6,"name":"formal-optimality","bbox":[457,342,366,226]}
+{"kind":"shape","id":"sh/ml07i9sv","slide":6,"name":"formal-boundary","bbox":[872,342,366,226]}
+{"kind":"textbox","id":"sh/7m98ru9g","slide":6,"name":"text-70-372","text":"Soundness","textPreview":"Soundness","textChars":9,"textLines":1,"bbox":[70,372,310,38]}
+{"kind":"textbox","id":"sh/oryp8fah","slide":6,"name":"text-70-432","text":"Replayed COMPLETE закрывает представленные реальные residual paths и mandatory channels.","textPreview":"Replayed COMPLETE закрывает представленные реальные residual paths и mandatory channels.","textChars":88,"textLines":1,"bbox":[70,432,305,104]}
+{"kind":"textbox","id":"sh/pc76hkr2","slide":6,"name":"text-485-372","text":"Optimality","textPreview":"Optimality","textChars":10,"textLines":1,"bbox":[485,372,310,38]}
+{"kind":"textbox","id":"sh/h4bupgn6","slide":6,"name":"text-485-432","text":"Finite exact selector возвращает feasible candidate с глобально минимальной стоимостью.","textPreview":"Finite exact selector возвращает feasible candidate с глобально минимальной стоимостью.","textChars":87,"textLines":1,"bbox":[485,432,305,104]}
+{"kind":"textbox","id":"sh/w32twb6l","slide":6,"name":"text-900-372","text":"Boundary","textPreview":"Boundary","textChars":8,"textLines":1,"bbox":[900,372,310,38]}
+{"kind":"textbox","id":"sh/v2tcn650","slide":6,"name":"text-900-432","text":"Требуются complete registered topology и sound local verifiers.","textPreview":"Требуются complete registered topology и sound local verifiers.","textChars":63,"textLines":1,"bbox":[900,432,305,104]}
+{"kind":"textbox","id":"sh/u1kbu1ov","slide":6,"name":"text-42-626","text":"Lean 4 · no sorry/admit · axiom allowlist audited","textPreview":"Lean 4 · no sorry/admit · axiom allowlist audited","textChars":49,"textLines":1,"bbox":[42,626,800,32]}
+{"kind":"textbox","id":"sh/5svutgni","slide":6,"name":"slide-number-6","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/x8f69ofe","slide":6,"text":"Lean доказывает условное утверждение. Явно назовите assumptions — это повышает научную честность."}
+{"kind":"slide","id":"sl/gnmp4jqx","slide":7,"title":"06  Real-process experiment","textShapes":8}
+{"kind":"textbox","id":"sh/a9ojq5kz","slide":7,"name":"text-42-38","text":"06  Real-process experiment","textPreview":"06  Real-process experiment","textChars":27,"textLines":1,"bbox":[42,38,420,28]}
+{"kind":"textbox","id":"sh/cb2tkvap","slide":7,"name":"text-42-84","text":"Меньше работы — тот же verified COMPLETE","textPreview":"Меньше работы — тот же verified COMPLETE","textChars":40,"textLines":1,"bbox":[42,84,1120,68]}
+{"kind":"shape","id":"sh/dcbud0ra","slide":7,"name":"systems-chart-frame","bbox":[42,184,650,430]}
+{"kind":"textbox","id":"sh/ydkbm5sv","slide":7,"name":"text-760-205","text":"17.64×","textPreview":"17.64×","textChars":6,"textLines":1,"bbox":[760,205,400,86]}
+{"kind":"textbox","id":"sh/zedcfa9g","slide":7,"name":"text-760-292","text":"speedup; 95% CI 16.39–18.98×","textPreview":"speedup; 95% CI 16.39–18.98×","textChars":28,"textLines":1,"bbox":[760,292,430,40]}
+{"kind":"textbox","id":"sh/kzmdova1","slide":7,"name":"text-760-375","text":"94.62%","textPreview":"94.62%","textChars":6,"textLines":1,"bbox":[760,375,400,86]}
+{"kind":"textbox","id":"sh/l0vuh0rm","slide":7,"name":"text-760-462","text":"меньше declared application/filesystem bytes","textPreview":"меньше declared application/filesystem bytes","textChars":44,"textLines":1,"bbox":[760,462,430,64]}
+{"kind":"textbox","id":"sh/eh0ba1sr","slide":7,"name":"text-760-566","text":"20 paired holdout seeds · 100% completion · 0 retained-data loss","textPreview":"20 paired holdout seeds · 100% completion · 0 retained-data loss","textChars":64,"textLines":1,"bbox":[760,566,440,58]}
+{"kind":"textbox","id":"sh/fi9c369c","slide":7,"name":"slide-number-7","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"chart","id":"ch/lwzu9ovq","slide":7,"name":"Chart","chartType":"bar","bbox":[82,244,560,300]}
+{"kind":"notes","id":"nt/gnmp4jqx","slide":7,"text":"Реальны процессы PostgreSQL, Redis и Qdrant. Данные synthetic; это не production latency FaceID/eGov."}
+{"kind":"slide","id":"sl/fu1gfa1s","slide":8,"title":"07  Model layer","textShapes":9}
+{"kind":"textbox","id":"sh/m5gvmhwn","slide":8,"name":"text-42-38","text":"07  Model layer","textPreview":"07  Model layer","textChars":15,"textLines":1,"bbox":[42,38,300,28]}
+{"kind":"textbox","id":"sh/18byd4zy","slide":8,"name":"text-42-84","text":"MUFAC FAIL → sequential PASS","textPreview":"MUFAC FAIL → sequential PASS","textChars":28,"textLines":1,"bbox":[42,84,1000,68]}
+{"kind":"shape","id":"sh/g72x4zyd","slide":8,"name":"ml-image-frame","bbox":[42,190,710,430]}
+{"kind":"textbox","id":"sh/ri9g7uhw","slide":8,"name":"text-800-205","text":"MUFAC v3","textPreview":"MUFAC v3","textChars":8,"textLines":1,"bbox":[800,205,380,42]}
+{"kind":"textbox","id":"sh/6h0fypgb","slide":8,"name":"text-800-258","text":"FAIL","textPreview":"FAIL","textChars":4,"textLines":1,"bbox":[800,258,250,65]}
+{"kind":"textbox","id":"sh/tkby9kzm","slide":8,"name":"text-800-326","text":"retained utility gate","textPreview":"retained utility gate","textChars":21,"textLines":1,"bbox":[800,326,360,36]}
+{"kind":"textbox","id":"sh/sjix0zy1","slide":8,"name":"text-800-406","text":"Sequential v1","textPreview":"Sequential v1","textChars":13,"textLines":1,"bbox":[800,406,380,42]}
+{"kind":"textbox","id":"sh/je9g3ahk","slide":8,"name":"text-800-459","text":"PASS · 25/25","textPreview":"PASS · 25/25","textChars":12,"textLines":1,"bbox":[800,459,360,65]}
+{"kind":"textbox","id":"sh/id0fu50z","slide":8,"name":"text-800-540","text":"privacy upper CI 0.00624 · first-run, project-authored.","textPreview":"privacy upper CI 0.00624 · first-run, project-authored.","textChars":55,"textLines":1,"bbox":[800,540,390,65]}
+{"kind":"textbox","id":"sh/o7ydoret","slide":8,"name":"slide-number-8","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"image","id":"im/c32pkj2x","slide":8,"name":"","bbox":[66,249.53,662,308.93]}
+{"kind":"notes","id":"nt/fu1gfa1s","slide":8,"text":"Покажите научную зрелость: первая быстрая candidate не прошла utility gate; safe policy выбрала exact retraining."}
+{"kind":"slide","id":"sl/udsvah03","slide":9,"title":"08  GhostGraph","textShapes":13}
+{"kind":"textbox","id":"sh/bml0buxs","slide":9,"name":"text-42-38","text":"08  GhostGraph","textPreview":"08  GhostGraph","textChars":14,"textLines":1,"bbox":[42,38,250,28]}
+{"kind":"textbox","id":"sh/1cfmhgne","slide":9,"name":"text-42-84","text":"Ищем неизвестный путь — не верим карте","textPreview":"Ищем неизвестный путь — не верим карте","textChars":38,"textLines":1,"bbox":[42,84,840,70]}
+{"kind":"shape","id":"sh/0b65obm9","slide":9,"name":"method-graph","bbox":[42,213,355,365]}
+{"kind":"shape","id":"sh/nex4jq5k","slide":9,"name":"method-proof","bbox":[462,213,355,365]}
+{"kind":"shape","id":"sh/mdonql4z","slide":9,"name":"method-cut","bbox":[882,213,355,365]}
+{"kind":"textbox","id":"sh/9gzml0nq","slide":9,"name":"text-69-238","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[69,238,50,58]}
+{"kind":"textbox","id":"sh/ofq5svm5","slide":9,"name":"text-69-310","text":"Version space","textPreview":"Version space","textChars":13,"textLines":1,"bbox":[69,310,280,48]}
+{"kind":"textbox","id":"sh/bih4na5w","slide":9,"name":"text-69-378","text":"Frozen-каталог возможных deletion-regeneration графов и полный evidence contract.","textPreview":"Frozen-каталог возможных deletion-regeneration графов и полный evidence contract.","textChars":81,"textLines":1,"bbox":[69,378,280,130]}
+{"kind":"textbox","id":"sh/ah8nu54b","slide":9,"name":"text-489-238","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[489,238,50,58]}
+{"kind":"textbox","id":"sh/oza1gfyh","slide":9,"name":"text-489-310","text":"Active probe","textPreview":"Active probe","textChars":12,"textLines":1,"bbox":[489,310,280,48]}
+{"kind":"textbox","id":"sh/p0ji9kf2","slide":9,"name":"text-489-378","text":"Minimax выбирает intervention, сильнее всего сужающий оставшиеся графы.","textPreview":"Minimax выбирает intervention, сильнее всего сужающий оставшиеся графы.","textChars":71,"textLines":1,"bbox":[489,378,280,130]}
+{"kind":"textbox","id":"sh/2xsjepgb","slide":9,"name":"text-909-238","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[909,238,50,58]}
+{"kind":"textbox","id":"sh/3y107axw","slide":9,"name":"text-909-310","text":"Fail-closed repair","textPreview":"Fail-closed repair","textChars":18,"textLines":1,"bbox":[909,310,280,48]}
+{"kind":"textbox","id":"sh/cnu1kzyd","slide":9,"name":"text-909-378","text":"Exact graph / path class, либо OUT / UNVERIFIED; затем exact control и replay.","textPreview":"Exact graph / path class, либо OUT / UNVERIFIED; затем exact control и replay.","textChars":78,"textLines":1,"bbox":[909,378,280,130]}
+{"kind":"textbox","id":"sh/do3id4fy","slide":9,"name":"text-42-624","text":"Finite catalogue · synthetic subjects · без claim об arbitrary hidden infrastructure.","textPreview":"Finite catalogue · synthetic subjects · без claim об arbitrary hidden infrastructure.","textChars":85,"textLines":1,"bbox":[42,624,1100,36]}
+{"kind":"textbox","id":"sh/qlcjipgn","slide":9,"name":"slide-number-4","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/udsvah03","slide":9,"text":"Сформулируйте вклад как композицию. Не заявляйте изобретение lineage, подписи, min-cut или machine unlearning по отдельности."}
+{"kind":"slide","id":"sl/m90b6t0r","slide":10,"title":"09  GhostGraph result","textShapes":8}
+{"kind":"textbox","id":"sh/d87uxg3m","slide":10,"name":"text-42-38","text":"09  GhostGraph result","textPreview":"09  GhostGraph result","textChars":21,"textLines":1,"bbox":[42,38,420,28]}
+{"kind":"textbox","id":"sh/xc3mho32","slide":10,"name":"text-42-84","text":"Активный запрос находит путь без ложной уверенности","textPreview":"Активный запрос находит путь без ложной уверенности","textChars":51,"textLines":1,"bbox":[42,84,1120,68]}
+{"kind":"shape","id":"sh/cbu58j2h","slide":10,"name":"systems-chart-frame","bbox":[42,184,650,430]}
+{"kind":"textbox","id":"sh/zelojyl8","slide":10,"name":"text-760-205","text":"49","textPreview":"49","textChars":2,"textLines":1,"bbox":[760,205,400,86]}
+{"kind":"textbox","id":"sh/ydcnatkn","slide":10,"name":"text-760-292","text":"probes у nonadaptive exhaustive; active minimax — 7","textPreview":"probes у nonadaptive exhaustive; active minimax — 7","textChars":51,"textLines":1,"bbox":[760,292,430,40]}
+{"kind":"textbox","id":"sh/l036l83y","slide":10,"name":"text-760-375","text":"5 / 5","textPreview":"5 / 5","textChars":5,"textLines":1,"bbox":[760,375,400,86]}
+{"kind":"textbox","id":"sh/kzu5c32t","slide":10,"name":"text-760-462","text":"live cases: Redis · Keycloak · MLflow · Qdrant","textPreview":"live cases: Redis · Keycloak · MLflow · Qdrant","textChars":46,"textLines":1,"bbox":[760,462,430,64]}
+{"kind":"textbox","id":"sh/725onyl4","slide":10,"name":"text-760-566","text":"0 false confident · 0 oracle mismatch · external v2: NOT_COLLECTED","textPreview":"0 false confident · 0 oracle mismatch · external v2: NOT_COLLECTED","textChars":66,"textLines":1,"bbox":[760,566,440,58]}
+{"kind":"textbox","id":"sh/m1cnetkj","slide":10,"name":"slide-number-7","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"chart","id":"ch/69s3qh0n","slide":10,"name":"Chart","chartType":"bar","bbox":[82,244,560,300]}
+{"kind":"notes","id":"nt/m90b6t0r","slide":10,"text":"Реальны процессы PostgreSQL, Redis и Qdrant. Данные synthetic; это не production latency FaceID/eGov."}
+{"kind":"slide","id":"sl/jetc3ut0","slide":11,"title":"10  Новизна без преувеличения","textShapes":10}
+{"kind":"textbox","id":"sh/0b6tc3yx","slide":11,"name":"text-42-38","text":"10  Новизна без преувеличения","textPreview":"10  Новизна без преувеличения","textChars":29,"textLines":1,"bbox":[42,38,480,28]}
+{"kind":"textbox","id":"sh/xcryxg7y","slide":11,"name":"text-42-84","text":"Новый вклад — active discovery + fail-closed repair","textPreview":"Новый вклад — active discovery + fail-closed repair","textChars":51,"textLines":1,"bbox":[42,84,1120,68]}
+{"kind":"shape","id":"sh/wbih4b6d","slide":11,"name":"novel-known","bbox":[42,202,355,390]}
+{"kind":"shape","id":"sh/n69grmpw","slide":11,"name":"novel-contribution","bbox":[462,202,355,390]}
+{"kind":"shape","id":"sh/250zy18b","slide":11,"name":"novel-no-claim","bbox":[882,202,355,390]}
+{"kind":"textbox","id":"sh/98rytw72","slide":11,"name":"text-69-234","text":"Уже существовало","textPreview":"Уже существовало","textChars":16,"textLines":1,"bbox":[69,234,290,38]}
+{"kind":"textbox","id":"sh/o7ih0r6h","slide":11,"name":"text-69-306","text":"Network tomography\nActive diagnosis\nData lineage\nGroup testing\nTemporal erasure","textPreview":"Network tomography | Active diagnosis | Data lineage | Group testing | Temporal erasure","textChars":79,"textLines":5,"bbox":[69,306,285,220]}
+{"kind":"textbox","id":"sh/72t03qp0","slide":11,"name":"text-489-234","text":"Узкий вклад","textPreview":"Узкий вклад","textChars":11,"textLines":1,"bbox":[489,234,290,38]}
+{"kind":"textbox","id":"sh/61kzalof","slide":11,"name":"text-489-306","text":"Subject interventions → exact version-space update → OUT / UNVERIFIED → path class → exact control + replay.","textPreview":"Subject interventions → exact version-space update → OUT / UNVERIFIED → path class → exact control + replay.","textChars":108,"textLines":1,"bbox":[489,306,285,242]}
+{"kind":"textbox","id":"sh/ofqtgnyt","slide":11,"name":"text-909-234","text":"Не заявляется","textPreview":"Не заявляется","textChars":13,"textLines":1,"bbox":[909,234,290,38]}
+{"kind":"textbox","id":"sh/9gza9sze","slide":11,"name":"text-909-306","text":"«Первый в мире»\nArbitrary topology discovery\nGlobal optimal decision tree\nFaceID/eGov production","textPreview":"«Первый в мире» | Arbitrary topology discovery | Global optimal decision tree | FaceID/eGov production","textChars":96,"textLines":4,"bbox":[909,306,285,230]}
+{"kind":"textbox","id":"sh/mdobedg3","slide":11,"name":"text-42-626","text":"Greedy baseline tied at 7 probes: novelty is the auditable fail-closed composition, not universal query optimality.","textPreview":"Greedy baseline tied at 7 probes: novelty is the auditable fail-closed composition, not universal query optimality.","textChars":115,"textLines":1,"bbox":[42,626,1140,38]}
+{"kind":"textbox","id":"sh/nehs7iho","slide":11,"name":"slide-number-9","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/jetc3ut0","slide":11,"text":"Если жюри спросит «где новизна», ответьте одной фразой из центральной колонки и сразу назовите prior art."}
+{"kind":"slide","id":"sl/8f2psfyx","slide":12,"title":"11  Доказательная лестница","textShapes":13}
+{"kind":"textbox","id":"sh/nq1o3a5w","slide":12,"name":"text-42-38","text":"11  Доказательная лестница","textPreview":"11  Доказательная лестница","textChars":26,"textLines":1,"bbox":[42,38,410,28]}
+{"kind":"textbox","id":"sh/1gbm9s3a","slide":12,"name":"text-42-84","text":"Readiness нельзя выдавать за independence","textPreview":"Readiness нельзя выдавать за independence","textChars":41,"textLines":1,"bbox":[42,84,1080,68]}
+{"kind":"shape","id":"sh/0f2lgnmp","slide":12,"name":"evidence-current","bbox":[42,222,355,342]}
+{"kind":"shape","id":"sh/ra943il8","slide":12,"name":"evidence-next","bbox":[462,174,355,390]}
+{"kind":"shape","id":"sh/q903ad4n","slide":12,"name":"evidence-org","bbox":[882,126,355,438]}
+{"kind":"textbox","id":"sh/dcbm583y","slide":12,"name":"text-69-254","text":"7.8","textPreview":"7.8","textChars":3,"textLines":1,"bbox":[69,254,290,88]}
+{"kind":"textbox","id":"sh/sb2lcnmd","slide":12,"name":"text-69-354","text":"Сейчас","textPreview":"Сейчас","textChars":6,"textLines":1,"bbox":[69,354,290,38]}
+{"kind":"textbox","id":"sh/b6d4f2lc","slide":12,"name":"text-69-418","text":"Frozen v2 + live four-service PASS. External submission: NOT_COLLECTED.","textPreview":"Frozen v2 + live four-service PASS. External submission: NOT_COLLECTED.","textChars":71,"textLines":1,"bbox":[69,418,285,105]}
+{"kind":"textbox","id":"sh/a543mx4r","slide":12,"name":"text-489-206","text":"9.5","textPreview":"9.5","textChars":3,"textLines":1,"bbox":[489,206,290,88]}
+{"kind":"textbox","id":"sh/wvupgz6t","slide":12,"name":"text-489-306","text":"External blind v2 PASS","textPreview":"External blind v2 PASS","textChars":22,"textLines":1,"bbox":[489,306,290,38]}
+{"kind":"textbox","id":"sh/xw3q94ne","slide":12,"name":"text-489-370","text":"Outside author: hidden graphs, clean commit, source hashes, one-shot reveal, Ed25519 signature.","textPreview":"Outside author: hidden graphs, clean commit, source hashes, one-shot reveal, Ed25519 signature.","textChars":95,"textLines":1,"bbox":[489,370,285,144]}
+{"kind":"textbox","id":"sh/atc7epon","slide":12,"name":"text-909-158","text":"9.8","textPreview":"9.8","textChars":3,"textLines":1,"bbox":[909,158,290,88]}
+{"kind":"textbox","id":"sh/bulo7u58","slide":12,"name":"text-909-258","text":"Репликация","textPreview":"Репликация","textChars":10,"textLines":1,"bbox":[909,258,290,38]}
+{"kind":"textbox","id":"sh/orapcf6h","slide":12,"name":"text-909-322","text":"Два независимых evaluator или одна authorized organization на materially different systems.","textPreview":"Два независимых evaluator или одна authorized organization на materially different systems.","textChars":91,"textLines":1,"bbox":[909,322,285,144]}
+{"kind":"textbox","id":"sh/9sj65kn2","slide":12,"name":"text-42-625","text":"Только external authorship двигает independence; local work повышает readiness.","textPreview":"Только external authorship двигает independence; local work повышает readiness.","textChars":79,"textLines":1,"bbox":[42,625,900,34]}
+{"kind":"textbox","id":"sh/mps7a5or","slide":12,"name":"slide-number-10","text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/8f2psfyx","slide":12,"text":"Это ключевой слайд честности. Скажите: технически путь к 9.5 готов, но фактическая независимость остаётся 7.8."}
+{"kind":"slide","id":"sl/hgzapcr6","slide":13,"title":"ERASEMAP","textShapes":9}
+{"kind":"textbox","id":"sh/t8fy5k3i","slide":13,"name":"text-42-38","text":"ERASEMAP","textPreview":"ERASEMAP","textChars":8,"textLines":1,"bbox":[42,38,300,28]}
+{"kind":"textbox","id":"sh/q50nydsj","slide":13,"name":"text-42-108","text":"Не верить слову «удалено».\nПроверять путь.","textPreview":"Не верить слову «удалено». | Проверять путь.","textChars":42,"textLines":2,"bbox":[42,108,1050,180]}
+{"kind":"shape","id":"sh/bq9orito","slide":13,"name":"closing-band","bbox":[0,392,1280,328]}
+{"kind":"shape","id":"sh/o3i5w3ad","slide":13,"name":"closing-a","bbox":[42,450,34,34]}
+{"kind":"shape","id":"sh/p4r6p8by","slide":13,"name":"closing-b","bbox":[452,450,34,34]}
+{"kind":"shape","id":"sh/21gnuts7","slide":13,"name":"closing-c","bbox":[862,450,34,34]}
+{"kind":"textbox","id":"sh/32ponyts","slide":13,"name":"text-42-510","text":"Сейчас","textPreview":"Сейчас","textChars":6,"textLines":1,"bbox":[42,510,330,38]}
+{"kind":"textbox","id":"sh/gzy5s3a1","slide":13,"name":"text-42-560","text":"Formal + measured systems + GhostGraph live + jury demo","textPreview":"Formal + measured systems + GhostGraph live + jury demo","textChars":55,"textLines":1,"bbox":[42,560,330,78]}
+{"kind":"textbox","id":"sh/1076lobm","slide":13,"name":"text-452-510","text":"Следующий результат","textPreview":"Следующий результат","textChars":19,"textLines":1,"bbox":[452,510,350,38]}
+{"kind":"textbox","id":"sh/hcfy9k3u","slide":13,"name":"text-452-560","text":"Blind v2 evaluator-authored challenge; algorithm frozen","textPreview":"Blind v2 evaluator-authored challenge; algorithm frozen","textChars":55,"textLines":1,"bbox":[452,560,350,78]}
+{"kind":"textbox","id":"sh/gb6x0zm9","slide":13,"name":"text-862-510","text":"Цель","textPreview":"Цель","textChars":4,"textLines":1,"bbox":[862,510,330,38]}
+{"kind":"textbox","id":"sh/vaxg7ulo","slide":13,"name":"text-862-560","text":"Доказать COMPLETE на чужих скрытых системах — или честно показать failure.","textPreview":"Доказать COMPLETE на чужих скрытых системах — или честно показать failure.","textChars":74,"textLines":1,"bbox":[862,560,350,78]}
+{"kind":"textbox","id":"sh/u9ofyp43","slide":13,"name":"slide-number-11","text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1182,664,55,24]}
+{"kind":"notes","id":"nt/hgzapcr6","slide":13,"text":"Завершите: ценность EraSeMap не в обещании идеального удаления, а в отказе объявлять успех без проверяемого основания."}

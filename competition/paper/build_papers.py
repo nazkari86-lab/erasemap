@@ -95,7 +95,7 @@ def make_system_figure(path: Path, ru: bool) -> None:
 
 
 def make_result_figure(path: Path, ru: bool) -> None:
-    img = Image.new("RGB", (1800, 1270), "white")
+    img = Image.new("RGB", (1800, 1510), "white")
     d = ImageDraw.Draw(img)
     title = ImageFont.truetype(font_path(True), 46)
     label = ImageFont.truetype(font_path(True), 28)
@@ -142,6 +142,15 @@ def make_result_figure(path: Path, ru: bool) -> None:
         d.text((x1 + (500 - box[2]) / 2, 1080), value, fill="#1E8449", font=title)
         box2 = d.textbbox((0, 0), caption, font=small)
         d.text((x1 + (500 - box2[2]) / 2, 1165), caption, fill="#5D6D7E", font=small)
+
+    d.line((80, 1270, 1720, 1270), fill="#AAB7C4", width=3)
+    d.text((90, 1310), "GhostGraph v2 active discovery", fill="#17202A", font=label)
+    ghost_metrics = [("7", "active minimax"), ("13", "frozen random"), ("49", "exhaustive")]
+    for idx, (value, caption) in enumerate(ghost_metrics):
+        x1 = 90 + idx * 560
+        d.rounded_rectangle((x1, 1370, x1 + 500, 1485), radius=20, fill="#F3F0FA", outline="#6C4AA1", width=3)
+        d.text((x1 + 65, 1392), value, fill="#6C4AA1", font=title)
+        d.text((x1 + 170, 1410), caption, fill="#5D6D7E", font=small)
     img.save(path, dpi=(180, 180))
 
 
@@ -543,7 +552,7 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
                     doc,
                     result_fig,
                     ("Рисунок 2. Stress test механизма, измеренное многосервисное испытание и preregistered RSE v2. Составлено автором по зафиксированным результатам." if ru else "Figure 2. Mechanism stress, measured multi-service holdout, and preregistered RSE v2. Author-generated from the frozen results."),
-                    ("Диаграмма: PCUG даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; CDC достигает 17,64-кратного ускорения и сокращает записанные байты на 94,62 процента; RSE обнаруживает 30 из 30 рисков без повторов после MSC." if ru else "Results chart: PCUG has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; CDC reaches 17.64-fold speedup and 94.62 percent fewer written bytes; RSE detects 30 of 30 risks with no post-MSC recurrence."),
+                    ("Диаграмма: PCUG даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; CDC достигает 17,64-кратного ускорения и сокращает записанные байты на 94,62 процента; RSE обнаруживает 30 из 30 рисков без повторов после MSC; GhostGraph использует 7 probes против 13 у frozen random и 49 у exhaustive." if ru else "Results chart: PCUG has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; CDC reaches 17.64-fold speedup and 94.62 percent fewer written bytes; RSE detects 30 of 30 risks with no post-MSC recurrence; GhostGraph uses 7 probes versus 13 for frozen random and 49 for exhaustive."),
                 )
                 inserted_results = True
             i += 1

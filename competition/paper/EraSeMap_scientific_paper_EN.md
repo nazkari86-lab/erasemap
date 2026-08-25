@@ -22,6 +22,8 @@ A further preregistered transfer study executed one frozen contract in 60 cases 
 
 GhostGraph adds active topology discovery when the registered recurrence map itself is uncertain. It maintains a finite version space of candidate graphs and selects the next synthetic intervention by an exact minimax partition rule. In the frozen v2 comparison, active minimax used 7 probes, returned 3 exact graph and 2 path-class recoveries, detected the outside-catalogue case, failed closed on missing evidence, and produced no false-confident output, oracle mismatch, recurrence after control, or retained-subject loss. Frozen random required 13 probes and exhaustive nonadaptive testing 49; passive declared lineage and flat tomography each produced one false-confident output. A separate run over digest-pinned Redis, Keycloak, MLflow, and Qdrant used 5 probes across 5 cases with the same safety endpoints. These remain project-authored bounded and local results. An independently signable blind challenge v2 is executable but has status `NOT_COLLECTED` until an outside evaluator authors and runs it.
 
+GhostGraph-T changes the target from exact graph identity to the complete set of minimum erasure-operation cuts. A separately frozen 300-case benchmark achieved 300/300 correct action-or-OOD decisions, 50/50 held-out-family detections, zero false-confident outputs, and 1.28 mean probes versus 8.0 exhaustive. Exact graph recovery left 170 action-safe irrelevant-topology twins unresolved. Lean checks action-homogeneous stopping soundness and the impossibility of identifying different actions for query-indistinguishable graphs. Global optimization matched a separate recursive oracle but tied one-step minimax and greedy, so adaptive-baseline superiority is not claimed.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -175,6 +177,10 @@ Let **Q** be a finite state space, **δᵣ** the registered transition relation,
 
 Lean checks this induction over reflexive-transitive reachability. A separate checked counterexample constructs a hidden real transition that regenerates a residual when the coverage premise is removed. The theorem makes transition coverage an explicit deployment obligation rather than claiming it automatically.
 
+### 5.4 Erasure-action identifiability
+
+Let **A(G)** be the complete set of minimum-cardinality operation cuts intersecting every represented recovery path in graph **G**. Exact graph identity is unnecessary when all surviving graphs have the same **A(G)**. Lean proves that, under catalogue closure and sound observations, any member of an action-homogeneous survivor set prescribes the actual listed graph's action. It also proves the finite impossibility boundary: if two listed graphs need different actions but produce the same trace under every allowed query, no policy over those queries can establish action-identifiability.
+
 ## 6. Implementation
 
 EraSeMap is implemented as a reproducible Python package with canonical JSON inputs and outputs. Decoding rejects missing or unknown fields, duplicate nodes or edges, unknown endpoints, and implicit cross-subject edges. Canonical sorting makes graph roots, receipts, and evidence bundles deterministic.
@@ -245,6 +251,10 @@ The Qdrant confirmatory split uses five preregistered subjects from public Olive
 The v2 protocol freezes five graph hypotheses, six allowed experiments, seven hidden cases, an exact trace model, an evidence contract, and six strategies before reveal. At each step, active minimax partitions the version space by predicted trace and minimizes, in order, the largest remaining bucket, squared bucket sizes, declared cost, and experiment ID. A separately implemented bitmask oracle recomputes each choice. The runner stops with an exact graph, erasure-relevant path class, OUT_OF_HYPOTHESIS, or UNVERIFIED; incomplete evidence never becomes confidence.
 
 The live transfer freezes four digest-pinned stock services—Redis, Keycloak, MLflow, and Qdrant—and executes native API observations using isolated synthetic commitments. Five cases cover direct recurrence, multi-hop recurrence, an outside-catalogue graph, a path-equivalent graph, and a safe graph. The external v2 protocol removes pre-disclosed traces: the project receives case IDs and evidence flags, sends one adaptively selected experiment to an evaluator-controlled adapter, and receives only its trace. After reveal, verification recomputes every trace, version space, planner/oracle choice, source hash, commitment, and Ed25519 signature. No external submission is currently claimed.
+
+### 7.11 Layer J: GhostGraph-T action identification
+
+The v1 protocol and core were committed before the first result. It freezes 120 instance-held-out, 80 composition-held-out, 50 family-held-out, and 50 temporal-shift cases; eight strategies; source and case-manifest hashes; Wilson intervals; and seven success gates. A held-out family is evaluated only for `OUT_OF_HYPOTHESIS`, never for impossible post-hoc localization. The exact global policy minimizes worst-case declared cost over the full finite decision tree and is checked against a separately structured recursive oracle.
 
 ## 8. Results
 
@@ -321,6 +331,12 @@ The frozen v2 run passed every gate. Active minimax required **7** probes across
 
 The digest-pinned four-service run used **5** probes across five cases, recovered three exact-or-path-class cases, detected the outside-catalogue case, recognized the safe case, and recorded zero false confidence, mismatch, recurrence, retained loss, or cleanup failure. This is stronger transfer evidence than an in-memory simulator but remains a project-operated local test. The external blind protocol is technically complete and adversarially tested, but its evidence status remains **NOT_COLLECTED**.
 
+### 8.10 GhostGraph-T action identification
+
+The first locked run passed all frozen gates: **300/300** correct action-or-OOD decisions, **50/50** held-out-family detections, zero false-confident outputs (Wilson 95% upper bound 0.01265), and zero global-policy/oracle mismatches. The global policy used 1.28 mean probes at declared cost 8.84, compared with 8.0 probes and cost 28.0 for exhaustive testing. Exact-graph minimax resolved only 130/300 and returned UNVERIFIED for 170 irrelevant-topology twins; sink-only observation left 41 temporal cases unresolved; passive lineage produced 265 false-confident actions.
+
+Global, one-step minimax, and greedy all achieved the same correctness, probes, and cost. This is a negative result against a superiority claim: the experiment supports action-equivalence stopping and bounded OOD rejection, not empirical dominance over the strongest adaptive baseline.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -359,7 +375,7 @@ service-family portability without establishing operational deployment or extern
 
 **Topology-uncertainty scope.** TRE uses eight project-authored scenarios, a three-transition mutation catalogue, and declared costs. The solver sees the complete finite envelope before selection. Zero recurrence inside this envelope is not evidence of safety outside it or of the probability that a real organization satisfies the envelope.
 
-**Active-discovery scope.** GhostGraph uses a finite project-authored catalogue, deterministic traces, and declared experiment costs. The live services are real processes, but their hidden graphs and orchestration are internal. Active minimax tied one greedy baseline and has no global decision-tree optimality theorem. The external blind challenge is protocol-ready but not yet independently authored or executed.
+**Active-discovery scope.** GhostGraph uses finite project-authored catalogues, deterministic traces, and declared experiment costs. GhostGraph-T adds an exact global finite policy and an action-identifiability theorem, but the first 300 cases still tied one-step minimax and greedy. The live services are real processes, while hidden graphs and orchestration remain internal. The external blind challenge is protocol-ready but not independently authored or executed.
 
 **Novelty search.** The review is structured but not a complete systematic review or legal freedom-to-operate opinion. New publications and patents can narrow the claim.
 
@@ -385,6 +401,7 @@ python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
 python scripts/verify_ghostgraph_v2.py
 python scripts/verify_ghostgraph_live_v2.py
+python scripts/verify_ghostgraph_t_v1.py
 python -m external_ghostgraph_challenge.verify_v2
 scripts/reproduce_release.sh core
 ```
@@ -462,6 +479,7 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | TRE | Topology-Robust Erasure: one exact plan for every topology in a declared uncertainty envelope |
 | ET | Erasure Tomography: bounded coded deletion probes for recurrence-mechanism localization |
 | GhostGraph | Active finite version-space discovery of deletion-regeneration topology |
+| GhostGraph-T | Active identification of an erasure-action equivalence class with bounded OOD rejection |
 
 ## Appendix B. Claim–Evidence Map
 
@@ -481,3 +499,4 @@ The evidence supports reproducibility, internal correctness, and feasibility. It
 | TRE survives the frozen topology shifts | Nominal 35/35 recurrences; TRE 0/35; cost 7 versus blanket 60 | Prospective but finite, visible, project-authored envelope |
 | ET localizes bounded recurrence mechanisms | 8/8 supports; 4/4 negative fail-closed; 3,584/3,584 oracle; Redis 4/4 | `k=1`, `e=0`, project-authored catalogue/workflows; no arbitrary discovery |
 | GhostGraph actively reduces topology uncertainty | 7 probes; 3 exact + 2 path-class; OUT and UNVERIFIED detected; live 5/5 cases with zero false confidence | Finite project-authored catalogue; greedy tied; external blind run is `NOT_COLLECTED` |
+| GhostGraph-T identifies sufficient erasure actions | 300/300 action-or-OOD; 50/50 family OOD; 0 false confidence; exact policy matches oracle | Project-authored deterministic grammar; adaptive baselines tied; no open-world or independent claim |

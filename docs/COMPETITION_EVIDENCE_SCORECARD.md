@@ -93,6 +93,13 @@ above 7.8.
     used 5 probes over Redis, Keycloak, MLflow, and Qdrant, passed 5/5 cases, and left no managed
     containers. The interactive external v2 route is executable but still `NOT_COLLECTED`, so
     independence remains 7.8 and RKNP remains 9.8.
+13. **GhostGraph-T action identification:** protocol/core commit `6aaaf73` precedes the first
+    result. The locked 300-case run achieved 300/300 action-or-OOD decisions, 50/50 held-out-family
+    OOD, zero false confidence, 1.28 mean probes versus 8 exhaustive, and zero exact-policy/oracle
+    mismatches. Exact graph identity left 170 irrelevant-topology twins unresolved, supporting the
+    action-equivalence objective. One-step minimax and greedy tied the global policy, so this adds a
+    formal sufficient-action result and broader controlled evidence, not adaptive-baseline
+    superiority or external independence. The stable RKNP score remains 9.8.
 
 ## Reproduce the jury artifact
 

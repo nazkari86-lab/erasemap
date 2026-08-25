@@ -30,8 +30,9 @@ checked page by page.
 The paper reports project-authored mechanism evidence, independently sourced but project-mapped
 structures, formal Lean results, local real-process measurements, a post-exposure adaptive model
 result, first-run preregistered sequential-release and temporal results, the finite-envelope TRE
-result, bounded Erasure Tomography local/Redis results, GhostGraph v2 active/live results, and the
-preregistered 60-case transfer study on digest-pinned stock Keycloak, MLflow, and
+result, bounded Erasure Tomography local/Redis results, GhostGraph v2 active/live results, the
+separately frozen GhostGraph-T 300-case action-identification result including its strong-baseline
+tie, and the preregistered 60-case transfer study on digest-pinned stock Keycloak, MLflow, and
 Qdrant services as separate evidence layers. The transfer layer uses public Olivetti vectors but
 project-authored identities, mappings, faults, and execution. It does not claim certified privacy,
 arbitrary unknown-topology coverage, a completed independently authored hidden challenge, or a production

@@ -22,6 +22,8 @@ Erasure Tomography (ET) добавляет bounded topology-acquisition layer. �
 
 GhostGraph добавляет активное обнаружение топологии, когда сама зарегистрированная карта повторного появления неизвестна. Он поддерживает конечное пространство графов-кандидатов и выбирает следующее синтетическое вмешательство точным minimax-разбиением. В frozen v2 сравнении active minimax использовал 7 probes, дал 3 точных восстановления графа и 2 восстановления класса путей, обнаружил outside-catalogue случай, fail-closed обработал недостающие evidence и не дал false-confident output, oracle mismatch, recurrence после control или потери retained subject. Frozen random потребовал 13 probes, exhaustive nonadaptive — 49; passive declared lineage и flat tomography дали по одному false-confident результату. Отдельный запуск на digest-pinned Redis, Keycloak, MLflow и Qdrant использовал 5 probes в 5 случаях с теми же safety endpoints. Это авторские bounded и local результаты. Независимо подписываемый blind challenge v2 исполним, но имеет статус `NOT_COLLECTED`, пока внешний evaluator сам не создаст и не запустит случаи.
 
+GhostGraph-T меняет цель с точной идентичности графа на полный набор минимальных erasure-operation cuts. Отдельно frozen benchmark из 300 случаев дал 300/300 корректных action-or-OOD решений, 50/50 обнаружений held-out family, ноль false-confident outputs и в среднем 1,28 probes против 8,0 exhaustive. Exact graph recovery оставил 170 action-safe twins с нерелевантной топологией неразрешёнными. Lean проверяет soundness остановки на action-homogeneous version space и невозможность определить разные действия для query-indistinguishable графов. Global optimization совпал с отдельным recursive oracle, но разделил результат с one-step minimax и greedy, поэтому превосходство над adaptive baselines не заявляется.
+
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
 ## 1. Введение
@@ -175,6 +177,10 @@ Lean 4.33.1 проверяет результаты без `sorry` и `admit`. �
 
 Lean проверяет это индукцией по reflexive-transitive reachability. Отдельный проверенный контрпример создаёт скрытый реальный переход, возвращающий остаток при удалении coverage premise. Поэтому coverage переходов является явным deployment obligation, а не автоматической гарантией.
 
+### 5.4 Идентифицируемость действия удаления
+
+Пусть **A(G)** — полный набор минимальных по мощности operation cuts, пересекающих каждый представленный recovery path графа **G**. Точная идентичность графа не нужна, если все surviving graphs имеют одинаковое **A(G)**. Lean доказывает, что при catalogue closure и sound observations любой элемент action-homogeneous survivor set задаёт действие реального listed graph. Также доказана граница невозможности: если два listed graphs требуют разных действий, но дают одинаковую trace для каждого допустимого query, никакая policy над этими queries не может установить action-identifiability.
+
 ## 6. Реализация
 
 EraSeMap реализован как воспроизводимый Python-пакет с каноническими JSON-входами и выходами. Декодирование отклоняет пропущенные и неизвестные поля, повторяющиеся узлы и рёбра, неизвестные endpoints и неявные cross-subject связи. Каноническая сортировка делает корни графа, квитанции и доказательные пакеты детерминированными.
@@ -245,6 +251,10 @@ Confirmatory split Qdrant использует пять заранее выбр�
 Протокол v2 до reveal фиксирует пять гипотез графа, шесть допустимых экспериментов, семь скрытых случаев, точную trace-модель, evidence contract и шесть стратегий. На каждом шаге active minimax разбивает пространство версий по ожидаемому trace и последовательно минимизирует крупнейшую оставшуюся группу, сумму квадратов размеров групп, заявленную стоимость и ID эксперимента. Отдельно реализованный bitmask oracle пересчитывает каждый выбор. Runner останавливается с точным графом, значимым для удаления классом путей, OUT_OF_HYPOTHESIS или UNVERIFIED; неполные evidence никогда не превращаются в уверенность.
 
 Live transfer фиксирует четыре digest-pinned stock-сервиса — Redis, Keycloak, MLflow и Qdrant — и выполняет native API observations над изолированными синтетическими commitments. Пять случаев покрывают direct recurrence, multi-hop recurrence, outside-catalogue граф, path-equivalent граф и safe граф. Внешний протокол v2 исключает заранее раскрытые traces: проект получает ID случаев и evidence flags, отправляет один адаптивно выбранный experiment в adapter под контролем evaluator и получает только его trace. После reveal verifier пересчитывает каждый trace, пространство версий, planner/oracle choice, source hash, commitment и Ed25519 signature. Внешняя submission пока не заявляется.
+
+### 7.11 Уровень J: GhostGraph-T action identification
+
+Протокол и core v1 были закоммичены до первого результата. Зафиксированы 120 instance-held-out, 80 composition-held-out, 50 family-held-out и 50 temporal-shift случаев; восемь стратегий; hashes кода и case manifest; Wilson intervals; семь gates. Held-out family оценивается только по `OUT_OF_HYPOTHESIS`, а не по невозможной post-hoc localization. Exact global policy минимизирует worst-case declared cost полного конечного decision tree и проверяется отдельно структурированным recursive oracle.
 
 ## 8. Результаты
 
@@ -321,6 +331,12 @@ Frozen v2 run прошёл все gates. Active minimax использовал *
 
 Digest-pinned four-service run использовал **5** probes в пяти случаях, восстановил три exact-or-path-class случая, обнаружил outside-catalogue случай, распознал safe случай и дал ноль false confidence, mismatch, recurrence, retained loss и cleanup failure. Это сильнее in-memory simulator как доказательство переноса, но остаётся project-operated local test. Внешний blind protocol технически завершён и adversarially протестирован, однако его evidence status остаётся **NOT_COLLECTED**.
 
+### 8.10 GhostGraph-T action identification
+
+Первый locked run прошёл все gates: **300/300** корректных action-or-OOD решений, **50/50** held-out-family detections, ноль false-confident outputs (верхняя Wilson 95% граница 0,01265) и ноль global-policy/oracle mismatches. Global policy использовал в среднем 1,28 probes стоимостью 8,84 против 8,0 probes и стоимости 28,0 у exhaustive. Exact-graph minimax разрешил только 130/300 и вернул UNVERIFIED для 170 irrelevant-topology twins; sink-only observation оставил 41 temporal case неразрешённым; passive lineage дал 265 false-confident actions.
+
+Global, one-step minimax и greedy получили одинаковые correctness, число probes и cost. Это отрицательный результат против claim о превосходстве: эксперимент поддерживает action-equivalence stopping и bounded OOD rejection, но не empirical dominance над сильнейшим adaptive baseline.
+
 ## 9. Обсуждение
 
 Практический результат — не только обнаружение ошибки. Полезная система удаления должна в одной воспроизводимой цепочке ответить: что осталось; почему завершение заблокировано; какой самый дешёвый разрешённый набор действий действительно приводит к завершению. Остаточный путь отвечает на первые два вопроса, CDC и replay — на третий.
@@ -360,7 +376,7 @@ Open-transfer исследование использует реальные sto
 
 **Область topology uncertainty.** TRE использует восемь project-authored scenarios, каталог из трёх optional transitions и заявленные стоимости. Solver видит полный конечный envelope до выбора. Ноль возвратов внутри envelope не доказывает безопасность вне него или вероятность соответствия ему реальной организации.
 
-**Область active discovery.** GhostGraph использует конечный авторский каталог, детерминированные traces и заявленные experiment costs. Live-сервисы являются реальными процессами, но hidden graphs и orchestration созданы внутри проекта. Active minimax сравнялся с одним greedy baseline и не имеет глобальной теоремы optimal decision tree. External blind challenge protocol-ready, но ещё не независимо создан и исполнен.
+**Область active discovery.** GhostGraph использует конечные авторские каталоги, детерминированные traces и заявленные experiment costs. GhostGraph-T добавляет exact global finite policy и action-identifiability theorem, но первые 300 случаев всё равно дали ничью с one-step minimax и greedy. Live-сервисы являются реальными процессами, однако hidden graphs и orchestration внутренние. External blind challenge protocol-ready, но ещё не независимо создан и исполнен.
 
 **Поиск новизны.** Обзор структурирован, но не является полным systematic review или юридическим freedom-to-operate заключением. Новые работы и патенты могут сузить claim.
 
@@ -386,6 +402,7 @@ python scripts/verify_sequential_deletion_privacy_v1.py
 python scripts/verify_regeneration_safe_erasure_v2.py
 python scripts/verify_ghostgraph_v2.py
 python scripts/verify_ghostgraph_live_v2.py
+python scripts/verify_ghostgraph_t_v1.py
 python -m external_ghostgraph_challenge.verify_v2
 scripts/reproduce_release.sh core
 ```
@@ -463,6 +480,7 @@ EraSeMap показывает практический и математичес
 | TRE | Topology-Robust Erasure: единый exact-план для каждой топологии заявленного uncertainty envelope |
 | ET | Erasure Tomography: bounded coded deletion probes для localization recurrence-механизма |
 | GhostGraph | Активное обнаружение deletion-regeneration topology в конечном пространстве версий |
+| GhostGraph-T | Активная идентификация erasure-action equivalence class с bounded OOD rejection |
 
 ## Приложение B. Карта claim–evidence
 
@@ -482,3 +500,4 @@ EraSeMap показывает практический и математичес
 | TRE переживает frozen topology shifts | Nominal 35/35 возвратов; TRE 0/35; стоимость 7 против blanket 60 | Prospective, но finite visible project-authored envelope |
 | ET локализует bounded recurrence mechanisms | 8/8 supports; 4/4 negative fail-closed; 3584/3584 oracle; Redis 4/4 | `k=1`, `e=0`, project-authored catalogue/workflows; не arbitrary discovery |
 | GhostGraph активно уменьшает неопределённость топологии | 7 probes; 3 exact + 2 path-class; OUT и UNVERIFIED обнаружены; live 5/5 с нулём false confidence | Конечный авторский каталог; greedy дал ничью; внешний blind run — `NOT_COLLECTED` |
+| GhostGraph-T определяет достаточное действие удаления | 300/300 action-or-OOD; 50/50 family OOD; 0 false confidence; exact policy совпала с oracle | Авторская deterministic grammar; adaptive baselines дали ничью; нет open-world или independent claim |

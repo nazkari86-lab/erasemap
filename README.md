@@ -355,6 +355,25 @@ PYTHONPATH=src python experiments/run_regeneration_safe_erasure_v2.py
 python scripts/verify_regeneration_safe_erasure_v2.py
 ```
 
+## Qwen–TOFU Kaggle experiment
+
+A frozen GPU protocol extends the model channel to the real open
+[`Qwen/Qwen2.5-1.5B`](https://huggingface.co/Qwen/Qwen2.5-1.5B) base model and the external TOFU
+benchmark. It compares a full-data QLoRA target, exact adapter retraining on `retain99`, and a paired
+gradient-difference candidate across three seeds. Direct, perturbed, retained, holdout, world-fact,
+membership-AUC, and save/reload recurrence channels are conjunctive. The exact reference applies to
+the registered adapter procedure only; no removal from Qwen pretraining is claimed.
+
+The protocol is preregistered, but the first Kaggle GPU result is currently `NOT_COLLECTED`:
+
+```bash
+scripts/kaggle_qwen_tofu_v1.sh submit
+scripts/kaggle_qwen_tofu_v1.sh status
+scripts/kaggle_qwen_tofu_v1.sh collect
+```
+
+See [`docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md).
+
 See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for the locked results,
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict
 claim boundaries.

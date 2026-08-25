@@ -53,6 +53,20 @@ def main() -> int:
     shutil.copytree(ASSETS / "erasemap-50305b8", CHECKOUT)
     if not WHEELS.is_dir() or not TOFU.is_dir():
         raise RuntimeError("attached frozen wheels or TOFU snapshot are absent")
+    torch_wheel = Path("/kaggle/working/torch-2.5.1+cu121-cp312-cp312-linux_x86_64.whl")
+    shutil.copy2(torch_wheels[0], torch_wheel)
+    run(
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+        "--no-input",
+        "--no-index",
+        "--no-deps",
+        str(torch_wheel),
+    )
+    torch_wheel.unlink()
     run(
         sys.executable,
         "-m",
@@ -64,7 +78,6 @@ def main() -> int:
         "--no-deps",
         "--find-links",
         str(WHEELS),
-        str(torch_wheels[0]),
         "transformers==4.48.3",
         "peft==0.14.0",
         "datasets==3.2.0",

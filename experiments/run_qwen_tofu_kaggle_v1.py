@@ -142,18 +142,24 @@ def _infinite(loader: Iterable[Mapping[str, Any]]) -> Iterator[Mapping[str, Any]
 
 def _load_base(protocol: Mapping[str, Any], deps: Mapping[str, Any]) -> Any:
     model_spec = protocol["model"]
+    model_source = os.environ.get("ERASEMAP_MODEL_PATH", model_spec["repository"])
     quantization = deps["BitsAndBytesConfig"](
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=deps["torch"].float16,
         bnb_4bit_use_double_quant=True,
     )
+    source_options = (
+        {"revision": model_spec["revision"]}
+        if model_source == model_spec["repository"]
+        else {"local_files_only": True}
+    )
     model = deps["AutoModelForCausalLM"].from_pretrained(
-        model_spec["repository"],
-        revision=model_spec["revision"],
+        model_source,
         device_map={"": 0},
         quantization_config=quantization,
         torch_dtype=deps["torch"].float16,
+        **source_options,
     )
     model.config.use_cache = False
     return model
@@ -319,9 +325,15 @@ def _load_rows(
     load_dataset = deps["load_dataset"]
 
     def config(name: str) -> list[Mapping[str, str]]:
-        loaded = load_dataset(
-            dataset["repository"], dataset[name], revision=dataset["revision"], split="train"
-        )
+        local_dataset = os.environ.get("ERASEMAP_TOFU_PATH")
+        if local_dataset:
+            loaded = load_dataset(
+                "json", data_files=str(Path(local_dataset) / f"{dataset[name]}.json"), split="train"
+            )
+        else:
+            loaded = load_dataset(
+                dataset["repository"], dataset[name], revision=dataset["revision"], split="train"
+            )
         return [cast(Mapping[str, str], row) for row in loaded]
 
     full = config("full")
@@ -355,9 +367,13 @@ def run(protocol_path: Path, output: Path, *, code_revision: str) -> dict[str, o
     output.mkdir(parents=True, exist_ok=False)
     checkpoint_root = output / "adapters"
     checkpoint_root.mkdir()
-    tokenizer = deps["AutoTokenizer"].from_pretrained(
-        protocol["model"]["repository"], revision=protocol["model"]["revision"]
+    model_source = os.environ.get("ERASEMAP_MODEL_PATH", protocol["model"]["repository"])
+    tokenizer_options = (
+        {"revision": protocol["model"]["revision"]}
+        if model_source == protocol["model"]["repository"]
+        else {"local_files_only": True}
     )
+    tokenizer = deps["AutoTokenizer"].from_pretrained(model_source, **tokenizer_options)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
     collator = QACollator(tokenizer, int(protocol["training"]["max_length"]), torch)

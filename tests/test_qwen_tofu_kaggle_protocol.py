@@ -118,3 +118,10 @@ def test_synthetic_result_recomputes_and_tampering_fails(tmp_path: Path) -> None
     (result / "trials.jsonl").write_text("\n".join(rows) + "\n")
     with pytest.raises(ValueError, match="manifest"):
         verify_result(result)
+
+
+def test_experiment_supports_offline_kaggle_inputs_without_changing_protocol() -> None:
+    source = Path("experiments/run_qwen_tofu_kaggle_v1.py").read_text()
+    assert 'os.environ.get("ERASEMAP_MODEL_PATH"' in source
+    assert 'os.environ.get("ERASEMAP_TOFU_PATH")' in source
+    assert '"local_files_only": True' in source

@@ -1,0 +1,88 @@
+{
+  "base_protocol_sha256": "sha256:9986f119c8c263edc97921e79a23310878653c1e9b23ab6a0a770fdc212de869",
+  "claim_boundary": "Project-authored bounded strategy comparison over a frozen graph catalogue; not a global decision-tree optimality theorem, independent evaluation, production pilot, or open-world guarantee.",
+  "decision": "PASS",
+  "protocol_sha256": "sha256:a537a088636a6ca8fc1cf2bb0a432f2b62b91a98b4154c9a9a27603fe03a5d80",
+  "reveal_sha256": "sha256:bb87126b00279628f5e4fd488fb12dea494f3e6e68d62a432d310d16471782b8",
+  "schema_version": "erasemap-ghostgraph-result-v2",
+  "strategy_metrics": [
+    {
+      "exact_unique_graph_recovery_count": 3,
+      "false_confident_count": 0,
+      "out_of_hypothesis_detection_count": 1,
+      "path_class_recovery_count": 2,
+      "planner_oracle_mismatch_count": 0,
+      "post_control_recurrence_count": 0,
+      "probe_count": 7,
+      "retained_subject_loss_count": 0,
+      "strategy_id": "active-minimax",
+      "true_graph_containment_rate": 1.0,
+      "unverified_negative_count": 1
+    },
+    {
+      "exact_unique_graph_recovery_count": 3,
+      "false_confident_count": 0,
+      "out_of_hypothesis_detection_count": 1,
+      "path_class_recovery_count": 2,
+      "planner_oracle_mismatch_count": 0,
+      "post_control_recurrence_count": 0,
+      "probe_count": 13,
+      "retained_subject_loss_count": 0,
+      "strategy_id": "frozen-random-feasible",
+      "true_graph_containment_rate": 1.0,
+      "unverified_negative_count": 1
+    },
+    {
+      "exact_unique_graph_recovery_count": 3,
+      "false_confident_count": 0,
+      "out_of_hypothesis_detection_count": 1,
+      "path_class_recovery_count": 2,
+      "planner_oracle_mismatch_count": 0,
+      "post_control_recurrence_count": 0,
+      "probe_count": 7,
+      "retained_subject_loss_count": 0,
+      "strategy_id": "greedy-separated-pairs",
+      "true_graph_containment_rate": 1.0,
+      "unverified_negative_count": 1
+    },
+    {
+      "exact_unique_graph_recovery_count": 0,
+      "false_confident_count": 1,
+      "out_of_hypothesis_detection_count": 0,
+      "path_class_recovery_count": 0,
+      "planner_oracle_mismatch_count": 0,
+      "post_control_recurrence_count": 0,
+      "probe_count": 0,
+      "retained_subject_loss_count": 0,
+      "strategy_id": "passive-declared-lineage",
+      "true_graph_containment_rate": 1.0,
+      "unverified_negative_count": 1
+    },
+    {
+      "exact_unique_graph_recovery_count": 3,
+      "false_confident_count": 1,
+      "out_of_hypothesis_detection_count": 0,
+      "path_class_recovery_count": 2,
+      "planner_oracle_mismatch_count": 0,
+      "post_control_recurrence_count": 0,
+      "probe_count": 16,
+      "retained_subject_loss_count": 0,
+      "strategy_id": "flat-erasure-tomography",
+      "true_graph_containment_rate": 1.0,
+      "unverified_negative_count": 1
+    },
+    {
+      "exact_unique_graph_recovery_count": 3,
+      "false_confident_count": 0,
+      "out_of_hypothesis_detection_count": 1,
+      "path_class_recovery_count": 2,
+      "planner_oracle_mismatch_count": 0,
+      "post_control_recurrence_count": 0,
+      "probe_count": 49,
+      "retained_subject_loss_count": 0,
+      "strategy_id": "nonadaptive-exhaustive",
+      "true_graph_containment_rate": 1.0,
+      "unverified_negative_count": 1
+    }
+  ]
+}

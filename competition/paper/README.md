@@ -33,7 +33,9 @@ result, first-run preregistered sequential-release and temporal results, the fin
 result, bounded Erasure Tomography local/Redis results, GhostGraph v2 active/live results, the
 separately frozen GhostGraph-T 300-case action-identification result including its strong-baseline
 tie, and the preregistered 60-case transfer study on digest-pinned stock Keycloak, MLflow, and
-Qdrant services as separate evidence layers. The transfer layer uses public Olivetti vectors but
+Qdrant services as separate evidence layers. It also retains both real Qwen–TOFU negative results:
+the semantically audited v1 under-forgetting/utility failure and the corrected author-disjoint v2
+overscrubbing transfer failure. The transfer layer uses public Olivetti vectors but
 project-authored identities, mappings, faults, and execution. It does not claim certified privacy,
 arbitrary unknown-topology coverage, a completed independently authored hidden challenge, or a production
 FaceID/eGov/government deployment.

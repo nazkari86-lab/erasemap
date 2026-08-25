@@ -26,6 +26,8 @@ GhostGraph-T changes the target from exact graph identity to the complete set of
 
 A preregistered three-seed NF4 QLoRA study on Qwen2.5-1.5B and TOFU produced a retained negative result. Post-audit accounting is six valid passes, two failures, and one semantically unevaluable perturbed-answer gate. The paired-gradient candidate missed the all-seed forgetting minimum, recovered only 33.8–39.1% of exact-reference forgetting, and failed world-fact utility. EraSeMap therefore kept the model channel incomplete. This is real-model project-operated evidence, not successful approximate unlearning or independent validation.
 
+A separately frozen v2 corrected the evaluator and selected UCSGP only on author-disjoint development deletions. The selected configuration passed development but failed all five confirmation seeds by overscrubbing: normalized exact recovery was 4.957–8.632 against the required 0.8–1.25. It passed 8/12 gates, including at least 30.48x speedup and zero reload recurrence, but failed recovery, paraphrase, retain, and membership matching. This strengthens the falsifiable methodology while remaining a negative method result.
+
 **Keywords:** biometric erasure; machine unlearning; data lineage; temporal erasure; regeneration witness; verifiable deletion; residual path; minimum-cost remediation; fail-closed audit.
 
 ## 1. Introduction
@@ -262,9 +264,9 @@ The v1 protocol and core were committed before the first result. It freezes 120 
 
 Before the first valid GPU run, the protocol froze a pinned Qwen2.5-1.5B base, TOFU revision, three seeds, NF4 QLoRA configuration, target/exact/candidate procedures, six evaluation sets, nine conjunctive gates, and artifact hashes. The exact reference retrains an adapter on `retain99`; it does not alter Qwen pretraining. Offline verification recomputes per-example losses, membership AUC, reload recurrence, all gates, and the decision from downloaded arrays.
 
-### 7.13 Prospective Qwen–TOFU v2 correction
+### 7.13 Qwen–TOFU v2 correction and author-disjoint confirmation
 
-After the v1 result, a semantic audit found that the perturbed split had been read through its ordinary `answer` field. The adaptive v2 protocol therefore remains separate from v1 and correctly evaluates paraphrased and five false answers. Six declared UCSGP configurations are selected using only `forget05` rows outside `forget01`, `retain95` utility rows that exclude all reserved authors, and two development seeds. The chosen configuration is then locked for five untouched confirmation seeds. Its primary endpoint is normalized exact-retraining recovery, with a required per-seed interval of 0.8–1.25, plus retained, real-author, world-fact, truth-margin, membership-proxy, speed, and reload gates. This is a prospective method until GPU evidence is collected.
+After the v1 result, a semantic audit found that the perturbed split had been read through its ordinary `answer` field. The separate v2 protocol correctly evaluates paraphrased and five false answers. Six declared UCSGP configurations were selected using only `forget05` rows outside `forget01`, `retain95` utility rows that exclude all reserved authors, and two development seeds. The chosen configuration was then locked for five untouched confirmation seeds. Its primary endpoint is normalized exact-retraining recovery, with a required per-seed interval of 0.8–1.25, plus retained, real-author, world-fact, truth-margin, membership-proxy, speed, and reload gates. Offline verification binds the source commit, protocol digest, raw arrays, adapter hashes, development selection, seed lists, recomputed aggregates, and decision.
 
 ## 8. Results
 
@@ -353,6 +355,8 @@ The first valid Tesla P100 run completed all three frozen seeds and returned **F
 
 However, minimum candidate forgetting lift was **0.04837**, below the frozen 0.05 gate, and maximum world-fact NLL degradation was **0.45300**, above the 0.20 gate; two of three seeds failed the utility endpoint. The result falsifies the v1 candidate's conjunctive success claim while demonstrating that EraSeMap does not convert partial metric agreement into completion.
 
+The first scientifically valid v2 run also returned **FAIL**. Development selected `ucsgp-f035-a025`, which passed all gates on two development seeds with normalized recovery 0.806–1.089. Without further tuning, five author-disjoint confirmation seeds produced recovery **4.957–8.632**, exceeding the frozen 1.25 upper bound on every seed. Maximum candidate/exact gaps were 0.85111 for paraphrase NLL, 0.18609 for retain NLL, and 0.41250 for membership AUC, against limits 0.20, 0.15, and 0.10. Truth-margin, world-fact, real-author, speed, and reload gates passed; minimum speedup was 30.48x and recurrence was zero. Overall, 8/12 gates passed. The same-environment v1 baseline under-forgot at 28.4–36.9% normalized recovery. Thus v2 identifies a real transfer trade-off—baseline under-forgetting versus UCSGP overscrubbing—rather than a successful approximate-unlearning method.
+
 ## 9. Discussion
 
 The main practical result is not merely detection. A useful erasure system must answer three questions in one reproducible chain: What remains? Why is completion blocked? What is the least expensive permitted action set that actually reaches completion? The residual path answers the first two; CDC and replay answer the third.
@@ -419,6 +423,7 @@ python scripts/verify_ghostgraph_v2.py
 python scripts/verify_ghostgraph_live_v2.py
 python scripts/verify_ghostgraph_t_v1.py
 python -m external_ghostgraph_challenge.verify_v2
+PYTHONPATH=src:. python scripts/verify_qwen_tofu_kaggle_v2.py
 scripts/reproduce_release.sh core
 ```
 

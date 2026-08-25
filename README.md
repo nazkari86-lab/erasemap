@@ -410,12 +410,16 @@ scripts/kaggle_qwen_tofu_v1.sh collect
 See [`docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V1_PREREGISTRATION.md)
 and [`docs/QWEN_TOFU_KAGGLE_V1_REPORT.md`](docs/QWEN_TOFU_KAGGLE_V1_REPORT.md).
 
-The frozen adaptive v2 follow-up corrects the semantic evaluator, replaces the loose absolute
-forget-gap rule with normalized recovery against exact retraining, adds disjoint real-author
-anchors, and selects a utility-constrained selective-gradient candidate using only author-disjoint
-development deletions. Its five-seed confirmation remains unexecuted until the committed protocol
-is submitted to Kaggle; no v2 performance claim is made yet. See
-[`docs/QWEN_TOFU_KAGGLE_V2_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V2_PREREGISTRATION.md).
+The frozen adaptive v2 follow-up corrected the semantic evaluator, replaced the loose absolute
+forget-gap rule with normalized recovery against exact retraining, added disjoint real-author
+anchors, and selected a utility-constrained selective-gradient candidate using only author-disjoint
+development deletions. The first valid five-seed confirmation is also a retained **FAIL**. The
+chosen candidate passed development, then overscrubbed every confirmation seed: normalized recovery
+was 4.957–8.632 against the frozen 0.8–1.25 interval. It passed 8/12 conjunctive gates, including
+30.48x minimum speedup and zero reload recurrence, but failed exact-matched recovery, paraphrase,
+retain, and membership endpoints. See
+[`docs/QWEN_TOFU_KAGGLE_V2_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V2_PREREGISTRATION.md) and
+[`docs/QWEN_TOFU_KAGGLE_V2_REPORT.md`](docs/QWEN_TOFU_KAGGLE_V2_REPORT.md).
 
 ```bash
 scripts/kaggle_qwen_tofu_v2.sh submit

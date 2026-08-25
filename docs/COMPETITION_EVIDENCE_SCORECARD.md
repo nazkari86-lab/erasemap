@@ -1,6 +1,6 @@
 # EraSeMap competition evidence scorecard
 
-Snapshot: 2026-08-25. This is a fixed evidence map, not an official RKNP or ISEF score and not a
+Snapshot: 2026-08-26. This is a fixed evidence map, not an official RKNP or ISEF score and not a
 probability of winning. A number may move only after the named evidence event occurs.
 
 ## Thirty-second explanation
@@ -100,14 +100,19 @@ above 7.8.
     action-equivalence objective. One-step minimax and greedy tied the global policy, so this adds a
     formal sufficient-action result and broader controlled evidence, not adaptive-baseline
     superiority or external independence. The stable RKNP score remains 9.8.
-14. **Real Qwen–TOFU model channel:** the preregistered three-seed P100 run is a retained negative
+14. **Real Qwen–TOFU model channel:** the preregistered three-seed P100 v1 run is a retained negative
     result. Post-audit accounting is six valid passes, two failures, and one unevaluable perturbed
     gate. Minimum candidate forgetting was 0.04837 against 0.05
     and maximum world-fact degradation was 0.45300 against 0.20. Exact adapter retraining passed its
     forgetting gate and reload recurrence was zero. This strengthens real-model input evidence and
     the fail-closed demonstration; it does not validate the approximate method, raise independence,
-    or change the stable 9.8 RKNP score. A separate frozen v2 corrects the evaluator and introduces
-    author-disjoint development selection, but remains prospective until its GPU result is collected.
+    or change the stable 9.8 RKNP score. The separately frozen v2 then produced another valid
+    negative result: its selected configuration passed two development seeds but overscrubbed all
+    five author-disjoint confirmation seeds, with normalized recovery 4.957–8.632 instead of
+    0.8–1.25. It passed 8/12 gates and was at least 30.48x faster with zero recurrence, but failed
+    recovery, paraphrase, retain, and membership matching. This materially strengthens methodology
+    and real-model evidence while falsifying the candidate; it does not raise independence or the
+    stable 9.8 RKNP score.
 
 ## Reproduce the jury artifact
 

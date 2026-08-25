@@ -26,6 +26,8 @@ GhostGraph-T меняет цель с точной идентичности гр
 
 Preregistered three-seed NF4 QLoRA исследование Qwen2.5-1.5B и TOFU дало сохранённый отрицательный результат. После семантического аудита корректный итог — шесть валидных passes, два failures и один unevaluable perturbed-answer gate. Paired-gradient candidate не достиг all-seed forgetting minimum, восстановил только 33,8–39,1% эффекта exact reference и провалил world-fact utility. Поэтому EraSeMap оставил model channel незавершённым. Это project-operated evidence на реальной модели, а не успешное approximate unlearning или независимая validation.
 
+Отдельно frozen v2 исправил evaluator и выбирал UCSGP только на author-disjoint development deletions. Выбранная конфигурация прошла development, но overscrubbed все пять confirmation seeds: normalized exact recovery равен 4,957–8,632 при требуемом интервале 0,8–1,25. Пройдены 8/12 gates, включая минимум 30,48x speedup и нулевой reload recurrence, но провалены recovery, paraphrase, retain и membership matching. Это усиливает falsifiable methodology, сохраняя отрицательный итог метода.
+
 **Ключевые слова:** удаление биометрии; machine unlearning; происхождение данных; временное удаление; regeneration witness; проверяемое удаление; остаточный путь; минимальная ремедиация; fail-closed аудит.
 
 ## 1. Введение
@@ -262,9 +264,9 @@ Live transfer фиксирует четыре digest-pinned stock-сервиса
 
 До первого валидного GPU run протокол зафиксировал Qwen2.5-1.5B base, TOFU revision, три seeds, NF4 QLoRA configuration, target/exact/candidate procedures, шесть evaluation sets, девять conjunctive gates и hashes artifacts. Exact reference переобучает adapter на `retain99`, но не изменяет Qwen pretraining. Offline verifier пересчитывает per-example losses, membership AUC, reload recurrence, все gates и решение из скачанных arrays.
 
-### 7.13 Prospective-коррекция Qwen–TOFU v2
+### 7.13 Коррекция Qwen–TOFU v2 и author-disjoint confirmation
 
-После результата v1 семантический аудит установил, что perturbed split читался через обычное поле `answer`. Поэтому adaptive protocol v2 отделён от v1 и корректно оценивает paraphrased answer и пять ложных answers. Шесть заранее объявленных UCSGP-конфигураций выбираются только на строках `forget05`, не входящих в `forget01`, utility-наборе `retain95`, исключающем всех reserved authors, и двух development seeds. Выбранная конфигурация затем фиксируется для пяти untouched confirmation seeds. Primary endpoint — normalized recovery относительно exact retraining с обязательным per-seed интервалом 0,8–1,25, дополненным retained, real-author, world-fact, truth-margin, membership-proxy, speed и reload gates. До получения GPU evidence это prospective method.
+После результата v1 семантический аудит установил, что perturbed split читался через обычное поле `answer`. Отдельный protocol v2 корректно оценивает paraphrased answer и пять ложных answers. Шесть заранее объявленных UCSGP-конфигураций выбирались только на строках `forget05`, не входящих в `forget01`, utility-наборе `retain95`, исключающем всех reserved authors, и двух development seeds. Выбранная конфигурация затем была зафиксирована для пяти untouched confirmation seeds. Primary endpoint — normalized recovery относительно exact retraining с обязательным per-seed интервалом 0,8–1,25, дополненным retained, real-author, world-fact, truth-margin, membership-proxy, speed и reload gates. Offline verifier связывает source commit, protocol digest, raw arrays, adapter hashes, development selection, seed lists, пересчитанные aggregates и решение.
 
 ## 8. Результаты
 
@@ -353,6 +355,8 @@ Global, one-step minimax и greedy получили одинаковые correct
 
 Однако minimum candidate forgetting lift равен **0,04837**, ниже frozen gate 0,05, а maximum world-fact NLL degradation равен **0,45300**, выше gate 0,20; два из трёх seeds провалили utility endpoint. Результат опровергает conjunctive success claim кандидата v1 и показывает, что EraSeMap не превращает частичное совпадение метрик в завершение.
 
+Первый научно валидный v2 run также вернул **FAIL**. На development выбран `ucsgp-f035-a025`, прошедший все gates на двух seeds с normalized recovery 0,806–1,089. Без дополнительной настройки пять author-disjoint confirmation seeds дали recovery **4,957–8,632**, превысив frozen upper bound 1,25 на каждом seed. Максимальные candidate/exact gaps равны 0,85111 для paraphrase NLL, 0,18609 для retain NLL и 0,41250 для membership AUC при limits 0,20, 0,15 и 0,10. Truth-margin, world-fact, real-author, speed и reload gates пройдены; минимальный speedup — 30,48x, recurrence — ноль. Всего пройдены 8/12 gates. Same-environment baseline v1 недоудалял, достигнув 28,4–36,9% normalized recovery. Следовательно, v2 выявляет реальный transfer trade-off — under-forgetting baseline против overscrubbing UCSGP, — а не успешный approximate-unlearning method.
+
 ## 9. Обсуждение
 
 Практический результат — не только обнаружение ошибки. Полезная система удаления должна в одной воспроизводимой цепочке ответить: что осталось; почему завершение заблокировано; какой самый дешёвый разрешённый набор действий действительно приводит к завершению. Остаточный путь отвечает на первые два вопроса, CDC и replay — на третий.
@@ -420,6 +424,7 @@ python scripts/verify_ghostgraph_v2.py
 python scripts/verify_ghostgraph_live_v2.py
 python scripts/verify_ghostgraph_t_v1.py
 python -m external_ghostgraph_challenge.verify_v2
+PYTHONPATH=src:. python scripts/verify_qwen_tofu_kaggle_v2.py
 scripts/reproduce_release.sh core
 ```
 

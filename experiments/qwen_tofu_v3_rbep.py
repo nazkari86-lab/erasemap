@@ -45,7 +45,8 @@ def bounded_rbep_loss(
     candidate_keep: Tensor,
     target_keep: Tensor,
     keep_labels: Tensor,
-    answer_mask: Tensor,
+    forget_answer_mask: Tensor,
+    keep_answer_mask: Tensor,
     temperature: float,
     keep_weight: float,
     cross_entropy_weight: float,
@@ -58,19 +59,19 @@ def bounded_rbep_loss(
         raise ValueError("cross_entropy_weight must be finite and nonnegative")
     forget_kl = _reference_kl(candidate_forget, base_forget, temperature)
     keep_kl = _reference_kl(candidate_keep, target_keep, temperature)
-    if answer_mask.shape != forget_kl.shape or answer_mask.shape != keep_kl.shape:
-        raise ValueError("answer mask must match forget and keep token dimensions")
-    forget_loss = _masked_mean(forget_kl, answer_mask)
-    keep_loss = _masked_mean(keep_kl, answer_mask)
-    if keep_labels.shape != answer_mask.shape:
-        raise ValueError("keep labels must match answer mask")
+    forget_loss = _masked_mean(forget_kl, forget_answer_mask)
+    keep_loss = _masked_mean(keep_kl, keep_answer_mask)
+    if keep_labels.shape != keep_answer_mask.shape:
+        raise ValueError("keep labels must match keep answer mask")
     if cross_entropy_weight:
         token_ce = functional.cross_entropy(
             candidate_keep.reshape(-1, candidate_keep.shape[-1]),
             keep_labels.reshape(-1),
             reduction="none",
         ).reshape(keep_labels.shape)
-        keep_loss = keep_loss + cross_entropy_weight * _masked_mean(token_ce, answer_mask)
+        keep_loss = keep_loss + cross_entropy_weight * _masked_mean(
+            token_ce, keep_answer_mask
+        )
     result = forget_loss + keep_weight * keep_loss
     if not bool(torch.isfinite(result)):
         raise ValueError("RBEP loss is nonfinite")
@@ -167,6 +168,7 @@ def adapter_sha256(state: Mapping[str, Tensor]) -> str:
 class RBEPCheckpoint:
     step: int
     adapter_sha256: str
+    runtime_seconds: float
     state: Mapping[str, Tensor]
 
 
@@ -229,6 +231,7 @@ def train_rbep_path(
                 RBEPCheckpoint(
                     step=step,
                     adapter_sha256=adapter_sha256(state),
+                    runtime_seconds=time.perf_counter() - started,
                     state=state,
                 )
             )

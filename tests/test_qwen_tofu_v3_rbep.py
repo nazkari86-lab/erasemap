@@ -20,7 +20,8 @@ def test_rbep_loss_is_zero_when_candidate_matches_both_references() -> None:
         candidate_keep=logits,
         target_keep=logits,
         keep_labels=torch.tensor([[1, 0]]),
-        answer_mask=torch.tensor([[True, True]]),
+        forget_answer_mask=torch.tensor([[True, True]]),
+        keep_answer_mask=torch.tensor([[True, True]]),
         temperature=1.0,
         keep_weight=1.0,
         cross_entropy_weight=0.0,
@@ -38,7 +39,8 @@ def test_rbep_loss_detaches_references_and_is_finite() -> None:
         candidate_keep=candidate,
         target_keep=target,
         keep_labels=torch.tensor([[1]]),
-        answer_mask=torch.tensor([[True]]),
+        forget_answer_mask=torch.tensor([[True]]),
+        keep_answer_mask=torch.tensor([[True]]),
         temperature=2.0,
         keep_weight=0.5,
         cross_entropy_weight=0.1,
@@ -58,7 +60,8 @@ def test_rbep_loss_rejects_empty_mask_and_invalid_temperature() -> None:
         "candidate_keep": logits,
         "target_keep": logits,
         "keep_labels": torch.tensor([[1]]),
-        "answer_mask": torch.tensor([[False]]),
+        "forget_answer_mask": torch.tensor([[False]]),
+        "keep_answer_mask": torch.tensor([[False]]),
         "keep_weight": 1.0,
         "cross_entropy_weight": 0.0,
     }
@@ -125,6 +128,7 @@ def test_train_path_projects_every_step_and_saves_declared_checkpoints() -> None
     )
     assert [checkpoint.step for checkpoint in result.checkpoints] == [2, 4]
     assert result.runtime_seconds >= 0.0
+    assert all(checkpoint.runtime_seconds > 0.0 for checkpoint in result.checkpoints)
     delta = torch.linalg.vector_norm(parameter.detach() - target["adapter"])
     assert delta <= torch.linalg.vector_norm(target["adapter"]) * 0.25 + 1e-6
     assert all(checkpoint.adapter_sha256.startswith("sha256:") for checkpoint in result.checkpoints)

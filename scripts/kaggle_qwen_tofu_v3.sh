@@ -2,7 +2,7 @@
 set -euo pipefail
 
 project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-kernel_slug="erasemap-qwen-tofu-v3"
+kernel_slug="erasemap-qwen-tofu-v3-rbep"
 source_slug="erasemap-qwen-tofu-v3-source"
 action="${1:-status}"
 credential_dir="${KAGGLE_CONFIG_DIR:-$HOME/.kaggle}"
@@ -79,7 +79,7 @@ if [[ "$action" == "submit" ]]; then
   fi
   wait_for_source_dataset
   jq --arg username "$kaggle_username" \
-    '.id = ($username + "/erasemap-qwen-tofu-v3")
+    '.id = ($username + "/erasemap-qwen-tofu-v3-rbep")
      | .dataset_sources = ["hijima/erasemap-qwen-tofu-v1-assets", ($username + "/erasemap-qwen-tofu-v3-source")]' \
     "$project_root/kaggle/qwen-tofu-v3/kernel-metadata.template.json" \
     > "$kernel_temp/kernel-metadata.json"

@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import pytest
-import torch
 
-from experiments.qwen_tofu_v3_rbep import (
+torch = pytest.importorskip("torch")
+
+from experiments.qwen_tofu_v3_rbep import (  # noqa: E402
     adapter_sha256,
     bounded_rbep_loss,
     interpolate_adapter,

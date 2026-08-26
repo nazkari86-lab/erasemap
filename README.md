@@ -427,6 +427,32 @@ scripts/kaggle_qwen_tofu_v2.sh status
 scripts/kaggle_qwen_tofu_v2.sh collect
 ```
 
+The prospective v3 study is frozen before its first GPU execution. Its Reference-Bounded Erasure
+Path (RBEP) aligns deleted-author answers toward the pinned base model, preserves retained answers
+toward the target adapter, caps the complete LoRA delta, and searches a declared checkpoint/alpha
+path. Selection sees only five disclosed two-author folds and requires at least three contiguous
+alphas that pass all 12 unchanged v2 gates. A self-hashed selection is written before either sealed
+confirmation block can be loaded. The same choice is then tested on two untouched two-author blocks
+and five new seeds each; all ten trials must pass. If no robust interval exists, the result is
+fail-closed `NO_CANDIDATE` and confirmation is never opened.
+
+There is currently **no v3 performance result**. The protocol-only verifier checks the frozen
+model/data revisions, real SHA-256 author commitments, disjoint development/confirmation/reserve
+split, unchanged gates, seeds, and selector. The first completed result will be retained whether it
+is `PASS`, `FAIL`, or `NO_CANDIDATE`; any scientific change after this freeze requires v4.
+
+```bash
+PYTHONPATH=src:. python scripts/verify_qwen_tofu_kaggle_v3.py --protocol-only
+scripts/kaggle_qwen_tofu_v3.sh submit
+scripts/kaggle_qwen_tofu_v3.sh status
+scripts/kaggle_qwen_tofu_v3.sh collect
+```
+
+See
+[`docs/QWEN_TOFU_KAGGLE_V3_PREREGISTRATION.md`](docs/QWEN_TOFU_KAGGLE_V3_PREREGISTRATION.md) and
+the approved
+[`v3 design`](docs/superpowers/specs/2026-08-26-qwen-tofu-v3-reference-bounded-erasure-design.md).
+
 See [docs/ADVANCED_UNLEARNING_REPORT.md](docs/ADVANCED_UNLEARNING_REPORT.md) for the locked results,
 and [docs/REAL_FACE_EXPERIMENT.md](docs/REAL_FACE_EXPERIMENT.md) for the earlier baseline and strict
 claim boundaries.

@@ -25,6 +25,14 @@ def _sha256(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _selection_commitment(selection: Mapping[str, object]) -> str:
+    payload = {key: value for key, value in selection.items() if key != "selection_commitment"}
+    encoded = json.dumps(
+        payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode()
+    return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
 def _json(path: Path) -> Mapping[str, Any]:
     value = json.loads(path.read_text())
     if not isinstance(value, dict):
@@ -288,6 +296,14 @@ def verify_result(
         int(method["minimum_contiguous_feasible_alphas"]),
     )
     selection = _json(result_root / "selection.json")
+    if selection.get("selection_commitment") != _selection_commitment(selection):
+        raise ValueError("selection commitment digest mismatch")
+    if selection.get("protocol_sha256") != protocol_sha256:
+        raise ValueError("selection protocol hash mismatch")
+    if selection.get("development_sha256") != _sha256(result_root / "development.json"):
+        raise ValueError("selection development hash mismatch")
+    if selection.get("code_revision") != summary.get("code_revision"):
+        raise ValueError("selection source commit mismatch")
     if selection.get("selected_path_id") != selected.path_id or not math.isclose(
         float(selection.get("selected_alpha")), selected.alpha, abs_tol=1e-12
     ):
@@ -299,12 +315,47 @@ def verify_result(
     if actual != expected or len(trials) != 10:
         raise ValueError("confirmation seed or block coverage mismatch")
     combined = summarize_v2_trials(trials, criteria)
+    primary = summarize_v2_trials(
+        [row for row in trials if row.get("block") == "primary"], criteria
+    )
+    replication = summarize_v2_trials(
+        [row for row in trials if row.get("block") == "replication"], criteria
+    )
     expected_decision = combined["decision"]
     _close(combined, summary.get("combined"), path="combined summary")
+    _close(primary, summary.get("primary"), path="primary summary")
+    _close(replication, summary.get("replication"), path="replication summary")
     if decision != expected_decision:
         raise ValueError("scientific decision mismatch")
-    _jsonl(result_root / "baseline_trials.jsonl")
-    _jsonl(result_root / "secondary_trials.jsonl")
+    baseline_trials = _jsonl(result_root / "baseline_trials.jsonl")
+    for row in baseline_trials:
+        evaluations = row.get("evaluations")
+        metrics = row.get("metrics")
+        if not isinstance(evaluations, Mapping) or not isinstance(metrics, Mapping):
+            raise ValueError("baseline raw evidence is incomplete")
+        recomputed = score_v2_trial(
+            cast(Mapping[str, Mapping[str, object]], evaluations),
+            recurrence_after_reload=float(metrics["retained_recurrence_after_reload"]),
+            candidate_runtime_seconds=float(metrics["candidate_runtime_seconds"]),
+            exact_runtime_seconds=float(metrics["exact_runtime_seconds"]),
+        )
+        _close(recomputed, metrics, path="baseline metrics")
+    secondary_trials = _jsonl(result_root / "secondary_trials.jsonl")
+    trial_index = {(str(row["block"]), int(row["seed"])): row for row in trials}
+    if {(str(row.get("block")), int(row.get("seed"))) for row in secondary_trials} != expected:
+        raise ValueError("secondary seed or block coverage mismatch")
+    secondary = cast(Mapping[str, object], protocol["secondary"])
+    threshold = float(secondary["forget_recovery_increase_max"])
+    for row in secondary_trials:
+        key = (str(row["block"]), int(row["seed"]))
+        before = float(trial_index[key]["metrics"]["candidate_exact_normalized_recovery"])
+        if not math.isclose(before, float(row["before_normalized_recovery"]), abs_tol=1e-12):
+            raise ValueError("secondary primary linkage mismatch")
+        increase = before - float(row["after_normalized_recovery"])
+        if not math.isclose(increase, float(row["forget_recovery_increase"]), abs_tol=1e-12):
+            raise ValueError("secondary recurrence recomputation mismatch")
+        if bool(row["passes_secondary_threshold"]) != (increase <= threshold):
+            raise ValueError("secondary gate mismatch")
     return {
         "decision": decision,
         "scientific": True,

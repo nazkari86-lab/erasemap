@@ -6,7 +6,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-SOURCE_DATASET = Path("/kaggle/input/erasemap-qwen-tofu-v3-source")
 INPUTS = Path("/kaggle/input")
 CHECKOUT = Path("/kaggle/working/erasemap-source")
 OUTPUT = Path("/kaggle/working/qwen-tofu-v3")
@@ -28,12 +27,12 @@ def locate_assets() -> tuple[Path, Path, Path, Path]:
     return assets, wheels, tofu, torch_wheels[0]
 
 
-def locate_model(assets: Path) -> Path:
+def locate_model(assets: Path, source: Path) -> Path:
     candidates = [
         config.parent
         for config in INPUTS.rglob("config.json")
         if assets not in config.parents
-        and SOURCE_DATASET not in config.parents
+        and source not in config.parents
         and "qwen2.5" in str(config).lower()
     ]
     if len(candidates) != 1:
@@ -42,7 +41,9 @@ def locate_model(assets: Path) -> Path:
 
 
 def locate_source() -> tuple[Path, str]:
-    markers = list(SOURCE_DATASET.rglob("ERASEMAP_CODE_REVISION"))
+    # Kaggle may mount a dataset under a normalized/versioned directory name.
+    # The immutable marker is a stronger identifier than that mount basename.
+    markers = list(INPUTS.rglob("ERASEMAP_CODE_REVISION"))
     if len(markers) != 1:
         raise RuntimeError(f"expected one source revision marker, found {markers}")
     revision = markers[0].read_text().strip()
@@ -56,8 +57,8 @@ def locate_source() -> tuple[Path, str]:
 
 def main() -> int:
     assets, wheels, tofu, frozen_torch_wheel = locate_assets()
-    model = locate_model(assets)
     source, revision = locate_source()
+    model = locate_model(assets, source)
     os.environ.update(
         {
             "ERASEMAP_MODEL_PATH": str(model),

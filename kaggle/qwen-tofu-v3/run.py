@@ -75,8 +75,12 @@ def main() -> int:
         if directory.exists():
             shutil.rmtree(directory)
     shutil.copytree(source, CHECKOUT)
-    # Keep the wheel's compatibility tags in its filename; pip validates them.
-    torch_wheel = Path("/kaggle/working") / frozen_torch_wheel.name
+    # Kaggle strips the PEP 440 local-version separator from uploaded names.
+    # Restore it while preserving the wheel's Python and platform tags.
+    torch_wheel_name = frozen_torch_wheel.name.replace("2.5.1cu121", "2.5.1+cu121")
+    if torch_wheel_name == frozen_torch_wheel.name:
+        raise RuntimeError(f"unexpected frozen Torch wheel name: {frozen_torch_wheel.name}")
+    torch_wheel = Path("/kaggle/working") / torch_wheel_name
     shutil.copy2(frozen_torch_wheel, torch_wheel)
     run(
         sys.executable,

@@ -141,16 +141,27 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
-## Evidence comparison figures
+## Direct algorithm comparisons
 
 Each panel below reproduces a committed result under its own frozen protocol. The panels must not be
 pooled into one universal “superiority score”: the source-locked experiment still contains a tie
 with the strongest full typed audit, GhostGraph-T tied the strong adaptive baselines, and the
 unlearning candidate remains slightly below exact retraining on retained utility.
 
-![EraSeMap system comparisons across frozen experiments](docs/assets/erasemap-system-comparisons.png)
+![EraSeMap algorithms versus same-protocol baselines](docs/assets/erasemap-system-comparisons.png)
 
-![MUFAC v3.2 candidate versus exact retraining](docs/assets/erasemap-unlearning-v3-comparison.png)
+![MUFAC v3.2 direct unlearning algorithm comparison](docs/assets/erasemap-unlearning-v3-comparison.png)
+
+These are not cross-paper leaderboard figures. Every panel compares methods run under the same
+committed protocol. The honest result is mixed:
+
+| Result | Direct evidence |
+|---|---|
+| **Win** | PCUG has 0 false-COMPLETE decisions versus 100/100 for checklist, model-only and receipt-only on the source-locked holdout; on stock services it has 0 versus 5 for full typed audit and 45 for native-success signals. |
+| **Win** | Targeted CDC reaches the same 20/20 replayed-COMPLETE outcome with 17.64x speedup and 94.62% fewer bytes than rebuild-all. |
+| **Win** | GhostGraph active probing uses 7 probes versus 13 random and 49 exhaustive; GhostGraph-T uses 1.28 versus 2.92 random and 8 exhaustive mean probes. |
+| **Tie** | PCUG and full typed audit both have 0/100 false COMPLETE on the source-locked holdout. Exact CDC ties greedy CDC at mean cost 17. GhostGraph-T ties one-step minimax and greedy separated-pairs at 1.28 probes. |
+| **Loss / trade-off** | The MUFAC candidate is faster than exact retraining (0.313 s versus 0.498 s) and much closer to exact behavior than gradient ascent or head-only, but retained AUC is lower than exact (91.912% versus 92.565%) and head-only (92.635%). Exact retraining remains the reference and mandatory fallback when a gate fails. |
 
 The chart inputs and provenance paths are frozen in
 [`benchmark/evidence-charts-v1.json`](benchmark/evidence-charts-v1.json). Rebuild the figures with:

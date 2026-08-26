@@ -50,6 +50,11 @@ from erasemap.receipts import (
     verify_receipt,
 )
 from erasemap.showcase import write_showcase
+from erasemap.synthetic_bank_control_plane import (
+    serve_control_plane,
+    write_control_plane_demo,
+)
+from erasemap.synthetic_bank_demo import write_synthetic_bank_demo
 from erasemap.temporal_lab import run_temporal_lab_trial
 
 
@@ -449,6 +454,49 @@ def _showcase(args: argparse.Namespace) -> int:
     return 0
 
 
+def _bank_demo(args: argparse.Namespace) -> int:
+    scenario = write_synthetic_bank_demo(args.output)
+    _print(
+        {
+            "html": str(Path(args.output) / "index.html"),
+            "scenario": str(Path(args.output) / "scenario.json"),
+            "scope": scenario["scope"],
+            "status": "READY",
+        }
+    )
+    return 0
+
+
+def _bank_control_plane_generate(args: argparse.Namespace) -> int:
+    manifest = write_control_plane_demo(args.output, customer_count=args.customers)
+    _print(
+        {
+            "customer_count": manifest["customer_count"],
+            "html": str(Path(args.output) / "index.html"),
+            "manifest": str(Path(args.output) / "manifest.json"),
+            "status": "READY",
+        }
+    )
+    return 0
+
+
+def _bank_control_plane_serve(args: argparse.Namespace) -> int:
+    _print(
+        {
+            "customer_count": args.customers,
+            "scope": "LOCAL_SYNTHETIC_ONLY",
+            "status": "SERVING",
+            "url": f"http://{args.host}:{args.port}",
+        }
+    )
+    serve_control_plane(
+        customer_count=args.customers,
+        host=args.host,
+        port=args.port,
+    )
+    return 0
+
+
 def _rse_demo(args: argparse.Namespace) -> int:
     with tempfile.TemporaryDirectory(prefix="erasemap-rse-demo-") as root:
         trial = run_temporal_lab_trial(root, seed=args.seed)
@@ -517,6 +565,26 @@ def _parser() -> argparse.ArgumentParser:
     showcase.add_argument("--repo-root", default=".")
     showcase.add_argument("--output", default="outputs/jury-showcase-v1")
     showcase.set_defaults(handler=_showcase)
+
+    bank_demo = commands.add_parser("bank-demo")
+    bank_demo.add_argument("--output", default="outputs/synthetic-bank-demo-v1")
+    bank_demo.set_defaults(handler=_bank_demo)
+
+    bank_control_plane = commands.add_parser("bank-control-plane")
+    bank_control_plane_commands = bank_control_plane.add_subparsers(
+        dest="bank_control_plane_command", required=True
+    )
+    bank_control_plane_generate = bank_control_plane_commands.add_parser("generate")
+    bank_control_plane_generate.add_argument(
+        "--output", default="outputs/synthetic-bank-control-plane-v1"
+    )
+    bank_control_plane_generate.add_argument("--customers", type=int, default=512)
+    bank_control_plane_generate.set_defaults(handler=_bank_control_plane_generate)
+    bank_control_plane_serve = bank_control_plane_commands.add_parser("serve")
+    bank_control_plane_serve.add_argument("--host", default="127.0.0.1")
+    bank_control_plane_serve.add_argument("--port", type=int, default=8765)
+    bank_control_plane_serve.add_argument("--customers", type=int, default=512)
+    bank_control_plane_serve.set_defaults(handler=_bank_control_plane_serve)
 
     rse = commands.add_parser("rse")
     rse_commands = rse.add_subparsers(dest="rse_command", required=True)

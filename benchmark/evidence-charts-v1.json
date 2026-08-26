@@ -1,0 +1,84 @@
+{
+  "schema_version": "erasemap-evidence-charts-v1",
+  "claim_boundary": "Author-generated charts from committed EraSeMap result summaries. Cross-panel values come from different frozen experiments and must not be pooled into one superiority score.",
+  "charts": [
+    {
+      "id": "01_false_complete_stress",
+      "title": "False COMPLETE: mechanism stress test",
+      "subtitle": "75 project-authored incomplete cases; lower is safer",
+      "kind": "count",
+      "labels": ["EraSeMap PCUG", "Typed-node state"],
+      "values": [0, 75],
+      "denominator": 75,
+      "source": "competition/paper/EraSeMap_scientific_paper_EN.md"
+    },
+    {
+      "id": "02_false_complete_stock_services",
+      "title": "False COMPLETE on live stock services",
+      "subtitle": "60 frozen cases on Keycloak, MLflow and Qdrant; lower is safer",
+      "kind": "count",
+      "labels": ["EraSeMap PCUG", "Full typed audit", "Native success"],
+      "values": [0, 5, 45],
+      "denominator": 60,
+      "source": "outputs/open-transfer-v1/result.json"
+    },
+    {
+      "id": "03_targeted_cdc_efficiency",
+      "title": "Targeted CDC versus rebuild-all",
+      "subtitle": "20/20 paired trials reached the same replayed COMPLETE",
+      "kind": "normalized",
+      "labels": ["Wall-clock work", "Bytes written"],
+      "series": {
+        "Rebuild-all": [100.0, 100.0],
+        "Targeted CDC": [5.67, 5.38]
+      },
+      "annotations": ["17.64x speedup", "94.62% fewer bytes"],
+      "source": "outputs/measured-multiservice-v1/result.json"
+    },
+    {
+      "id": "04_ghostgraph_probe_budget",
+      "title": "GhostGraph topology localization",
+      "subtitle": "Frozen v2 comparison; fewer probes are better",
+      "kind": "count",
+      "labels": ["Active minimax", "Frozen random", "Exhaustive"],
+      "values": [7, 13, 49],
+      "denominator": 49,
+      "source": "outputs/ghostgraph-v2/result.json"
+    },
+    {
+      "id": "05_ghostgraph_t_action_identification",
+      "title": "GhostGraph-T identifies actions, not irrelevant topology",
+      "subtitle": "300/300 correct; strong adaptive baselines tied on this benchmark",
+      "kind": "count_float",
+      "labels": ["GhostGraph-T", "Exhaustive"],
+      "values": [1.28, 8.0],
+      "denominator": 8.0,
+      "source": "outputs/ghostgraph-t-v1/result.json"
+    },
+    {
+      "id": "06_temporal_rse",
+      "title": "Why snapshot deletion is insufficient",
+      "subtitle": "Prospective RSE v2: temporal risk detection and safe-case specificity",
+      "kind": "grouped_count",
+      "labels": ["Future-risk detected", "Guarded-safe accepted"],
+      "series": {
+        "RSE": [30, 10],
+        "Snapshot / blanket baseline": [0, 0]
+      },
+      "denominators": [30, 10],
+      "source": "outputs/regeneration-safe-erasure-v2/result.json"
+    },
+    {
+      "id": "07_unlearning_tradeoff",
+      "title": "Model-unlearning trade-off, not a universal win",
+      "subtitle": "MUFAC v3.2 candidate versus exact retraining",
+      "kind": "unlearning",
+      "metrics": {
+        "retained_verification_auc": {"candidate": 0.91912, "exact": 0.92565},
+        "speedup": {"candidate": 1.593, "exact": 1.0},
+        "privacy_upper_bound": {"candidate": 0.04091, "gate": 0.05}
+      },
+      "source": "benchmark/results/mufac-safe-policy-v3-summary.json"
+    }
+  ]
+}

@@ -44,6 +44,9 @@ erasemap audit examples/five_branch_system.json --subject subject-1
 erasemap generate --seed 7 --nodes 100 --fault STALE_CACHE --output /tmp/case.json
 erasemap benchmark dev --protocol benchmark/protocol-v1.json --output outputs/dev-v1
 erasemap showcase --repo-root . --output outputs/jury-showcase-v1
+erasemap bank-demo --output outputs/synthetic-bank-demo-v1
+erasemap bank-control-plane generate --output outputs/synthetic-bank-control-plane-v1
+erasemap bank-control-plane serve --port 8765
 erasemap rse demo --seed 101
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
 PYTHONPATH=src:. python scripts/verify_erasure_tomography_redis_v1.py
@@ -68,6 +71,21 @@ Russian defense script, and adversarial Q&A are in
 [`docs/JURY_DEFENSE_RU.md`](docs/JURY_DEFENSE_RU.md), and
 [`docs/JUDGE_QA_RU.md`](docs/JUDGE_QA_RU.md). The editable 13-slide PowerPoint is
 [`competition/EraSeMap_RKNP_ISEF_RU.pptx`](competition/EraSeMap_RKNP_ISEF_RU.pptx).
+
+For a live visual story, `bank-demo` writes a self-contained clickable **synthetic bank KYC
+sandbox**. It shows a deletion request, a delayed backup-restore recurrence, bounded GhostGraph
+probes, exact remediation, and a replay-verified synthetic certificate. It has no network calls and
+is explicitly not a bank, eGov, Face ID, or production-system integration.
+
+For a stateful product demonstration, `bank-control-plane serve` starts a loopback-only local API
+and dashboard with **512 generated customers**, **3,072 registered artifacts**, searchable customer
+records, five synthetic connector contracts (PostgreSQL, Keycloak, Redis, Qdrant, and MinIO),
+approval-required dry runs, ordered deletion actions, delayed recurrence, bounded GhostGraph
+localization, replay verification, and protection of the other 511 customers. The adapters execute
+only against the in-memory synthetic sandbox. They are connector contracts and product UX evidence,
+not a connection to an organization or validation of production deletion. The Russian launch guide,
+data-channel table, jury walkthrough, and claim boundary are in
+[`docs/SYNTHETIC_BANK_CONTROL_PLANE_RU.md`](docs/SYNTHETIC_BANK_CONTROL_PLANE_RU.md).
 
 ## Proof-Carrying Unlearning Graph
 
@@ -101,7 +119,7 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Component | Current evidence status |
 |---|---|
 | Typed residual-path audit v1 | Measured controlled benchmark; see `docs/CORE_PROTOCOL.md` |
-| Deletion-matched model experiments v3 | Measured only on the named open datasets; MUFAC retained-utility gate failed |
+| Deletion-matched model experiments | Original MUFAC v3 retained-utility gate failed; adaptive v3.2 passed the unchanged bounded gates on the exposed subset; exact retraining remains the fallback |
 | PCUG/CDC and RSE/MSC deterministic cores | Lean-checked conditional soundness and finite optimality; bounded Python conformance PASS |
 | PCUG controlled development benchmark | Registered synthetic simulator; results must be read from its exported manifest |
 | PCUG source-structure generalization | v1 PASS on 125 source-derived cases; project-authored mappings/execution |
@@ -122,6 +140,25 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | External temporal hidden challenge | Commit/blind-run/reveal/score kit ready; no external run claimed |
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
+
+## Evidence comparison figures
+
+Each panel below reproduces a committed result under its own frozen protocol. The panels must not be
+pooled into one universal “superiority score”: the source-locked experiment still contains a tie
+with the strongest full typed audit, GhostGraph-T tied the strong adaptive baselines, and the
+unlearning candidate remains slightly below exact retraining on retained utility.
+
+![EraSeMap system comparisons across frozen experiments](docs/assets/erasemap-system-comparisons.png)
+
+![MUFAC v3.2 candidate versus exact retraining](docs/assets/erasemap-unlearning-v3-comparison.png)
+
+The chart inputs and provenance paths are frozen in
+[`benchmark/evidence-charts-v1.json`](benchmark/evidence-charts-v1.json). Rebuild the figures with:
+
+```bash
+.venv/bin/pip install -e '.[face]'
+.venv/bin/python experiments/render_evidence_comparisons.py
+```
 
 ## Erasure Tomography
 

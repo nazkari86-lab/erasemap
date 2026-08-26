@@ -75,7 +75,8 @@ def main() -> int:
         if directory.exists():
             shutil.rmtree(directory)
     shutil.copytree(source, CHECKOUT)
-    torch_wheel = Path("/kaggle/working/torch-v3.whl")
+    # Keep the wheel's compatibility tags in its filename; pip validates them.
+    torch_wheel = Path("/kaggle/working") / frozen_torch_wheel.name
     shutil.copy2(frozen_torch_wheel, torch_wheel)
     run(
         sys.executable,

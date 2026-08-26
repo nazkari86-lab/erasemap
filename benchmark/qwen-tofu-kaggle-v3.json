@@ -1,0 +1,129 @@
+{
+  "schema_version": "erasemap-qwen-tofu-kaggle-protocol-v3",
+  "status": "FROZEN_BEFORE_FIRST_V3_GPU_RUN",
+  "adaptation_disclosure": "Prospective adaptive follow-up designed after the retained v1 and v2 scientific FAIL results. V3 confirmation authors, seeds, thresholds, grid, selection rule, and gates are frozen before runner implementation or any v3 GPU confirmation evaluation.",
+  "research_question": "Can a reference-bounded erasure path select a stable interval on disclosed authors and then match exact adapter retraining on two untouched author blocks without overscrubbing, utility loss, privacy-proxy divergence, recurrence, or loss of the v2 speed advantage?",
+  "selection_uses_confirmation": false,
+  "model": {
+    "repository": "Qwen/Qwen2.5-1.5B",
+    "revision": "8faed761d45a263340a0528343f099c05c9a4323",
+    "quantization": "4bit_nf4",
+    "compute_dtype": "float16"
+  },
+  "dataset": {
+    "repository": "locuslab/TOFU",
+    "revision": "324592d84ae4f482ac7249b9285c2ecdb53e3a68",
+    "full": "full",
+    "author_source": "forget10",
+    "author_source_perturbed": "forget10_perturbed",
+    "retain": "retain90",
+    "holdout": "holdout05",
+    "world_facts": "world_facts",
+    "real_authors": "real_authors"
+  },
+  "author_blocks": {
+    "rows_per_author": 20,
+    "source_sha256": {
+      "forget10": "sha256:0044c8c2e70a38be93f62ec6cb1c1cc2a1f55a8df2fb549a4da2da8dde9d92f6",
+      "forget10_perturbed": "sha256:6fbcb946c57ea1d7b2124cea0e61bf3b5409d1bc10d02368f090109450ed73c7"
+    },
+    "commitments": [
+      "sha256:32c4b33f7fd5b09b7ebf764b8bb6ce5a2e41f72bf00e31f2274f06abffa8af53",
+      "sha256:6b1a8c6d29cec4d4ad4ae4cbada9a2fab7c546c26a656597076c920240b8056b",
+      "sha256:9dfa20613139bf36a683fb5eb2f56ee95b5878a41b40ab095b62c285e3d9b649",
+      "sha256:91e76d072f027a2bb4658345810d055d9258e1a055e68c5380e1c5859d6490aa",
+      "sha256:4d9933b8782ee4bad780016b284ced725a299bbdc3be07dcca66d65fb6aa9afc",
+      "sha256:f2bef10f96e295081fe603d3f4770adb82440d2d12db442820687104406eea4f",
+      "sha256:f428ec3468f1bd66d0add8034489e5c340ba126e707a067ceab4083f4362eda9",
+      "sha256:9abed35f9f49271310b08f89f0aa7cf5fd06762bc0ef089e68efbbb5f51be0b6",
+      "sha256:a302bca5db53bb1890da6ca69d668ca35028ec41fe6192084cd802750c714654",
+      "sha256:aff837ddac2d1f62ee97620fda59df3121c347e83787b0ce032eb16a9fe75e6a",
+      "sha256:6b086e92ef5859a4b952500ae5dd1375cb13d50b1d533d6068e2dc2c684e3ada",
+      "sha256:71aaac33b8564ed3aeafd7bc7e835d15242d3cdd779bfe930ad98054f67ec8a6",
+      "sha256:e6a0eee5d15c54d294662187290350ae158902054a5f9b7697af3fe61f0baecb",
+      "sha256:59acebab1d9029571ecd393dcbf630e43ffbf5652c2b245764119c25261dad4b",
+      "sha256:f5f4da5600bfa43d0be1da13aa30566252616561d466a785941c6f4cc45b027d",
+      "sha256:d844aa2a1bb2f04cd8bd88ff7920ce04b205fbd5fa997fb939bdadf97dcf7258",
+      "sha256:c2cc6e1f3dc5c422eae032cc0cb55dfa8b142003fe26a46af926a3cc1829d704",
+      "sha256:004eb7c9835978a278b7fade791e7f771b65dc718b1ba9d05363ccebce5bf037",
+      "sha256:9ae08be73cf47e0797319b376b0f47f0c2dd7ec7fcf60a57b4811ab6efd897ec",
+      "sha256:0ae6901de1778f63e1ac8de0bf8e39e5c63f84f69a0bf0bf1030dd142df1a211"
+    ],
+    "development_pairs": [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]],
+    "primary_confirmation": [10, 11],
+    "replication_confirmation": [12, 13],
+    "future_reserve": [14, 15, 16, 17, 18, 19]
+  },
+  "development_seeds": [20260828, 20260829],
+  "confirmation_seeds": [20261001, 20261002, 20261003, 20261004, 20261005],
+  "training": {
+    "max_length": 256,
+    "micro_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "target_epochs": 3,
+    "exact_epochs": 3,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0,
+    "lora_rank": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.0,
+    "target_modules": ["q_proj", "v_proj"]
+  },
+  "method": {
+    "id": "reference-bounded-erasure-path",
+    "temperatures": [1.0, 2.0],
+    "keep_weights": [0.5, 1.0, 2.0],
+    "cross_entropy_weight": 0.1,
+    "learning_rate": 0.00005,
+    "gradient_clip_norm": 1.0,
+    "delta_norm_ratio_max": 0.35,
+    "steps": 120,
+    "checkpoint_steps": [20, 40, 60, 80, 100, 120],
+    "alphas": [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.65, 0.80, 1.0],
+    "minimum_contiguous_feasible_alphas": 3,
+    "selection_order": ["widest_interval", "largest_minimum_margin", "lowest_worst_exact_gap", "highest_minimum_speedup", "lexical_path_id"],
+    "selected_alpha_rule": "lower_medoid"
+  },
+  "baselines": [
+    {"id": "paired-gradient-difference-v1-recipe", "role": "descriptive_only"},
+    {"id": "ucsgp-f035-a025-v2-recipe", "role": "descriptive_only"}
+  ],
+  "evaluation": {
+    "batch_size": 8,
+    "forget_rows": 40,
+    "holdout_rows": 40,
+    "retain_rows": 200,
+    "world_facts_rows": 100,
+    "real_author_anchor_rows": 50,
+    "real_author_test_rows": 50,
+    "perturbed_answers_per_row": 5
+  },
+  "success_criteria": {
+    "target_memorization_gain_min": 0.1,
+    "exact_forgetting_lift_min": 0.05,
+    "candidate_exact_normalized_recovery_min": 0.8,
+    "candidate_exact_normalized_recovery_max": 1.25,
+    "candidate_exact_paraphrase_nll_gap_max": 0.2,
+    "candidate_exact_truth_margin_gap_max": 0.2,
+    "candidate_exact_retain_nll_gap_max": 0.15,
+    "candidate_world_utility_nll_degradation_max": 0.2,
+    "candidate_real_author_nll_degradation_max": 0.2,
+    "candidate_exact_mia_auc_gap_max": 0.1,
+    "candidate_speedup_vs_exact_min": 1.5,
+    "retained_recurrence_after_reload_max": 0.000001
+  },
+  "secondary": {
+    "retain_only_steps": 40,
+    "learning_rate": 0.00005,
+    "forget_recovery_increase_max": 0.20,
+    "affects_primary_decision": false
+  },
+  "failure_policy": {
+    "no_robust_interval": "NO_CANDIDATE",
+    "any_primary_gate_failure": "FAIL",
+    "confirmation_trials_required": 10,
+    "retain_first_completed_scientific_run": true,
+    "post_freeze_change_requires": "v4"
+  },
+  "evidence_boundary": "A project-authored prospective adapter-level experiment on one pinned open 1.5B model and benchmark. It does not establish deletion from Qwen pretraining, certified privacy, cross-model generalization, independent replication, or production deployment."
+}

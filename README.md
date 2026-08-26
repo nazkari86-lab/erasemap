@@ -148,9 +148,58 @@ pooled into one universal “superiority score”: the source-locked experiment 
 with the strongest full typed audit, GhostGraph-T tied the strong adaptive baselines, and the
 unlearning candidate remains slightly below exact retraining on retained utility.
 
-![EraSeMap algorithms versus same-protocol baselines](docs/assets/erasemap-system-comparisons.png)
+### 1. PCUG — is deletion really complete?
+
+This figure measures **false COMPLETE**: how often an auditor incorrectly says that deletion is
+finished while data or a derivative still remains. **A smaller bar is safer.** PCUG beats the three
+narrow baselines, ties the full typed audit on the source-locked holdout, and beats it on the
+stock-service transfer.
+
+![PCUG direct baseline comparison](docs/assets/comparison-pcug.png)
+
+### 2. CDC — what is the cheapest sufficient deletion plan?
+
+All compared methods must reach the same final replayed-COMPLETE result. The graphs then ask how
+much the deletion costs, how long it takes, and how many bytes it rewrites. **Smaller is better in
+the first three graphs; larger is better only for successful completion.** Exact CDC ties greedy
+CDC on the small development set and targeted CDC substantially beats rebuild-all in measured work.
+
+![CDC cost, speed, bytes and completion comparisons](docs/assets/comparison-cdc.png)
+
+### 3. GhostGraph — how efficiently can hidden recovery paths be found?
+
+The first two graphs measure the number of active probes: **fewer probes mean faster diagnosis**.
+The other two measure correctness and dangerous false confidence. GhostGraph beats random and
+exhaustive search on probe count, but honestly ties one-step minimax and greedy separated-pairs on
+the current GhostGraph-T benchmark.
+
+![GhostGraph probe, accuracy and safety comparisons](docs/assets/comparison-ghostgraph.png)
+
+### 4. RSE — can deleted data return later?
+
+Snapshot deletion checks only the present. RSE additionally models delayed restoration. The graphs
+show future-risk detection, acceptance of genuinely safe cases, and later recurrence. **High
+detection/specificity and zero recurrence are better.** These results are prospective simulations,
+not an external production deployment.
+
+![RSE temporal deletion comparisons](docs/assets/comparison-rse.png)
+
+### 5. Gated model unlearning — is it fast, useful and private simultaneously?
+
+These six graphs compare the same model and split. They separately show retained-user utility,
+forgotten-identity behavior, privacy-attack advantage, distance from exact retraining, and runtime.
+The candidate is faster and much closer to exact behavior than gradient ascent/head-only, but it
+**does not win every metric**: exact and head-only have slightly higher retained AUC. Exact
+retraining therefore remains the safety fallback.
 
 ![MUFAC v3.2 direct unlearning algorithm comparison](docs/assets/erasemap-unlearning-v3-comparison.png)
+
+### One-page overview
+
+The compact figure below is useful when all system-level results must fit on one slide. The five
+figures above should be used when explaining the project to judges.
+
+![EraSeMap algorithms versus same-protocol baselines](docs/assets/erasemap-system-comparisons.png)
 
 These are not cross-paper leaderboard figures. Every panel compares methods run under the same
 committed protocol. The honest result is mixed:

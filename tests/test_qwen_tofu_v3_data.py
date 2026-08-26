@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -7,12 +8,19 @@ import pytest
 
 from experiments.qwen_tofu_v3_data import (
     AuthorBlock,
+    ConfirmationView,
+    DevelopmentView,
     build_author_lock,
+    compute_selection_commitment,
+    load_confirmation_view,
+    load_development_view,
     load_jsonl,
     partition_author_blocks,
     row_fingerprint,
     validate_perturbed_alignment,
 )
+
+PROTOCOL = Path("benchmark/qwen-tofu-kaggle-v3.json")
 
 
 def _rows(authors: int = 3, rows_per_author: int = 20) -> list[dict[str, object]]:
@@ -36,6 +44,25 @@ def _perturbed(rows: list[dict[str, object]]) -> list[dict[str, object]]:
         }
         for index, row in enumerate(rows)
     ]
+
+
+def _protocol_for_rows(tmp_path: Path, rows: list[dict[str, object]]) -> Path:
+    protocol = json.loads(PROTOCOL.read_text())
+    protocol["author_blocks"]["commitments"] = [
+        block.commitment for block in partition_author_blocks(rows, rows_per_author=20)
+    ]
+    path = tmp_path / "protocol.json"
+    path.write_text(json.dumps(protocol))
+    return path
+
+
+def _write_selection(path: Path, protocol_sha256: str) -> None:
+    selection = {
+        "protocol_sha256": protocol_sha256,
+        "selected_path_id": "rbep-t1-k05-s20",
+    }
+    selection["selection_commitment"] = compute_selection_commitment(selection)
+    path.write_text(json.dumps(selection))
 
 
 def test_partition_rejects_incomplete_twenty_row_author() -> None:
@@ -100,3 +127,81 @@ def test_jsonl_loader_rejects_non_objects(tmp_path: Path) -> None:
     path.write_text(json.dumps(["not", "an", "object"]) + "\n")
     with pytest.raises(ValueError, match="JSON object"):
         load_jsonl(path)
+
+
+def test_development_view_exposes_only_declared_development_blocks(tmp_path: Path) -> None:
+    rows = _rows(authors=20)
+    protocol = _protocol_for_rows(tmp_path, rows)
+    view = load_development_view(
+        rows,
+        _perturbed(rows),
+        protocol_path=protocol,
+        holdout_rows=rows[:4],
+        world_fact_rows=rows[4:8],
+        real_anchor_rows=rows[8:12],
+        real_test_rows=rows[12:16],
+    )
+    assert isinstance(view, DevelopmentView)
+    assert [fold.block_indices for fold in view.folds] == [
+        (0, 1),
+        (2, 3),
+        (4, 5),
+        (6, 7),
+        (8, 9),
+    ]
+    assert all(len(fold.direct) == 40 for fold in view.folds)
+    visible = {row_fingerprint(row) for fold in view.folds for row in fold.direct}
+    sealed = {row_fingerprint(row) for row in rows[200:280]}
+    assert visible.isdisjoint(sealed)
+
+
+def test_confirmation_requires_matching_selection_commitment(tmp_path: Path) -> None:
+    rows = _rows(authors=20)
+    protocol = _protocol_for_rows(tmp_path, rows)
+    protocol_sha256 = "sha256:" + hashlib.sha256(protocol.read_bytes()).hexdigest()
+    selection = tmp_path / "selection.json"
+    with pytest.raises(ValueError, match="selection commitment"):
+        load_confirmation_view(
+            rows,
+            _perturbed(rows),
+            protocol_path=protocol,
+            selection_path=selection,
+            expected_protocol_sha256=protocol_sha256,
+            holdout_rows=rows[:4],
+            world_fact_rows=rows[4:8],
+            real_test_rows=rows[8:12],
+        )
+    _write_selection(selection, "sha256:" + "0" * 64)
+    with pytest.raises(ValueError, match="protocol hash"):
+        load_confirmation_view(
+            rows,
+            _perturbed(rows),
+            protocol_path=protocol,
+            selection_path=selection,
+            expected_protocol_sha256=protocol_sha256,
+            holdout_rows=rows[:4],
+            world_fact_rows=rows[4:8],
+            real_test_rows=rows[8:12],
+        )
+
+
+def test_confirmation_view_exposes_only_two_sealed_blocks(tmp_path: Path) -> None:
+    rows = _rows(authors=20)
+    protocol = _protocol_for_rows(tmp_path, rows)
+    protocol_sha256 = "sha256:" + hashlib.sha256(protocol.read_bytes()).hexdigest()
+    selection = tmp_path / "selection.json"
+    _write_selection(selection, protocol_sha256)
+    view = load_confirmation_view(
+        rows,
+        _perturbed(rows),
+        protocol_path=protocol,
+        selection_path=selection,
+        expected_protocol_sha256=protocol_sha256,
+        holdout_rows=rows[:4],
+        world_fact_rows=rows[4:8],
+        real_test_rows=rows[8:12],
+    )
+    assert isinstance(view, ConfirmationView)
+    assert view.primary.block_indices == (10, 11)
+    assert view.replication.block_indices == (12, 13)
+    assert len(view.primary.direct) == len(view.replication.direct) == 40

@@ -47,6 +47,38 @@ class AuthorBlock:
     rows: tuple[Mapping[str, object], ...]
 
 
+@dataclass(frozen=True, slots=True)
+class QA:
+    question: str
+    answer: str
+
+
+@dataclass(frozen=True, slots=True)
+class DeletionFold:
+    block_indices: tuple[int, ...]
+    block_commitments: tuple[str, ...]
+    direct: tuple[Mapping[str, object], ...]
+    perturbed: tuple[Mapping[str, object], ...]
+
+
+@dataclass(frozen=True, slots=True)
+class DevelopmentView:
+    folds: tuple[DeletionFold, ...]
+    holdout: tuple[QA, ...]
+    world_facts: tuple[QA, ...]
+    real_anchor: tuple[QA, ...]
+    real_test: tuple[QA, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ConfirmationView:
+    primary: DeletionFold
+    replication: DeletionFold
+    holdout: tuple[QA, ...]
+    world_facts: tuple[QA, ...]
+    real_test: tuple[QA, ...]
+
+
 def partition_author_blocks(
     rows: Sequence[Mapping[str, object]], *, rows_per_author: int
 ) -> tuple[AuthorBlock, ...]:
@@ -129,6 +161,167 @@ def build_author_lock(
         "rows_per_author": rows_per_author,
         "schema_version": "erasemap-qwen-tofu-author-lock-v3",
     }
+
+
+def _qa_rows(rows: Sequence[Mapping[str, object]]) -> tuple[QA, ...]:
+    return tuple(QA(_text(row, "question"), _text(row, "answer")) for row in rows)
+
+
+def _protocol(path: Path) -> Mapping[str, object]:
+    value = json.loads(path.read_text())
+    if not isinstance(value, dict):
+        raise ValueError("protocol must be a JSON object")
+    if value.get("status") != "FROZEN_BEFORE_FIRST_V3_GPU_RUN":
+        raise ValueError("protocol is not frozen")
+    return cast(Mapping[str, object], value)
+
+
+def _author_blocks_config(protocol: Mapping[str, object]) -> Mapping[str, object]:
+    value = protocol.get("author_blocks")
+    if not isinstance(value, dict):
+        raise ValueError("protocol author_blocks are missing")
+    return cast(Mapping[str, object], value)
+
+
+def _validated_blocks(
+    direct_rows: Sequence[Mapping[str, object]],
+    perturbed_rows: Sequence[Mapping[str, object]],
+    protocol: Mapping[str, object],
+) -> tuple[AuthorBlock, ...]:
+    config = _author_blocks_config(protocol)
+    rows_per_author = config.get("rows_per_author")
+    commitments = config.get("commitments")
+    if not isinstance(rows_per_author, int) or not isinstance(commitments, list):
+        raise ValueError("invalid author-block protocol")
+    validate_perturbed_alignment(direct_rows, perturbed_rows, expected_answers=5)
+    blocks = partition_author_blocks(direct_rows, rows_per_author=rows_per_author)
+    actual = [block.commitment for block in blocks]
+    if actual != commitments:
+        raise ValueError("author block commitment drift")
+    return blocks
+
+
+def _indices(config: Mapping[str, object], field: str) -> tuple[int, ...]:
+    value = config.get(field)
+    if not isinstance(value, list) or not all(isinstance(item, int) for item in value):
+        raise ValueError(f"invalid {field} author indices")
+    return tuple(cast(list[int], value))
+
+
+def _fold(
+    indices: tuple[int, ...],
+    blocks: tuple[AuthorBlock, ...],
+    perturbed_rows: Sequence[Mapping[str, object]],
+) -> DeletionFold:
+    if not indices or len(set(indices)) != len(indices):
+        raise ValueError("deletion fold must contain distinct authors")
+    try:
+        selected = tuple(blocks[index] for index in indices)
+    except IndexError as exc:
+        raise ValueError("author index is out of range") from exc
+    direct = tuple(row for block in selected for row in block.rows)
+    perturbed = tuple(
+        perturbed_rows[index * len(blocks[0].rows) + offset]
+        for index in indices
+        for offset in range(len(blocks[0].rows))
+    )
+    return DeletionFold(
+        block_indices=indices,
+        block_commitments=tuple(block.commitment for block in selected),
+        direct=direct,
+        perturbed=perturbed,
+    )
+
+
+def load_development_view(
+    direct_rows: Sequence[Mapping[str, object]],
+    perturbed_rows: Sequence[Mapping[str, object]],
+    *,
+    protocol_path: Path,
+    holdout_rows: Sequence[Mapping[str, object]],
+    world_fact_rows: Sequence[Mapping[str, object]],
+    real_anchor_rows: Sequence[Mapping[str, object]],
+    real_test_rows: Sequence[Mapping[str, object]],
+) -> DevelopmentView:
+    protocol = _protocol(protocol_path)
+    config = _author_blocks_config(protocol)
+    blocks = _validated_blocks(direct_rows, perturbed_rows, protocol)
+    raw_pairs = config.get("development_pairs")
+    if not isinstance(raw_pairs, list):
+        raise ValueError("development pairs are missing")
+    pairs: list[tuple[int, ...]] = []
+    for pair in raw_pairs:
+        if not isinstance(pair, list) or not all(isinstance(item, int) for item in pair):
+            raise ValueError("invalid development pair")
+        pairs.append(tuple(cast(list[int], pair)))
+    visible = {index for pair in pairs for index in pair}
+    sealed = {
+        *_indices(config, "primary_confirmation"),
+        *_indices(config, "replication_confirmation"),
+        *_indices(config, "future_reserve"),
+    }
+    if visible & sealed:
+        raise ValueError("development and sealed author blocks overlap")
+    return DevelopmentView(
+        folds=tuple(_fold(pair, blocks, perturbed_rows) for pair in pairs),
+        holdout=_qa_rows(holdout_rows),
+        world_facts=_qa_rows(world_fact_rows),
+        real_anchor=_qa_rows(real_anchor_rows),
+        real_test=_qa_rows(real_test_rows),
+    )
+
+
+def compute_selection_commitment(selection: Mapping[str, object]) -> str:
+    payload = {key: value for key, value in selection.items() if key != "selection_commitment"}
+    return _sha256_bytes(_canonical(payload))
+
+
+def _load_selection(path: Path, expected_protocol_sha256: str) -> Mapping[str, object]:
+    if not path.is_file():
+        raise ValueError("selection commitment is required before confirmation")
+    value = json.loads(path.read_text())
+    if not isinstance(value, dict):
+        raise ValueError("selection commitment must be a JSON object")
+    selection = cast(Mapping[str, object], value)
+    if selection.get("protocol_sha256") != expected_protocol_sha256:
+        raise ValueError("selection protocol hash mismatch")
+    if not isinstance(selection.get("selected_path_id"), str):
+        raise ValueError("selection path is missing")
+    if selection.get("selection_commitment") != compute_selection_commitment(selection):
+        raise ValueError("selection commitment digest mismatch")
+    return selection
+
+
+def load_confirmation_view(
+    direct_rows: Sequence[Mapping[str, object]],
+    perturbed_rows: Sequence[Mapping[str, object]],
+    *,
+    protocol_path: Path,
+    selection_path: Path,
+    expected_protocol_sha256: str,
+    holdout_rows: Sequence[Mapping[str, object]],
+    world_fact_rows: Sequence[Mapping[str, object]],
+    real_test_rows: Sequence[Mapping[str, object]],
+) -> ConfirmationView:
+    protocol = _protocol(protocol_path)
+    actual_protocol_sha256 = _sha256_file(protocol_path)
+    if actual_protocol_sha256 != expected_protocol_sha256:
+        raise ValueError("protocol hash drift")
+    _load_selection(selection_path, expected_protocol_sha256)
+    config = _author_blocks_config(protocol)
+    blocks = _validated_blocks(direct_rows, perturbed_rows, protocol)
+    primary = _indices(config, "primary_confirmation")
+    replication = _indices(config, "replication_confirmation")
+    reserve = set(_indices(config, "future_reserve"))
+    if set(primary) & set(replication) or (set(primary) | set(replication)) & reserve:
+        raise ValueError("confirmation and reserve author blocks overlap")
+    return ConfirmationView(
+        primary=_fold(primary, blocks, perturbed_rows),
+        replication=_fold(replication, blocks, perturbed_rows),
+        holdout=_qa_rows(holdout_rows),
+        world_facts=_qa_rows(world_fact_rows),
+        real_test=_qa_rows(real_test_rows),
+    )
 
 
 def load_jsonl(path: Path) -> list[Mapping[str, Any]]:

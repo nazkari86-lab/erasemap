@@ -24,7 +24,6 @@ fi
 
 kernel_slug="erasemap-qwen-tofu-v6-dev-${shard_index}"
 kernel_id="$kaggle_username/$kernel_slug"
-source_id="$kaggle_username/erasemap-qwen-tofu-v3-source"
 
 if [[ "$action" == "status" ]]; then
   kaggle kernels status "$kernel_id"
@@ -37,6 +36,7 @@ if [[ "$action" == "submit" ]]; then
     exit 2
   fi
   revision="$(git -C "$project_root" rev-parse HEAD)"
+  source_id="$kaggle_username/erasemap-qwen-tofu-v6-source-${revision:0:7}"
   source_temp="$(mktemp -d "${TMPDIR:-/tmp}/erasemap-v6-source.XXXXXX")"
   kernel_temp="$(mktemp -d "${TMPDIR:-/tmp}/erasemap-v6-kernel.XXXXXX")"
   cleanup() {
@@ -51,9 +51,11 @@ if [[ "$action" == "submit" ]]; then
   jq -n --arg id "$source_id" \
     '{title:"EraSeMap Qwen TOFU v3 source",id:$id,licenses:[{name:"MIT"}]}' \
     > "$source_temp/dataset-metadata.json"
-  kaggle datasets version -p "$source_temp" -m "Frozen shard source $revision" --dir-mode zip
+  kaggle datasets create -p "$source_temp" --dir-mode zip
   for _ in {1..60}; do
-    if [[ "$(kaggle datasets status "$source_id" 2>/dev/null || true)" == "ready" ]]; then
+    if [[ "$(kaggle datasets status "$source_id" 2>/dev/null || true)" == "ready" ]] \
+      && kaggle datasets files "$source_id" --page-size 5 2>/dev/null \
+        | grep -q 'ERASEMAP_CODE_REVISION'; then
       break
     fi
     sleep 5
@@ -65,7 +67,7 @@ if [[ "$action" == "submit" ]]; then
   find "$kernel_temp" -name '*.bak' -delete
   jq -n \
     --arg id "$kernel_id" \
-    --arg title "EraSeMap Qwen TOFU v6 development shard $shard_index" \
+    --arg title "erasemap qwen tofu v6 dev $shard_index" \
     --arg source "$source_id" \
     '{id:$id,title:$title,code_file:"run.py",language:"python",kernel_type:"script",is_private:true,enable_gpu:true,enable_internet:false,dataset_sources:["hijima/erasemap-qwen-tofu-v1-assets",$source],competition_sources:[],kernel_sources:[],model_sources:["qwen-lm/qwen2.5/transformers/1.5b/1"]}' \
     > "$kernel_temp/kernel-metadata.json"

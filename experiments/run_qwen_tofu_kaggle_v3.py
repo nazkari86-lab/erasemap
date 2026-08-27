@@ -203,9 +203,7 @@ class EvidenceJournal:
     ) -> None:
         self.begin_confirmation()
         trial_path = self._write_once("trials.jsonl", trials, jsonl=True)
-        baseline_path = self._write_once(
-            "baseline_trials.jsonl", baseline_trials, jsonl=True
-        )
+        baseline_path = self._write_once("baseline_trials.jsonl", baseline_trials, jsonl=True)
         self._transition(
             "CONFIRMATION_COMPLETE",
             {
@@ -283,9 +281,7 @@ class EvidenceJournal:
         return self._seal(summary, expected="SECONDARY_COMPLETE")
 
 
-def run_smoke(
-    protocol_path: Path, output: Path, *, code_revision: str
-) -> dict[str, object]:
+def run_smoke(protocol_path: Path, output: Path, *, code_revision: str) -> dict[str, object]:
     journal = EvidenceJournal(
         output,
         protocol_path=protocol_path,
@@ -336,9 +332,7 @@ def _normal_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
     return [_normal(row.get("question"), row.get("answer")) for row in rows]
 
 
-def _load_common_inputs(
-    protocol: Mapping[str, Any], deps: Mapping[str, Any]
-) -> dict[str, object]:
+def _load_common_inputs(protocol: Mapping[str, Any], deps: Mapping[str, Any]) -> dict[str, object]:
     _verify_source_assets(protocol)
     direct = _dataset_rows(protocol, deps, "author_source")
     perturbed = _dataset_rows(protocol, deps, "author_source_perturbed")
@@ -378,9 +372,7 @@ def _load_common_inputs(
     }
 
 
-def _development_view(
-    inputs: Mapping[str, object], protocol_path: Path
-) -> DevelopmentView:
+def _development_view(inputs: Mapping[str, object], protocol_path: Path) -> DevelopmentView:
     return load_development_view(
         cast(Sequence[Mapping[str, object]], inputs["direct"]),
         cast(Sequence[Mapping[str, object]], inputs["perturbed"]),
@@ -527,10 +519,7 @@ def _prepare_fold(
 
 
 def _path_id(temperature: float, keep_weight: float, checkpoint: int) -> str:
-    return (
-        f"rbep-t{temperature:.1f}-k{keep_weight:.1f}-s{checkpoint:03d}"
-        .replace(".", "p")
-    )
+    return f"rbep-t{temperature:.1f}-k{keep_weight:.1f}-s{checkpoint:03d}".replace(".", "p")
 
 
 def _train_and_evaluate_paths(
@@ -578,9 +567,7 @@ def _train_and_evaluate_paths(
             for name, parameter in candidate.named_parameters()
             if parameter.requires_grad
         }
-        target_state = {
-            name: parameter.detach().clone() for name, parameter in parameters.items()
-        }
+        target_state = {name: parameter.detach().clone() for name, parameter in parameters.items()}
         forget_stream = iter(
             _cycle_loader(
                 cast(Sequence[Mapping[str, str]], scenario["train_forget"]),
@@ -621,23 +608,39 @@ def _train_and_evaluate_paths(
         ) -> Any:
             forget_batch = _move(next(forget_stream), candidate.device)
             keep_batch = _move(next(keep_stream), candidate.device)
-            candidate_forget = candidate(
-                input_ids=forget_batch["input_ids"],
-                attention_mask=forget_batch["attention_mask"],
-            ).logits[:, :-1, :].float()
-            candidate_keep = candidate(
-                input_ids=keep_batch["input_ids"],
-                attention_mask=keep_batch["attention_mask"],
-            ).logits[:, :-1, :].float()
-            with torch.no_grad():
-                base_forget = base(
+            candidate_forget = (
+                candidate(
                     input_ids=forget_batch["input_ids"],
                     attention_mask=forget_batch["attention_mask"],
-                ).logits[:, :-1, :].float()
-                target_keep = target(
+                )
+                .logits[:, :-1, :]
+                .float()
+            )
+            candidate_keep = (
+                candidate(
                     input_ids=keep_batch["input_ids"],
                     attention_mask=keep_batch["attention_mask"],
-                ).logits[:, :-1, :].float()
+                )
+                .logits[:, :-1, :]
+                .float()
+            )
+            with torch.no_grad():
+                base_forget = (
+                    base(
+                        input_ids=forget_batch["input_ids"],
+                        attention_mask=forget_batch["attention_mask"],
+                    )
+                    .logits[:, :-1, :]
+                    .float()
+                )
+                target_keep = (
+                    target(
+                        input_ids=keep_batch["input_ids"],
+                        attention_mask=keep_batch["attention_mask"],
+                    )
+                    .logits[:, :-1, :]
+                    .float()
+                )
             forget_labels = forget_batch["labels"][:, 1:]
             keep_labels = keep_batch["labels"][:, 1:]
             return bounded_rbep_loss(
@@ -701,9 +704,7 @@ def _train_and_evaluate_paths(
                     candidate.save_pretrained(artifact_path)
                     candidate_digest = _adapter_digest(artifact_path)
                     reloaded_base = _load_base(protocol, deps)
-                    reloaded = deps["PeftModel"].from_pretrained(
-                        reloaded_base, artifact_path
-                    )
+                    reloaded = deps["PeftModel"].from_pretrained(reloaded_base, artifact_path)
                     reloaded_eval = _evaluate_model(
                         reloaded,
                         cast(Mapping[str, object], scenario["evaluation"]),
@@ -833,10 +834,7 @@ def _run_descriptive_baselines(
         "target_digest": prepared["target_digest"],
         "target_path": target_path,
     }
-    configs = {
-        str(config["id"]): config
-        for config in v2_protocol["candidate"]["development_grid"]
-    }
+    configs = {str(config["id"]): config for config in v2_protocol["candidate"]["development_grid"]}
     rows = {"real_anchor": inputs["real_anchor"]}
     baseline_root = checkpoint_root / "baselines" / block
     baseline_root.mkdir(parents=True, exist_ok=True)
@@ -911,9 +909,7 @@ def _run_secondary_relearning(
     before_metrics = cast(Mapping[str, Any], trial["metrics"])
     target_nll = float(before_metrics["target_forget_answer_nll"])
     exact_nll = float(before_metrics["exact_forget_answer_nll"])
-    after_nll = sum(float(value) for value in after["forget_answer"]) / len(
-        after["forget_answer"]
-    )
+    after_nll = sum(float(value) for value in after["forget_answer"]) / len(after["forget_answer"])
     denominator = exact_nll - target_nll
     if denominator <= 0.0:
         raise ValueError("secondary exact forgetting denominator is invalid")
@@ -932,17 +928,13 @@ def _run_secondary_relearning(
     }
 
 
-def run_scientific(
-    protocol_path: Path, output: Path, *, code_revision: str
-) -> dict[str, object]:
+def run_scientific(protocol_path: Path, output: Path, *, code_revision: str) -> dict[str, object]:
     protocol = cast(dict[str, Any], json.loads(protocol_path.read_text()))
     deps = _load_dependencies()
     torch = deps["torch"]
     if not torch.cuda.is_available():
         raise RuntimeError("a CUDA GPU is required for the frozen v3 experiment")
-    journal = EvidenceJournal(
-        output, protocol_path=protocol_path, code_revision=code_revision
-    )
+    journal = EvidenceJournal(output, protocol_path=protocol_path, code_revision=code_revision)
     checkpoint_root = output / "adapters"
     checkpoint_root.mkdir()
     model_source = os.environ.get("ERASEMAP_MODEL_PATH", protocol["model"]["repository"])
@@ -1144,6 +1136,96 @@ def run_scientific(
     )
 
 
+def run_development_shard(
+    protocol_path: Path,
+    output: Path,
+    *,
+    code_revision: str,
+    fold_index: int,
+) -> dict[str, object]:
+    """Run one execution-only shard without changing the frozen protocol."""
+    protocol = cast(dict[str, Any], json.loads(protocol_path.read_text()))
+    deps = _load_dependencies()
+    torch = deps["torch"]
+    if not torch.cuda.is_available():
+        raise RuntimeError("a CUDA GPU is required for the frozen v3 experiment")
+    if output.exists():
+        raise FileExistsError(f"refusing to overwrite shard directory: {output}")
+    output.mkdir(parents=True)
+    checkpoint_root = output / "adapters"
+    checkpoint_root.mkdir()
+    model_source = os.environ.get("ERASEMAP_MODEL_PATH", protocol["model"]["repository"])
+    tokenizer_options = (
+        {"revision": protocol["model"]["revision"]}
+        if model_source == protocol["model"]["repository"]
+        else {"local_files_only": True}
+    )
+    tokenizer = deps["AutoTokenizer"].from_pretrained(model_source, **tokenizer_options)
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    collator = QACollator(tokenizer, int(protocol["training"]["max_length"]), torch)
+    inputs = _load_common_inputs(protocol, deps)
+    development_view = _development_view(inputs, protocol_path)
+    if fold_index < 0 or fold_index >= len(development_view.folds):
+        raise ValueError(f"development fold must be in [0, {len(development_view.folds)})")
+    fold = development_view.folds[fold_index]
+    trials: list[dict[str, object]] = []
+    for seed_value in protocol["development_seeds"]:
+        seed = int(seed_value)
+        target_path = _train_target_once(
+            seed,
+            inputs,
+            protocol=protocol,
+            checkpoint_root=checkpoint_root,
+            collator=collator,
+            deps=deps,
+        )
+        scenario = _scenario(fold, inputs, protocol=protocol)
+        prepared = _prepare_fold(
+            seed,
+            scenario,
+            target_path,
+            protocol=protocol,
+            collator=collator,
+            deps=deps,
+        )
+        trials.extend(
+            _train_and_evaluate_paths(
+                seed,
+                f"development-{fold_index}",
+                scenario,
+                prepared,
+                target_path,
+                inputs,
+                protocol=protocol,
+                collator=collator,
+                deps=deps,
+            )
+        )
+        _release(prepared["base"], torch)
+        _release(prepared["target"], torch)
+    trial_path = output / "development-trials.jsonl"
+    trial_path.write_bytes(b"".join(_canonical(row) + b"\n" for row in trials))
+    manifest: dict[str, object] = {
+        "code_revision": code_revision,
+        "development_seeds": [int(value) for value in protocol["development_seeds"]],
+        "environment": {
+            "cuda": torch.version.cuda,
+            "gpu": torch.cuda.get_device_name(0),
+        },
+        "fold_index": fold_index,
+        "parent_protocol_sha256": _sha256(protocol_path),
+        "phase": "development",
+        "schema_version": "erasemap-qwen-tofu-v3-shard-v1",
+        "scientific_inputs_frozen": True,
+        "trial_count": len(trials),
+        "trials_sha256": _sha256(trial_path),
+    }
+    manifest_path = output / "manifest.json"
+    manifest_path.write_bytes(_canonical(manifest) + b"\n")
+    return manifest
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run frozen Qwen-TOFU Kaggle v3")
     parser.add_argument(
@@ -1153,14 +1235,23 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--output", type=Path, default=Path("/kaggle/working/qwen-tofu-v3"))
     parser.add_argument("--code-revision", default=os.environ.get("ERASEMAP_CODE_REVISION"))
+    parser.add_argument("--development-fold", type=int)
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args(argv)
     revision = args.code_revision or _git_revision()
-    result = (
-        run_smoke(args.protocol, args.output, code_revision=revision)
-        if args.smoke
-        else run_scientific(args.protocol, args.output, code_revision=revision)
-    )
+    if args.smoke and args.development_fold is not None:
+        parser.error("--smoke and --development-fold are mutually exclusive")
+    if args.development_fold is not None:
+        result = run_development_shard(
+            args.protocol,
+            args.output,
+            code_revision=revision,
+            fold_index=args.development_fold,
+        )
+    elif args.smoke:
+        result = run_smoke(args.protocol, args.output, code_revision=revision)
+    else:
+        result = run_scientific(args.protocol, args.output, code_revision=revision)
     print(json.dumps(result, sort_keys=True))
     return 0
 

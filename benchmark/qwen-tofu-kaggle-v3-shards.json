@@ -1,0 +1,31 @@
+{
+  "schema_version": "erasemap-qwen-tofu-v3-execution-plan-v1",
+  "status": "FROZEN_AFTER_V5_TIME_LIMIT_BEFORE_SHARDED_RUNS",
+  "parent_protocol": "benchmark/qwen-tofu-kaggle-v3.json",
+  "parent_protocol_sha256": "sha256:23c3e4fc68930cce97550260a57a63e05a197c5ca7347ac773a434b1e4c762e9",
+  "reason": "Kernel version 5 reached the Kaggle wall-clock limit before sealing a result.",
+  "scientific_change": false,
+  "invariants": [
+    "dataset revisions",
+    "model revision",
+    "author blocks",
+    "development and confirmation seeds",
+    "path grid and checkpoints",
+    "selection rule",
+    "success gates"
+  ],
+  "development_shards": [
+    {"index": 0, "fold": 0, "seeds": [20260828, 20260829]},
+    {"index": 1, "fold": 1, "seeds": [20260828, 20260829]},
+    {"index": 2, "fold": 2, "seeds": [20260828, 20260829]},
+    {"index": 3, "fold": 3, "seeds": [20260828, 20260829]},
+    {"index": 4, "fold": 4, "seeds": [20260828, 20260829]}
+  ],
+  "confirmation_shards_after_selection": [
+    {"index": 0, "seed": 20261001, "blocks": ["primary", "replication"]},
+    {"index": 1, "seed": 20261002, "blocks": ["primary", "replication"]},
+    {"index": 2, "seed": 20261003, "blocks": ["primary", "replication"]},
+    {"index": 3, "seed": 20261004, "blocks": ["primary", "replication"]},
+    {"index": 4, "seed": 20261005, "blocks": ["primary", "replication"]}
+  ]
+}

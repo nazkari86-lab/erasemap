@@ -9,6 +9,8 @@ from pathlib import Path
 INPUTS = Path("/kaggle/input")
 CHECKOUT = Path("/kaggle/working/erasemap-source")
 OUTPUT = Path("/kaggle/working/qwen-tofu-v3")
+# Submission tooling replaces this execution-only value for development shards.
+SHARD_INDEX: int | None = None
 
 
 def run(*command: str, cwd: Path | None = None) -> None:
@@ -114,7 +116,7 @@ def main() -> int:
         "tokenizers==0.21.4",
         "huggingface-hub==0.28.1",
     )
-    run(
+    experiment_command = [
         sys.executable,
         "experiments/run_qwen_tofu_kaggle_v3.py",
         "--protocol",
@@ -123,8 +125,12 @@ def main() -> int:
         str(OUTPUT),
         "--code-revision",
         revision,
-        cwd=CHECKOUT,
-    )
+    ]
+    if SHARD_INDEX is not None:
+        shard_output = Path(f"/kaggle/working/qwen-tofu-v3-development-{SHARD_INDEX}")
+        experiment_command[experiment_command.index(str(OUTPUT))] = str(shard_output)
+        experiment_command.extend(["--development-fold", str(SHARD_INDEX)])
+    run(*experiment_command, cwd=CHECKOUT)
     return 0
 
 

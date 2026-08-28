@@ -1,6 +1,6 @@
 # Competition defense package
 
-- `EraSeMap_RKNP_ISEF_RU.pptx`: canonical 13-slide Russian RKNP/ISEF defense deck with one uniform warm-paper background, speaker notes, and project comparison charts.
+- `EraSeMap_RKNP_ISEF_RU.pptx`: canonical 13-slide Russian RKNP/ISEF defense deck with a uniform warm-paper organic-tech visual system, high-contrast Arial typography, speaker notes, and project comparison charts.
 - `../docs/JURY_DEFENSE_RU.md`: 30-second and 3-minute spoken versions.
 - `../docs/JUDGE_QA_RU.md`: concise answers to adversarial judge questions.
 - `../docs/COMPETITION_EVIDENCE_SCORECARD.md`: claim-to-evidence scorecard and fixed score events.

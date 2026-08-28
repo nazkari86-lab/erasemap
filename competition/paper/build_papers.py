@@ -57,15 +57,23 @@ def make_system_figure(path: Path, ru: bool) -> None:
     title = ImageFont.truetype(font_path(True), 48)
     label = ImageFont.truetype(font_path(True), 30)
     small = ImageFont.truetype(font_path(), 25)
-    d.text((90, 45), "Логика EraSeMap" if ru else "EraSeMap decision flow", fill="#173B57", font=title)
+    d.text(
+        (90, 45),
+        "Один алгоритм EraSeMap: пять этапов"
+        if ru
+        else "One EraSeMap algorithm: five stages",
+        fill="#173B57",
+        font=title,
+    )
 
     boxes = [
-        (80, 190, 350, 360, "Запрос\nсубъекта" if ru else "Subject\nrequest"),
-        (430, 120, 760, 430, "Типизированный граф\n\nDB · шаблон · индекс\nкэш · backup · model" if ru else "Typed graph\n\nDB · template · index\ncache · backup · model"),
-        (850, 120, 1170, 430, "Остаточные пути\n+ обязательные\nканалы evidence" if ru else "Residual paths\n+ mandatory\nevidence channels"),
-        (1260, 120, 1690, 430, "COMPLETE\nINCOMPLETE\nUNVERIFIED"),
-        (850, 590, 1170, 790, "Минимальный CDC" if ru else "Minimum-cost CDC"),
-        (1260, 590, 1690, 790, "Исполнение → replay" if ru else "Execute → replay"),
+        (70, 160, 340, 350, "Запрос\nна удаление" if ru else "Deletion\nrequest"),
+        (410, 130, 740, 380, "1. Карта\n\nкопии · производные\nмодель · backup" if ru else "1. Map\n\ncopies · derivatives\nmodel · backup"),
+        (810, 130, 1140, 380, "2. Обнаружение\n\nбезопасные\nактивные пробы" if ru else "2. Discover\n\nsafe active\nprobes"),
+        (1210, 130, 1690, 380, "3. Минимизация\n\nдостаточные действия\nминимальной стоимости" if ru else "3. Minimize\n\nleast-cost\nsufficient actions"),
+        (1210, 560, 1690, 800, "4. Проверка во времени\n\nможет ли объект\nпоявиться снова?" if ru else "4. Verify over time\n\ncan the object\nreturn later?"),
+        (690, 560, 1140, 800, "5. Сертификат\n\nтолько после\nполного replay" if ru else "5. Certify\n\nonly after\ncomplete replay"),
+        (70, 560, 600, 800, "COMPLETE WITHIN ENVELOPE\nINCOMPLETE\nUNVERIFIED"),
     ]
     for i, (x1, y1, x2, y2, text) in enumerate(boxes):
         fill = "#EEF4F8" if i < 4 else "#FFF6E6"
@@ -80,13 +88,22 @@ def make_system_figure(path: Path, ru: bool) -> None:
             d.text(((x1 + x2 - (box[2] - box[0])) / 2, y), line, fill="#17202A", font=f)
             y += heights[j] + 8
 
-    arrows = [((350, 275), (430, 275)), ((760, 275), (850, 275)), ((1170, 275), (1260, 275)), ((1010, 430), (1010, 590)), ((1170, 690), (1260, 690)), ((1480, 590), (1480, 430))]
+    arrows = [
+        ((340, 255), (410, 255)),
+        ((740, 255), (810, 255)),
+        ((1140, 255), (1210, 255)),
+        ((1450, 380), (1450, 560)),
+        ((1210, 680), (1140, 680)),
+        ((690, 680), (600, 680)),
+    ]
     for start, end in arrows:
         d.line((start, end), fill="#2E6388", width=8)
         ex, ey = end
         sx, sy = start
         if ex > sx:
             d.polygon([(ex, ey), (ex - 22, ey - 14), (ex - 22, ey + 14)], fill="#2E6388")
+        elif ex < sx:
+            d.polygon([(ex, ey), (ex + 22, ey - 14), (ex + 22, ey + 14)], fill="#2E6388")
         elif ey > sy:
             d.polygon([(ex, ey), (ex - 14, ey - 22), (ex + 14, ey - 22)], fill="#2E6388")
         else:
@@ -103,7 +120,7 @@ def make_result_figure(path: Path, ru: bool) -> None:
     d.text((80, 45), "Ключевые измеренные результаты" if ru else "Key measured results", fill="#173B57", font=title)
 
     d.text((90, 150), "False-complete, mechanism stress (n=75)" if not ru else "Ложный COMPLETE, stress test (n=75)", fill="#17202A", font=label)
-    values = [("PCUG", 0, GREEN), ("Typed-node", 75, RED)]
+    values = [("EraSeMap", 0, GREEN), ("Typed-node", 75, RED)]
     for idx, (name, value, color) in enumerate(values):
         y = 230 + idx * 120
         d.text((100, y), name, fill="#17202A", font=small)
@@ -129,7 +146,14 @@ def make_result_figure(path: Path, ru: bool) -> None:
         d.text((x1 + (500 - box2[2]) / 2, 800), caption, fill="#5D6D7E", font=small)
 
     d.line((80, 950, 1720, 950), fill="#AAB7C4", width=3)
-    d.text((90, 995), "Preregistered RSE v2 first run" if not ru else "Первый preregistered запуск RSE v2", fill="#17202A", font=label)
+    d.text(
+        (90, 995),
+        "EraSeMap temporal stage: preregistered first run"
+        if not ru
+        else "Временной этап EraSeMap: первый preregistered запуск",
+        fill="#17202A",
+        font=label,
+    )
     temporal_metrics = [
         ("30/30", "risks detected" if not ru else "рисков обнаружено"),
         ("10/10", "guarded safe cases" if not ru else "безопасных guarded случаев"),
@@ -144,7 +168,12 @@ def make_result_figure(path: Path, ru: bool) -> None:
         d.text((x1 + (500 - box2[2]) / 2, 1165), caption, fill="#5D6D7E", font=small)
 
     d.line((80, 1270, 1720, 1270), fill="#AAB7C4", width=3)
-    d.text((90, 1310), "GhostGraph v2 active discovery", fill="#17202A", font=label)
+    d.text(
+        (90, 1310),
+        "EraSeMap active-discovery stage",
+        fill="#17202A",
+        font=label,
+    )
     ghost_metrics = [("7", "active minimax"), ("13", "frozen random"), ("49", "exhaustive")]
     for idx, (value, caption) in enumerate(ghost_metrics):
         x1 = 90 + idx * 560
@@ -543,16 +572,16 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
                 add_figure(
                     doc,
                     system_fig,
-                    ("Рисунок 1. От запроса субъекта к проверенному завершению через остаточные пути, CDC и повторный аудит. Составлено автором по протоколу EraSeMap." if ru else "Figure 1. From a subject request to verified completion through residual paths, CDC, and replay. Author-generated from the EraSeMap protocol."),
-                    ("Схема: запрос удаления проходит через граф остаточных путей, проверяющие каналы, выбор CDC, исполнение действий и повторный аудит до COMPLETE." if ru else "Flow diagram: an erasure request passes through the residual-path graph, verifier channels, CDC selection, action execution, and replayed audit before COMPLETE."),
+                    ("Рисунок 1. Один алгоритм EraSeMap: карта, обнаружение, минимизация, проверка во времени и сертификат. Составлено автором по протоколу EraSeMap." if ru else "Figure 1. One EraSeMap algorithm: map, discover, minimize, verify over time, and certify. Author-generated from the EraSeMap protocol."),
+                    ("Схема: один запрос удаления проходит пять обязательных этапов и заканчивается COMPLETE_WITHIN_ENVELOPE, INCOMPLETE или UNVERIFIED." if ru else "Flow diagram: one deletion request passes through five mandatory stages and ends in COMPLETE_WITHIN_ENVELOPE, INCOMPLETE, or UNVERIFIED."),
                 )
                 inserted_system = True
             if (heading in ("9. Discussion", "9. Обсуждение")) and not inserted_results:
                 add_figure(
                     doc,
                     result_fig,
-                    ("Рисунок 2. Stress test механизма, измеренное многосервисное испытание и preregistered RSE v2. Составлено автором по зафиксированным результатам." if ru else "Figure 2. Mechanism stress, measured multi-service holdout, and preregistered RSE v2. Author-generated from the frozen results."),
-                    ("Диаграмма: PCUG даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; CDC достигает 17,64-кратного ускорения и сокращает записанные байты на 94,62 процента; RSE обнаруживает 30 из 30 рисков без повторов после MSC; GhostGraph использует 7 probes против 13 у frozen random и 49 у exhaustive." if ru else "Results chart: PCUG has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; CDC reaches 17.64-fold speedup and 94.62 percent fewer written bytes; RSE detects 30 of 30 risks with no post-MSC recurrence; GhostGraph uses 7 probes versus 13 for frozen random and 49 for exhaustive."),
+                    ("Рисунок 2. Четыре измеренных свойства единого алгоритма EraSeMap: безопасность, эффективность, временная проверка и активное обнаружение. Составлено автором по зафиксированным результатам." if ru else "Figure 2. Four measured properties of the unified EraSeMap algorithm: safety, efficiency, temporal verification, and active discovery. Author-generated from the frozen results."),
+                    ("Диаграмма: EraSeMap даёт 0 из 75 ложных COMPLETE против 75 из 75 у typed-node; работает в 17,64 раза быстрее rebuild-all и записывает на 94,62 процента меньше байтов; временной этап обнаруживает 30 из 30 рисков без повторов; активное обнаружение использует 7 probes против 13 random и 49 exhaustive." if ru else "Results chart: EraSeMap has 0 of 75 false COMPLETE verdicts versus 75 of 75 for typed-node; it is 17.64 times faster than rebuild-all with 94.62 percent fewer written bytes; its temporal stage detects 30 of 30 risks without recurrence; active discovery uses 7 probes versus 13 random and 49 exhaustive."),
                 )
                 inserted_results = True
             i += 1
@@ -597,7 +626,7 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
 
     core = doc.core_properties
     core.title = title
-    core.subject = "Biometric erasure auditing, PCUG, CDC, RSE, and machine unlearning"
+    core.subject = "Unified proof-carrying and regeneration-safe biometric erasure auditing"
     core.author = "EraSeMap project — author fields intentionally left for submission"
     core.keywords = "biometric erasure, machine unlearning, data lineage, verifiable deletion, regeneration-safe erasure"
     core.comments = "Design preset: narrative_proposal; named override: A4 academic submission geometry."

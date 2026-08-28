@@ -23,3 +23,6 @@ def test_evidence_chart_manifest_has_sources_and_honest_boundary() -> None:
         "Head-only",
         "Stale",
     ]
+    dashboard = ROOT / "docs" / "assets" / "erasemap-one-algorithm-comparison.png"
+    assert dashboard.is_file()
+    assert dashboard.stat().st_size > 100_000

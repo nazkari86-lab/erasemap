@@ -3,6 +3,10 @@
 Snapshot: 2026-08-26. This is a fixed evidence map, not an official RKNP or ISEF score and not a
 probability of winning. A number may move only after the named evidence event occurs.
 
+Presentation framing: the project has one public algorithm, EraSeMap. PCUG, GhostGraph, CDC, RSE,
+MSC, and TRE are internal stage/solver names used to make the evidence reproducible; they are not
+separate algorithms competing for the headline claim.
+
 ## Thirty-second explanation
 
 Deleting the main biometric row does not guarantee deletion: a template, vector index, cache,
@@ -19,7 +23,7 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 
 | Dimension | Current | Observable evidence | Next score-changing event |
 |---|---:|---|---|
-| Problem clarity | 9.8/10 | GhostGraph now gives one direct story: run a safe synthetic probe, remove incompatible maps, then repair every surviving path; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
+| Problem clarity | 9.8/10 | EraSeMap gives one direct story: map copies, probe hidden paths, repair every surviving path, and verify the result over time; human result remains `NOT_COLLECTED` | At least 10 unfamiliar participants pass the frozen answer-blind endpoints |
 | Practical relevance | 9.7/10 | Frozen failures and remediation now execute on stock identity, ML-lineage, and biometric-vector services | Authorized organization pilot on actual deletion workflow |
 | Narrow scientific novelty | 9.9/10 | GhostGraph adds active hidden recovery-graph discovery, full equivalence classes, exact minimax certificates, and discovery-to-TRE replay to the prior ET/PCUG stack | Systematic/patent review plus independently authored topology |
 | Experimental methodology | 9.9/10 | Frozen v2 compares six strategies under one budget; separate oracle, OUT/UNVERIFIED negatives, exact certificates, append-only outputs, and an independent live protocol/reveal sequence | Independently authored preregistered holdout |
@@ -36,6 +40,14 @@ It then computes the minimum-cost permitted set of actions needed to reach verif
 
 The independence row is deliberately not averaged away. More project-authored code cannot move it
 above 7.8.
+
+### One-algorithm comparison dashboard
+
+![EraSeMap versus non-EraSeMap algorithms and operational baselines](assets/erasemap-one-algorithm-comparison.png)
+
+The six panels are separate same-protocol experiments: the green bar is the relevant EraSeMap stage,
+while the other bars are non-EraSeMap algorithms or operational baselines. They are intentionally
+not pooled into a single leaderboard score.
 
 ## Strongest results, without scope inflation
 

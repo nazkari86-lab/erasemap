@@ -8,6 +8,11 @@ This directory contains two synchronized, submission-ready manuscripts:
 - `build_papers.py` — deterministic DOCX and figure builder;
 - `assets/` — the four generated bilingual figures.
 
+The manuscripts describe one public algorithm, EraSeMap, as five stages (map, discover, minimize,
+verify over time, certify). PCUG, GhostGraph, CDC, RSE, MSC, and TRE are internal reproducibility
+labels. The synchronized results figure compares the unified algorithm's relevant stage with
+non-EraSeMap baselines without pooling incompatible experiments into one score.
+
 Both papers use A4 pages, the same research question, synchronized falsifiable hypotheses, the same compact
 mathematical model, the same experiment results, and the same limitation boundary. Personal author,
 affiliation, and supervisor fields are intentionally blank because the repository does not contain

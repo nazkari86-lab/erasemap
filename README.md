@@ -14,28 +14,17 @@ EraSeMap covers only artifacts registered by trusted instrumentation. It does no
 physical erasure, detect secret unregistered copies, provide legal advice, or claim validation on
 eGov, Face ID, or another production identity system.
 
-The new **Erasure Tomography** layer narrows that limitation for a bounded candidate catalogue. It
-uses coded synthetic-subject deletion workflows to localize which candidate recovery mechanism made
-data recur, refuses to localize when catalogue/sparsity/evidence assumptions fail, and passes a
-localized mechanism to PCUG/TRE for physical control replay. It is not arbitrary open-world
-discovery.
+For a user or judge, EraSeMap is **one algorithm with five stages**:
 
-The new **GhostGraph** layer goes one step further: it actively distinguishes a bounded catalogue of
-hidden recovery graphs from temporal synthetic-subject traces, preserves complete indistinguishable
-classes, detects traces outside the catalogue, and passes justified survivors to TRE controls. The
-frozen v2 result used 7 active-minimax probes versus 13 for frozen random and 49 for nonadaptive
-exhaustive testing, recovered three exact graphs and two complete path classes, detected the
-outside-catalogue case, failed closed on missing evidence, and produced zero false confident
-outputs. A second run executed five cases with five probes through native APIs of digest-pinned
-Redis, Keycloak, MLflow, and Qdrant. Both remain project-authored bounded results, not open-world,
-independent, or production discovery.
+1. map registered copies and derivatives;
+2. actively discover bounded hidden recovery paths;
+3. choose the least-cost sufficient deletion actions;
+4. replay delayed recovery scenarios;
+5. issue a certificate only if every mandatory check passes.
 
-The new **GhostGraph-T** study changes the target from exact graph identity to the minimum erasure
-action. Its separately frozen 300-case benchmark passed 300/300 action-or-OOD decisions with zero
-false-confident outputs and 1.28 mean probes versus 8.0 exhaustive. Exact-graph identification left
-170 action-safe graph twins unresolved, while the action objective resolved them without inventing
-graph identity. Global, one-step minimax, and greedy policies tied on this catalogue, so no adaptive-
-baseline superiority is claimed.
+The research names PCUG, GhostGraph, CDC, RSE, MSC, TRE, and Erasure Tomography are retained only
+inside the scientific and reproducibility sections. They are representations, solvers, or bounded
+experiments supporting these five stages—not separate products or separate algorithms to present.
 
 ## Quick demonstration
 
@@ -73,14 +62,14 @@ Russian defense script, and adversarial Q&A are in
 [`competition/EraSeMap_RKNP_ISEF_RU.pptx`](competition/EraSeMap_RKNP_ISEF_RU.pptx).
 
 For a live visual story, `bank-demo` writes a self-contained clickable **synthetic bank KYC
-sandbox**. It shows a deletion request, a delayed backup-restore recurrence, bounded GhostGraph
+sandbox**. It shows a deletion request, a delayed backup-restore recurrence, bounded hidden-path
 probes, exact remediation, and a replay-verified synthetic certificate. It has no network calls and
 is explicitly not a bank, eGov, Face ID, or production-system integration.
 
 For a stateful product demonstration, `bank-control-plane serve` starts a loopback-only local API
 and dashboard with **512 generated customers**, **3,072 registered artifacts**, searchable customer
 records, five synthetic connector contracts (PostgreSQL, Keycloak, Redis, Qdrant, and MinIO),
-approval-required dry runs, ordered deletion actions, delayed recurrence, bounded GhostGraph
+approval-required dry runs, ordered deletion actions, delayed recurrence, bounded hidden-path
 localization, replay verification, and protection of the other 511 customers. The adapters execute
 only against the in-memory synthetic sandbox. They are connector contracts and product UX evidence,
 not a connection to an organization or validation of production deletion. The Russian launch guide,
@@ -141,79 +130,78 @@ synthetic graph semantics. They are not integrations with Apple, eGov, a bank, o
 | Organization production pilot | Machine-validated protocol ready; no organization run claimed |
 | Production FaceID/eGov applicability | Not established; requires authorized instrumentation and evaluation |
 
-## Direct algorithm comparisons
+## One algorithm: EraSeMap
 
-Each panel below reproduces a committed result under its own frozen protocol. The panels must not be
-pooled into one universal “superiority score”: the source-locked experiment still contains a tie
-with the strongest full typed audit, GhostGraph-T tied the strong adaptive baselines, and the
-unlearning candidate remains slightly below exact retraining on retained utility.
+The project now has **one public algorithm**, not five algorithms to memorize:
 
-### 1. PCUG — is deletion really complete?
+> **EraSeMap maps every copy and derivative, actively finds hidden recovery paths, selects the
+> least-cost sufficient deletion actions, verifies that the data cannot return, and only then
+> permits a replayable certificate.**
 
-This figure measures **false COMPLETE**: how often an auditor incorrectly says that deletion is
-finished while data or a derivative still remains. **A smaller bar is safer.** PCUG beats the three
-narrow baselines, ties the full typed audit on the source-locked holdout, and beats it on the
-stock-service transfer.
+```mermaid
+flowchart LR
+    A[Deletion request] --> B[1. Map copies and derivatives]
+    B --> C[2. Discover hidden recovery paths]
+    C --> D[3. Minimize sufficient actions]
+    D --> E[4. Verify over time]
+    E --> F{All mandatory evidence passed?}
+    F -->|Yes| G[COMPLETE WITHIN ENVELOPE + certificate]
+    F -->|Residual exists| H[INCOMPLETE + counterexample]
+    F -->|Evidence missing| I[UNVERIFIED]
+```
 
-![PCUG direct baseline comparison](docs/assets/comparison-pcug.png)
+PCUG, GhostGraph, CDC, RSE, MSC, and TRE remain internal implementation and paper names for
+reproducibility. For a presentation they are simply stages of EraSeMap. Model unlearning is one
+possible deletion action inside stage 3; if its utility/privacy gates fail, exact retraining is the
+safety fallback.
 
-### 2. CDC — what is the cheapest sufficient deletion plan?
+The executable entry point [`run_erasemap`](src/erasemap/unified.py) enforces this composition. It
+cannot return `COMPLETE_WITHIN_ENVELOPE` unless the registered deletion plan, active topology
+evidence, and temporal replay all pass. The full input/output definition and short decision rule are
+in [`docs/ERASEMAP_UNIFIED_ALGORITHM.md`](docs/ERASEMAP_UNIFIED_ALGORITHM.md).
 
-All compared methods must reach the same final replayed-COMPLETE result. The graphs then ask how
-much the deletion costs, how long it takes, and how many bytes it rewrites. **Smaller is better in
-the first three graphs; larger is better only for successful completion.** Exact CDC ties greedy
-CDC on the small development set and targeted CDC substantially beats rebuild-all in measured work.
+### Direct comparison with non-EraSeMap algorithms and baselines
 
-![CDC cost, speed, bytes and completion comparisons](docs/assets/comparison-cdc.png)
+Each graph states exactly what it measures and which direction is better. The green bar is the
+relevant result from the unified EraSeMap pipeline. The other bars are non-EraSeMap algorithms or
+operational baselines run by this project under the same frozen protocol for that panel.
 
-### 3. GhostGraph — how efficiently can hidden recovery paths be found?
+![One EraSeMap algorithm versus non-EraSeMap baselines](docs/assets/erasemap-one-algorithm-comparison.png)
 
-The first two graphs measure the number of active probes: **fewer probes mean faster diagnosis**.
-The other two measure correctness and dangerous false confidence. GhostGraph beats random and
-exhaustive search on probe count, but honestly ties one-step minimax and greedy separated-pairs on
-the current GhostGraph-T benchmark.
+The result is strong but not artificially perfect:
 
-![GhostGraph probe, accuracy and safety comparisons](docs/assets/comparison-ghostgraph.png)
-
-### 4. RSE — can deleted data return later?
-
-Snapshot deletion checks only the present. RSE additionally models delayed restoration. The graphs
-show future-risk detection, acceptance of genuinely safe cases, and later recurrence. **High
-detection/specificity and zero recurrence are better.** These results are prospective simulations,
-not an external production deployment.
-
-![RSE temporal deletion comparisons](docs/assets/comparison-rse.png)
-
-### 5. Gated model unlearning — is it fast, useful and private simultaneously?
-
-These six graphs compare the same model and split. They separately show retained-user utility,
-forgotten-identity behavior, privacy-attack advantage, distance from exact retraining, and runtime.
-The candidate is faster and much closer to exact behavior than gradient ascent/head-only, but it
-**does not win every metric**: exact and head-only have slightly higher retained AUC. Exact
-retraining therefore remains the safety fallback.
-
-![MUFAC v3.2 direct unlearning algorithm comparison](docs/assets/erasemap-unlearning-v3-comparison.png)
-
-### One-page overview
-
-The compact figure below is useful when all system-level results must fit on one slide. The five
-figures above should be used when explaining the project to judges.
-
-![EraSeMap algorithms versus same-protocol baselines](docs/assets/erasemap-system-comparisons.png)
-
-These are not cross-paper leaderboard figures. Every panel compares methods run under the same
-committed protocol. The honest result is mixed:
-
-| Result | Direct evidence |
+| Outcome | Direct evidence |
 |---|---|
-| **Win** | PCUG has 0 false-COMPLETE decisions versus 100/100 for checklist, model-only and receipt-only on the source-locked holdout; on stock services it has 0 versus 5 for full typed audit and 45 for native-success signals. |
-| **Win** | Targeted CDC reaches the same 20/20 replayed-COMPLETE outcome with 17.64x speedup and 94.62% fewer bytes than rebuild-all. |
-| **Win** | GhostGraph active probing uses 7 probes versus 13 random and 49 exhaustive; GhostGraph-T uses 1.28 versus 2.92 random and 8 exhaustive mean probes. |
-| **Tie** | PCUG and full typed audit both have 0/100 false COMPLETE on the source-locked holdout. Exact CDC ties greedy CDC at mean cost 17. GhostGraph-T ties one-step minimax and greedy separated-pairs at 1.28 probes. |
-| **Loss / trade-off** | The MUFAC candidate is faster than exact retraining (0.313 s versus 0.498 s) and much closer to exact behavior than gradient ascent or head-only, but retained AUC is lower than exact (91.912% versus 92.565%) and head-only (92.635%). Exact retraining remains the reference and mandatory fallback when a gate fails. |
+| **Safer** | 0 false-COMPLETE cases versus 5 for a full typed audit and 45 for native service-success signals on 60 stock-service cases. |
+| **Fewer probes** | 7 active probes versus 13 random and 49 exhaustive probes on the same hidden-path catalogue. |
+| **Tie** | Mean action cost 17 for EraSeMap and greedy set cover on the small development set; delete-everything cost 48.67. |
+| **Less work** | The same 20/20 replayed-COMPLETE outcome at 5.67% of rebuild-all wall time and 5.38% of its bytes written. |
+| **Temporal advantage** | 30/30 registered delayed-regeneration risks detected versus 0/30 for a present-time snapshot audit. |
+
+These are not cross-paper leaderboard values or independent external reproductions. Each panel is a
+separate same-protocol experiment, and values are never pooled into one score. Detailed component
+plots are kept only as a reproducibility appendix below. The hidden-path and temporal panels remain
+a project-authored bounded result, not an independent or production validation.
+
+<details>
+<summary>Scientific component-level comparison appendix</summary>
+
+![Typed graph verification comparison](docs/assets/comparison-pcug.png)
+
+![Deletion planning comparison](docs/assets/comparison-cdc.png)
+
+![Hidden-path discovery comparison](docs/assets/comparison-ghostgraph.png)
+
+![Temporal verification comparison](docs/assets/comparison-rse.png)
+
+![Model-action comparison](docs/assets/erasemap-unlearning-v3-comparison.png)
+
+![All committed system panels](docs/assets/erasemap-system-comparisons.png)
+
+</details>
 
 The chart inputs and provenance paths are frozen in
-[`benchmark/evidence-charts-v1.json`](benchmark/evidence-charts-v1.json). Rebuild the figures with:
+[`benchmark/evidence-charts-v1.json`](benchmark/evidence-charts-v1.json). Rebuild every figure with:
 
 ```bash
 .venv/bin/pip install -e '.[face]'

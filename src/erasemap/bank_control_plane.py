@@ -109,7 +109,7 @@ _ACTION_LABELS: dict[str, str] = {
     "create-request": "Create deletion request",
     "delete-visible": "Delete visible copies",
     "simulate-recovery": "Simulate scheduled backup restore",
-    "run-probes": "Run bounded GhostGraph probes",
+    "run-probes": "Run bounded hidden-path probes",
     "apply-exact-cut": "Apply exact deletion cut",
     "verify-replay": "Replay and verify certificate",
 }

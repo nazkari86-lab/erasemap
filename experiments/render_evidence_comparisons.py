@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 COLORS = ("#2a9d8f", "#457b9d", "#edae49", "#d1495b", "#8d99ae")
+ERASEMAP_COLOR = "#168b78"
+BASELINE_COLORS = ("#6687a3", "#e0a23a", "#c95b64", "#8d99ae")
 
 
 def _chart(data: dict[str, Any], chart_id: str) -> dict[str, Any]:
@@ -35,6 +37,107 @@ def _save(figure: Any, output: Path) -> None:
     plt.close(figure)
 
 
+def _comparison_bars(
+    axis: Any,
+    labels: list[str],
+    values: list[float],
+    title: str,
+    subtitle: str,
+    ylabel: str,
+) -> None:
+    x = np.arange(len(values))
+    colors = (ERASEMAP_COLOR, *BASELINE_COLORS[: len(values) - 1])
+    axis.bar(x, values, color=colors, edgecolor="white", linewidth=0.8)
+    axis.set_xticks(x, labels, rotation=20, ha="right", fontsize=8)
+    axis.set_title(f"{title}\n{subtitle}", fontsize=10, fontweight="bold")
+    axis.set_ylabel(ylabel, fontsize=8)
+    axis.grid(axis="y", alpha=0.22)
+    ceiling = max(values) or 1
+    axis.set_ylim(0, ceiling * 1.22)
+    for index, value in enumerate(values):
+        label = f"{value:.2f}" if value % 1 else f"{value:.0f}"
+        axis.text(index, value + ceiling * 0.025, label, ha="center", fontsize=8)
+
+
+def render_unified_algorithm(data: dict[str, Any], output: Path) -> None:
+    stock = _chart(data, "02_stock_services")
+    planner = _chart(data, "03_planner_cost")
+    multi = _chart(data, "04_multiservice")
+    ghost = _chart(data, "05_ghostgraph_v2")
+    temporal = _chart(data, "07_temporal")
+
+    fig, ax = plt.subplots(2, 3, figsize=(16, 8.2), constrained_layout=True)
+    panels = (
+        (
+            ["EraSeMap map", "Full typed audit", "Native service status"],
+            [stock["values"][0], stock["values"][1], stock["values"][2]],
+            "1. SAFETY — false deletion claims",
+            "60 stock-service cases; lower is safer",
+            "false-COMPLETE cases ↓",
+        ),
+        (
+            ["EraSeMap discover", "Random testing", "Exhaustive testing"],
+            [ghost["values"][0], ghost["values"][2], ghost["values"][3]],
+            "2. DIAGNOSIS — hidden-path search",
+            "same frozen catalogue; fewer probes are faster",
+            "active probes ↓",
+        ),
+        (
+            ["EraSeMap minimize", "Greedy set cover", "Delete everything"],
+            [planner["values"][0], planner["values"][1], planner["values"][2]],
+            "3. MINIMIZATION — deletion cost",
+            "same completion requirement; lower is cheaper",
+            "mean action cost ↓",
+        ),
+        (
+            ["EraSeMap plan", "Rebuild everything"],
+            [multi["time"][0], multi["time"][1]],
+            "4. SPEED — end-to-end deletion",
+            "20 paired real-process trials; lower is faster",
+            "normalized wall time % ↓",
+        ),
+        (
+            ["EraSeMap plan", "Rebuild everything"],
+            [multi["bytes"][0], multi["bytes"][1]],
+            "5. INFRASTRUCTURE — rewritten data",
+            "same 20 paired trials; lower is lighter",
+            "normalized bytes written % ↓",
+        ),
+        (
+            ["EraSeMap over-time", "Snapshot audit"],
+            [temporal["risk_detection_pct"][0], temporal["risk_detection_pct"][1]],
+            "6. TIME — future regeneration risk",
+            "30 delayed-recovery cases; higher is safer",
+            "risks detected % ↑",
+        ),
+    )
+    for axis, panel in zip(ax.flat, panels, strict=True):
+        labels, values, title, subtitle, ylabel = panel
+        _comparison_bars(
+            axis,
+            list(labels),
+            [float(value) for value in values],
+            title,
+            subtitle,
+            ylabel,
+        )
+    fig.suptitle(
+        "ONE ALGORITHM — EraSeMap vs non-EraSeMap baselines",
+        fontsize=16,
+        fontweight="bold",
+    )
+    fig.text(
+        0.5,
+        -0.012,
+        "Each panel is a separate same-protocol experiment. Values are not pooled into one score. "
+        "Green = the relevant stage/result of the unified EraSeMap pipeline; other bars = "
+        "non-EraSeMap algorithms or operational baselines.",
+        ha="center",
+        fontsize=9,
+    )
+    _save(fig, output)
+
+
 def render_pcug(data: dict[str, Any], output: Path) -> None:
     source = _chart(data, "01_source_locked")
     stock = _chart(data, "02_stock_services")
@@ -56,7 +159,7 @@ def render_pcug(data: dict[str, Any], output: Path) -> None:
         "false-COMPLETE cases / 60 ↓",
     )
     fig.suptitle(
-        "OUR ALGORITHM 1 — PCUG: verifies that every required deletion condition holds", fontsize=14
+        "ERASEMAP INTERNAL STAGE — verifies every required deletion condition", fontsize=14
     )
     _save(fig, output)
 
@@ -94,7 +197,8 @@ def render_cdc(data: dict[str, Any], output: Path) -> None:
         "successful trials % ↑",
     )
     fig.suptitle(
-        "OUR ALGORITHM 2 — CDC: finds the least-cost sufficient deletion action set", fontsize=14
+        "ERASEMAP INTERNAL STAGE — finds the least-cost sufficient deletion action set",
+        fontsize=14,
     )
     _save(fig, output)
 
@@ -133,7 +237,7 @@ def render_ghostgraph(data: dict[str, Any], output: Path) -> None:
         "false-confidence rate % ↓",
     )
     fig.suptitle(
-        "OUR ALGORITHM 3 — GhostGraph: discovers hidden recovery paths with active probes",
+        "ERASEMAP INTERNAL STAGE — discovers hidden recovery paths with active probes",
         fontsize=14,
     )
     _save(fig, output)
@@ -164,7 +268,7 @@ def render_rse(data: dict[str, Any], output: Path) -> None:
         "recurrences / 30 ↓",
     )
     fig.suptitle(
-        "OUR ALGORITHM 4 — RSE: prevents future regeneration, not only current presence",
+        "ERASEMAP INTERNAL STAGE — prevents future regeneration, not only current presence",
         fontsize=14,
     )
     _save(fig, output)
@@ -263,7 +367,7 @@ def render_unlearning_comparison(data: dict[str, Any], output: Path) -> None:
         "seconds ↓",
     )
     fig.suptitle(
-        "OUR ALGORITHM 5 — gated unlearning candidate: speed, utility and privacy together",
+        "ERASEMAP INTERNAL MODEL CHANNEL — speed, utility and privacy gates together",
         fontsize=14,
     )
     _save(fig, output)
@@ -277,15 +381,21 @@ def main() -> int:
         "--unlearning-output",
         default="docs/assets/erasemap-unlearning-v3-comparison.png",
     )
+    parser.add_argument(
+        "--unified-output",
+        default="docs/assets/erasemap-one-algorithm-comparison.png",
+    )
     args = parser.parse_args()
     data = json.loads(Path(args.data).read_text(encoding="utf-8"))
     render_system_comparison(data, Path(args.system_output))
+    render_unified_algorithm(data, Path(args.unified_output))
     render_pcug(data, Path("docs/assets/comparison-pcug.png"))
     render_cdc(data, Path("docs/assets/comparison-cdc.png"))
     render_ghostgraph(data, Path("docs/assets/comparison-ghostgraph.png"))
     render_rse(data, Path("docs/assets/comparison-rse.png"))
     render_unlearning_comparison(data, Path(args.unlearning_output))
     print(args.system_output)
+    print(args.unified_output)
     print(args.unlearning_output)
     return 0
 

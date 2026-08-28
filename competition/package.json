@@ -1,0 +1,11 @@
+{
+  "name": "erasemap-competition-deck",
+  "private": true,
+  "description": "Rebuild source for the editable EraSeMap RKNP/ISEF presentation",
+  "scripts": {
+    "build": "node build_organic_presentation.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  }
+}

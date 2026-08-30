@@ -306,8 +306,8 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
         },
         "visual_story": [
             "FIND: найти копии, производные, влияние в модели и пути восстановления.",
-            "ERASE: выбрать минимальный физический план и выполнить machine unlearning.",
-            "PROVE: повторить восстановление во времени и выдать проверяемый сертификат.",
+            "ERASE: выбрать самый короткий разрешённый план и выполнить удаление влияния из модели.",
+            "PROVE: повторить восстановление во времени и выдать сертификат только после проверки.",
         ],
         "usability_handoff": {
             "languages": list(usability_protocol["languages"]),
@@ -318,8 +318,8 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             "external_handoff": "external_transfer/README.md",
         },
         "claim_boundary": {
-            "supported": "EraSeMap одним fail-closed алгоритмом объединяет карту артефактов, активный bounded-поиск скрытых путей, физическое удаление, machine unlearning и temporal replay. Внутренний поиск прошёл frozen strategy comparison и live transfer на четырёх stock-сервисах.",
-            "not_supported": "Не заявляются production-внедрение в FaceID/eGov и завершённый независимый hidden challenge.",
+            "supported": "EraSeMap одним строгим алгоритмом объединяет карту артефактов, поиск ограниченного набора скрытых путей, физическое удаление, удаление влияния из модели и повторную проверку во времени. Поиск сравнивался с другими стратегиями и проверялся на четырёх готовых сервисах.",
+            "not_supported": "Не заявляются внедрение в FaceID/eGov и завершённая независимая скрытая проверка.",
             "independence_score": 7.8,
         },
         "source_sha256": source_hashes,
@@ -372,32 +372,32 @@ def render_showcase_html(report: dict[str, Any]) -> str:
 <body><main>
   <div class=\"eyebrow\">FIND · ERASE · PROVE</div>
   <h1>Удалить запись недостаточно.</h1>
-  <p class=\"lead\">EraSeMap отвечает на проверяемый вопрос: какая зарегистрированная копия или производная всё ещё может использовать данные человека?</p>
+  <p class=\"lead\">EraSeMap отвечает на простой вопрос: какая зарегистрированная копия или производная ещё может использовать данные человека?</p>
   <section class=\"path\" aria-label=\"Кратчайший остаточный путь\">
     <strong>Live audit: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
     <p>{html.escape(live["interpretation"])}</p>
   </section>
   <h2>Один алгоритм из трёх шагов</h2>
   <ol>{''.join(f'<li>{html.escape(step)}</li>' for step in story)}</ol>
-  <h2>Шесть разных уровней доказательств</h2>
+  <h2>Что именно проверено</h2>
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
-      <p>ложных COMPLETE у PCUG против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у node-only typed audit.</p>
+      <p>ложных COMPLETE у EraSeMap против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у аудита только по типам узлов.</p>
       <div class=\"scope\">{html.escape(mechanism["scope"])}</div></article>
     <article><div class=\"eyebrow\">Реальные процессы</div><div class=\"metric\">{systems["speedup_geometric_mean"]:.2f}×</div>
-      <p>геометрическое ускорение; {systems["bytes_reduction"]:.2%} меньше записанных bytes, completion {systems["complete_rate"]:.0%}.</p>
+      <p>ускорение; записано на {systems["bytes_reduction"]:.2%} меньше байтов, завершено {systems["complete_rate"]:.0%} задач.</p>
       <div class=\"scope\">{html.escape(systems["scope"])}</div></article>
     <article><div class=\"eyebrow\">Формальная связь</div><div class=\"metric\">{formal["runs"]} / {formal["runs"]}</div>
-      <p>совпадений production exact CDC с exhaustive oracle; mismatches: {formal["mismatches"]}.</p>
+      <p>совпадений точного решателя с полным перебором; расхождений: {formal["mismatches"]}.</p>
       <div class=\"scope\">{html.escape(formal["scope"])}</div></article>
-    <article><div class=\"eyebrow\">Temporal RSE / MSC</div><div class=\"metric\">{temporal["risk_detections"]} / 30</div>
-      <p>рисков обнаружено; safe {temporal["safe_specificity"]}/10, post-MSC recurrence {temporal["post_msc_recurrences"]}; conformance {temporal["conformance_configurations"]}/16384.</p>
+    <article><div class=\"eyebrow\">Проверка во времени</div><div class=\"metric\">{temporal["risk_detections"]} / 30</div>
+      <p>скрытых рисков найдено; после контроля возвратов: {temporal["post_msc_recurrences"]}; совпадений с полным перебором: {temporal["conformance_configurations"]}/16384.</p>
       <div class=\"scope\">{html.escape(temporal["scope"])}</div></article>
-    <article><div class=\"eyebrow\">Open stock transfer</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
-      <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; native-success: {transfer["native_false_complete"]}, typed audit: {transfer["typed_false_complete"]}; recurrence {transfer["post_control_recurrence"]}.</p>
+    <article><div class=\"eyebrow\">Проверка на сервисах</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
+      <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; обычный статус: {transfer["native_false_complete"]}, аудит узлов: {transfer["typed_false_complete"]}; возвратов после контроля: {transfer["post_control_recurrence"]}.</p>
       <div class=\"scope\">{html.escape(transfer["scope"])}</div></article>
-    <article><div class=\"eyebrow\">FIND · скрытые пути</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["random_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
-      <p>active / frozen random / exhaustive probes; exact graphs {ghostgraph["exact_graphs"]}, path classes {ghostgraph["path_classes"]}, false confident {ghostgraph["false_confident"]}.</p>
+    <article><div class=\"eyebrow\">Поиск скрытого пути</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["random_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
+      <p>активный поиск / случайная стратегия / полный перебор; точно найдено графов: {ghostgraph["exact_graphs"]}, классов путей: {ghostgraph["path_classes"]}, самоуверенных ошибок: {ghostgraph["false_confident"]}.</p>
       <p>Live four-service: {ghostgraph["live_four_service"]["cases"]}/5 cases, {ghostgraph["live_four_service"]["probes"]} probes, cleanup failures {ghostgraph["live_four_service"]["cleanup_failures"]}; external {ghostgraph["external_status"]}.</p>
       <div class=\"scope\">{html.escape(ghostgraph["scope"])}</div></article>
   </section>

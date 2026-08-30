@@ -11,22 +11,22 @@ remain in caches, indexes, replicas, exports, or backups; derivatives may remain
 templates and vectors; learned influence may remain in a trained model. A deleted object may also
 reappear after restore, synchronization, rebuild, or model redeployment.
 
-This work presents EraSeMap, one algorithm with three stages. **FIND** locates registered and
-bounded-hidden paths. **ERASE** selects a minimum sufficient set of physical actions and machine
-unlearning. **PROVE** performs temporal replay and permits a certificate only after every mandatory
-channel passes. The algorithm returns `COMPLETE_WITHIN_ENVELOPE`, `INCOMPLETE`, or `UNVERIFIED`;
-missing evidence is never treated as success.
+I developed and tested EraSeMap as one algorithm with three stages. **FIND** locates known and
+bounded, non-obvious paths. **ERASE** selects a minimum sufficient set of physical actions and removes
+learned influence from the model (machine unlearning). **PROVE** repeats future operations and permits
+a certificate only after every required check passes. The algorithm returns
+`COMPLETE_WITHIN_ENVELOPE`, `INCOMPLETE`, or `UNVERIFIED`; missing evidence is never treated as success.
 
-In a frozen 60-case transfer, EraSeMap produced 0 false `COMPLETE` decisions versus 5 for full typed
-audit and 45 for native service status. Bounded active recovery-graph search used 7 probes versus 13
-for frozen random and 49 for exhaustive testing; greedy also used 7. In 20 paired real-process
-trials, targeted erasure achieved a 17.64x geometric-mean speedup and 94.62% fewer written bytes than
-rebuild-all. Temporal verification detected 30/30 latent risks and produced 0/30 post-control
+In a pre-registered 60-case transfer, EraSeMap produced 0 false `COMPLETE` decisions versus 5 for a
+full node audit and 45 for the service's ordinary status. Active recovery-graph search used 7 probes
+versus 13 for random testing and 49 for exhaustive testing; greedy also used 7. In 20 paired
+real-process trials, the selected plan was 17.64 times faster on average and wrote 94.62% fewer bytes
+than rebuilding everything. Temporal verification detected 30/30 latent risks and produced 0/30 post-control
 recurrences. Exact solvers matched exhaustive oracles in 3,072/3,072 and 16,384/16,384
-configurations. Fast unlearning candidates on Qwen2.5-1.5B failed their complete frozen gates, so
-exact retraining remains the safe fallback. Results are bounded to registered topology and
-transition envelopes; production FaceID/eGov deployment and an independent hidden result are not
-claimed.
+configurations. Fast influence-removal candidates on Qwen2.5-1.5B failed all required thresholds
+together, so full retraining from scratch remains the safe fallback. Results are limited to registered
+topology and listed transitions; production FaceID/eGov deployment and an independent hidden result are
+not claimed.
 
 **Keywords:** verifiable erasure, machine unlearning, data lineage, temporal replay, biometrics,
 fail-closed, deletion certificate.

@@ -50,10 +50,10 @@ def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
 
     assert "source → template" in rendered
     assert "PROJECT_AUTHORED_DEVELOPMENT" in rendered
-    assert "production-внедрение в FaceID/eGov" in rendered
+    assert "внедрение в FaceID/eGov" in rendered
     assert "PROJECT_AUTHORED_LIVE_STOCK_SERVICES" in rendered
     assert "NOT_COLLECTED" in rendered
-    assert "FIND · скрытые пути" in rendered
+    assert "Поиск скрытого пути" in rendered
     assert "7 / 13 / 49" in rendered
     assert "Один алгоритм из трёх шагов" in rendered
     assert "7.8/10" in rendered

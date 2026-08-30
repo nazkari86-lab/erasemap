@@ -10,6 +10,12 @@ const REPO = path.resolve(__dirname, "..");
 const OUT = path.join(REPO, "competition", "EraSeMap_RU.pptx");
 const ASSETS = path.join(REPO, "docs", "assets");
 const PRESENTATION_ASSETS = path.join(REPO, "competition", "assets");
+const BANK_CONCEPT = path.join(
+  REPO,
+  "competition",
+  "design",
+  "synthetic-bank-control-plane-concept-v1.png",
+);
 
 const pptx = new PptxGenJS();
 pptx.layout = "LAYOUT_WIDE";
@@ -19,8 +25,8 @@ pptx.title = "EraSeMap — проверяемый путь удаления да
 pptx.company = "КГУ «Специализированный лицей-интернат „Білім-инновация“» Управления образования города Алматы";
 pptx.lang = "ru-RU";
 pptx.theme = {
-  headFontFace: "Arial",
-  bodyFontFace: "Arial",
+  headFontFace: "Inter Display",
+  bodyFontFace: "Inter",
   lang: "ru-RU",
 };
 pptx.defineLayout({ name: "ERA_WIDE", width: 13.333, height: 7.5 });
@@ -28,24 +34,24 @@ pptx.layout = "ERA_WIDE";
 
 const W = 13.333;
 const H = 7.5;
-const F_HEAD = "Arial";
-const F_BODY = "Arial";
+const F_HEAD = "Inter Display";
+const F_BODY = "Inter";
 const C = {
-  bg: "F3F0E8",
-  paper: "FBFAF6",
-  ink: "173F38",
-  ink2: "2D5B50",
-  muted: "4F6960",
-  line: "C8D6CE",
-  sage: "CBE4D6",
-  sage2: "E2F0E8",
-  teal: "079E94",
-  teal2: "14B8A6",
-  coral: "E8795E",
-  coral2: "F5D2C8",
-  ochre: "D49B43",
-  lilac: "7077D7",
-  blue: "2E9BD5",
+  bg: "F5F2E9",
+  paper: "FFFDF8",
+  ink: "123B35",
+  ink2: "24564C",
+  muted: "5B7069",
+  line: "CDDCD5",
+  sage: "D6E9E0",
+  sage2: "EAF4EF",
+  teal: "078C82",
+  teal2: "35A99B",
+  coral: "D8614B",
+  coral2: "F7DDD6",
+  ochre: "6B9D91",
+  lilac: "8DB9AD",
+  blue: "2C7C70",
   white: "FFFFFF",
   black: "111C1A",
 };
@@ -76,6 +82,15 @@ function shape(slide, type, x, y, w, h, fill = null, line = null, extra = {}) {
 }
 
 function line(slide, x, y, w, h, color = C.line, width = 1.2, transparency = 0) {
+  // Keep OOXML extents non-negative so strict import/export tools can round-trip the deck.
+  if (w < 0) {
+    x += w;
+    w = -w;
+  }
+  if (h < 0) {
+    y += h;
+    h = -h;
+  }
   shape(slide, pptx.ShapeType.line, x, y, w, h, null, { color, width, transparency });
 }
 
@@ -118,8 +133,8 @@ function footer(slide, section, n) {
 function title(slide, section, heading, n, sub = "") {
   addDecor(slide, n);
   footer(slide, section, n);
-  addText(slide, heading, 0.82, 0.92, 11.6, 0.56, 27, C.ink, { fontFace: F_HEAD, bold: true });
-  if (sub) addText(slide, sub, 0.84, 1.54, 11.2, 0.32, 13.3, C.muted, { bold: false });
+  addText(slide, heading, 0.82, 0.88, 11.6, 0.68, 35, C.ink, { fontFace: F_HEAD, bold: true });
+  if (sub) addText(slide, sub, 0.84, 1.58, 11.2, 0.38, 15.2, C.muted, { bold: false });
 }
 
 function sectionLabel(slide, text, x = 0.84, y = 0.64, w = 1.42) {
@@ -171,8 +186,8 @@ function notes(slide, text) {
   s.background = { color: C.bg };
   addDecor(s, 1);
   addText(s, "ERASEMAP  /  НҰРЛАНҰЛЫ ДУЛАТ  ·  9 «Б»", 0.82, 0.44, 4.8, 0.22, 9, C.teal, { bold: true, charSpacing: 0.45 });
-  addText(s, "Удаление —\nэто не кнопка.", 0.82, 1.55, 6.1, 1.4, 42, C.ink, { fontFace: F_HEAD, bold: true });
-  addText(s, "Здесь проверяется весь путь.", 0.86, 3.16, 5.4, 0.38, 23, C.coral, { fontFace: F_HEAD, bold: true });
+  addText(s, "Удаление —\nэто не кнопка.", 0.82, 1.45, 6.1, 1.55, 48, C.ink, { fontFace: F_HEAD, bold: true });
+  addText(s, "Здесь проверяется весь путь.", 0.86, 3.12, 5.5, 0.42, 25, C.coral, { fontFace: F_HEAD, bold: true });
   addText(s, "EraSeMap проверяет, исчезли ли данные из копий, производных\nи будущих каналов восстановления.", 0.86, 3.76, 5.55, 0.62, 16.5, C.muted);
   rounded(s, 0.86, 5.02, 4.95, 0.52, C.sage2, C.teal, 0.18, 0);
   addText(s, "DELETE 200 OK  →  карта  →  проверка  →  сертификат", 1.04, 5.17, 4.58, 0.2, 10.5, C.ink, { bold: true, align: "center" });
@@ -228,7 +243,7 @@ function notes(slide, text) {
   node(s, 7.25, 4.92, 1.92, 0.72, "резерв", "восстановление", C.coral, C.coral2);
   rounded(s, 5.28, 5.74, 6.67, 0.38, C.coral2, C.coral, 0.18, 0);
   addText(s, "«DELETE 200 OK»  ≠  данные исчезли", 5.5, 5.84, 6.25, 0.16, 11.2, C.coral, { bold: true, align: "center" });
-  notes(s, "Покажите, что один пользователь представлен не одной строкой: есть шаблон, кэш, backup и влияние на модель. Любая из ветвей может стать путём восстановления.");
+  notes(s, "Покажите, что один пользователь представлен не одной строкой: есть шаблон, кэш, резервная копия и влияние на модель. Любая из ветвей может стать путём восстановления.");
 }
 
 // 03 — one algorithm
@@ -285,26 +300,21 @@ function notes(slide, text) {
   notes(s, "Ключевая сила — безопасный отказ. COMPLETE выдаётся только при одновременном физическом, производном и временном закрытии.");
 }
 
-// 05 — one-request walkthrough
+// 05 — synthetic bank walkthrough
 {
   const s = pptx.addSlide(); s.background = { color: C.bg };
-  title(s, "Пример", "Один запрос: как EraSeMap проверяет удаление", 5, "Клиент просит удалить биометрический шаблон. Система проходит пять шагов, прежде чем сказать «готово».");
-  const items = [
-    ["Запрос", "клиент просит удалить", C.blue], ["Карта", "где лежат копии", C.teal], ["Закрытие", "закрываем нужные артефакты", C.ochre], ["Проверка", "проба + время", C.coral], ["Вердикт", "COMPLETE / INCOMPLETE", C.lilac],
-  ];
-  items.forEach(([label, sub, color], i) => {
-    const x = 0.92 + i * 2.43;
-    if (i < items.length - 1) line(s, x + 1.54, 3.77, 0.88, 0, C.line, 2.3, 9);
-    circle(s, x + 0.44, 3.1, 0.82, color, color, 0);
-    addText(s, label, x, 4.07, 1.7, 0.28, 14, C.ink, { fontFace: F_HEAD, bold: true, align: "center" });
-    addText(s, sub, x, 4.42, 1.7, 0.2, 10, C.muted, { align: "center" });
-  });
-  rounded(s, 1.3, 5.34, 4.78, 0.65, C.paper, C.line, 0.2, 0);
-  addText(s, "COMPLETE ⇔ все известные пути закрыты", 1.55, 5.55, 4.3, 0.2, 16, C.teal, { fontFace: F_HEAD, bold: true, align: "center" });
-  rounded(s, 6.63, 5.34, 5.35, 0.65, C.sage2, C.teal, 0.2, 0);
-  addText(s, "INCOMPLETE = риск найден", 6.9, 5.55, 4.8, 0.2, 12.7, C.ink, { bold: true, align: "center" });
-  addText(s, "Если путь неизвестен или риск найден — EraSeMap не говорит «готово».", 1.1, 6.44, 11.2, 0.25, 12, C.muted, { align: "center" });
-  notes(s, "Расскажите это как одну историю: запрос идёт от карты данных к закрытию копий, затем к активной проверке и только после этого к вердикту. Если найден риск или путь не подтверждён, EraSeMap не говорит COMPLETE.");
+  title(s, "Пример", "Синтетический банк: карта данных клиента", 5, "512 вымышленных клиентов, реальные типы хранилищ и ни одной настоящей персональной записи.");
+  addText(s, "512", 0.86, 2.35, 2.7, 0.58, 38, C.teal, { fontFace: F_HEAD, bold: true });
+  addText(s, "синтетических клиентов", 0.88, 2.95, 2.85, 0.28, 15, C.ink, { bold: true });
+  addText(s, "3 072", 0.86, 3.55, 2.7, 0.58, 38, C.teal2, { fontFace: F_HEAD, bold: true });
+  addText(s, "зарегистрированных артефакта", 0.88, 4.15, 3.0, 0.28, 15, C.ink, { bold: true });
+  rounded(s, 0.86, 4.84, 3.05, 1.18, C.coral2, C.coral, 0.22, 0);
+  addText(s, "INCOMPLETE", 1.08, 5.04, 2.6, 0.34, 21, C.coral, { fontFace: F_HEAD, bold: true });
+  addText(s, "остались 2 скрытых копии\nи 1 непроверенный канал", 1.08, 5.45, 2.55, 0.42, 13, C.ink, { bold: true });
+  rounded(s, 4.2, 2.18, 8.28, 4.35, C.paper, C.line, 0.22, 0);
+  s.addImage({ path: BANK_CONCEPT, ...imageSizingContain(BANK_CONCEPT, 4.34, 2.32, 8.0, 4.05), altText: "Экран синтетического банка с картой артефактов клиента и fail-closed verdict" });
+  addText(s, "Демонстрация показывает не красивый интерфейс, а проверяемый путь: найти → удалить → перепроверить.", 0.98, 6.55, 11.45, 0.28, 13.2, C.muted, { align: "center" });
+  notes(s, "Покажите экран банка: для выбранного клиента EraSeMap видит запись в PostgreSQL, учётную запись, кэш, вектор, резервную копию и модельный канал. Пока два объекта остаются скрытыми и один канал не проверен, система честно выдаёт INCOMPLETE.");
 }
 
 // 06 — safety evidence
@@ -387,15 +397,15 @@ function notes(slide, text) {
     addText(s, name, x + 0.82, 4.0, 2.2, 0.24, 12.2, C.ink, { bold: true });
     addText(s, sub, x + 0.82, 4.33, 2.22, 0.2, 9.4, C.muted);
   });
-  addText(s, "3 072 / 3 072 формальных проверок прошли в proof harness проекта.", 1.12, 5.67, 11.1, 0.26, 12.5, C.ink2, { bold: true, align: "center" });
-  addText(s, "Это проверка соответствия протоколу, а не доказательство внедрения в production.", 1.2, 6.18, 10.95, 0.22, 11.2, C.muted, { align: "center" });
-  notes(s, "Формула — удобная рамка для комиссии. Важно уточнить: formal checks подтверждают conformance протокола и composition property, но не заменяют внешний production pilot.");
+  addText(s, "3 072 / 3 072 формальных проверок прошли в проверяющей программе проекта.", 1.12, 5.67, 11.1, 0.26, 12.5, C.ink2, { bold: true, align: "center" });
+  addText(s, "Это проверка соответствия протоколу, а не доказательство внедрения в рабочую систему.", 1.2, 6.18, 10.95, 0.22, 11.2, C.muted, { align: "center" });
+  notes(s, "Формула помогает коротко объяснить правило решения. Формальные проверки подтверждают, что программа следует протоколу и правильно объединяет три условия, но не заменяют испытание в настоящей организации.");
 }
 
 // 11 — model channel
 {
   const s = pptx.addSlide(); s.background = { color: C.bg };
-  title(s, "Ограничение", "Влияние на модель — отдельный канал", 11, "Model unlearning проверяется отдельно и не заменяет физическое удаление.");
+  title(s, "Ограничение", "Влияние на модель — отдельный канал", 11, "Машинное разучивание (machine unlearning) проверяется отдельно и не заменяет физическое удаление.");
   rounded(s, 0.84, 2.18, 5.55, 3.85, C.paper, C.line, 0.24, 0);
   addText(s, "Что проверяем", 1.22, 2.55, 4.75, 0.28, 20, C.ink, { fontFace: F_HEAD, bold: true });
   [["01", "влияние / полезность для оставшихся", C.blue], ["02", "сравнение с точным переобучением", C.teal], ["03", "атака на приватность + порог качества", C.coral]].forEach(([n, t, c], i) => {
@@ -406,14 +416,14 @@ function notes(slide, text) {
   });
   rounded(s, 6.86, 2.18, 5.62, 3.85, C.coral2, C.coral, 0.24, 0);
   addText(s, "Реальный результат", 7.25, 2.55, 4.84, 0.28, 20, C.coral, { fontFace: F_HEAD, bold: true });
-  addText(s, "Кандидат MUFAC", 7.25, 3.28, 3.9, 0.26, 16, C.ink, { bold: true });
+  addText(s, "Быстрый метод MUFAC", 7.25, 3.28, 3.9, 0.26, 16, C.ink, { bold: true });
   rounded(s, 7.25, 3.68, 2.62, 0.31, C.paper, C.coral, 0.16, 0);
   addText(s, "FAIL · порог полезности", 7.38, 3.77, 2.36, 0.12, 8.1, C.coral, { bold: true, align: "center" });
   addText(s, "Точное переобучение", 7.25, 4.53, 3.9, 0.26, 16, C.teal, { bold: true });
   rounded(s, 7.25, 4.93, 2.52, 0.31, C.sage2, C.teal, 0.16, 0);
   addText(s, "PASS · безопасно / без ускорения", 7.38, 5.02, 2.26, 0.12, 8.1, C.teal, { bold: true, align: "center" });
   addText(s, "Граница: быстрое переобучение не считается успешным без проверки качества для остальных.", 1.25, 6.45, 10.9, 0.25, 11.6, C.muted, { align: "center" });
-  notes(s, "Поясните термины: retained utility — качество для оставшихся пользователей; exact fallback — полное переобучение. Отрицательный результат здесь важен, потому что система не скрывает проблему.");
+  notes(s, "Поясните два термина: качество для оставшихся пользователей показывает, не испортили ли модель; безопасный запасной вариант — полное переобучение. Отрицательный результат важен, потому что система не скрывает проблему.");
 }
 
 // 12 — novelty
@@ -443,8 +453,8 @@ function notes(slide, text) {
 {
   const s = pptx.addSlide(); s.background = { color: C.bg };
   addDecor(s, 13);
-  addText(s, "ERASEMAP  /  CONCLUSION", 0.82, 0.44, 3.6, 0.22, 9, C.teal, { bold: true, charSpacing: 0.8 });
-  addText(s, "Проверять путь,\nа не обещание.", 0.82, 1.55, 5.85, 1.32, 42, C.ink, { fontFace: F_HEAD, bold: true });
+  addText(s, "ERASEMAP  /  ВЫВОД", 0.82, 0.44, 3.6, 0.22, 9, C.teal, { bold: true, charSpacing: 0.8 });
+  addText(s, "Проверять путь,\nа не обещание.", 0.82, 1.45, 5.85, 1.48, 47, C.ink, { fontFace: F_HEAD, bold: true });
   addText(s, "EraSeMap превращает удаление из одной команды\nв процедуру с проверкой возврата во времени.", 0.86, 3.55, 5.65, 0.56, 16.5, C.muted);
   rounded(s, 0.86, 4.86, 4.95, 0.58, C.sage2, C.teal, 0.22, 0);
   addText(s, "Следующий эксперимент: независимая скрытая проверка", 1.04, 5.05, 4.58, 0.18, 10.5, C.ink, { bold: true, align: "center" });
@@ -460,7 +470,7 @@ function notes(slide, text) {
   addText(s, "SAFE", 7.25, 5.23, 1.05, 0.18, 11, C.lilac, { fontFace: F_HEAD, bold: true, align: "center" });
   addText(s, "проверка удаления по доказательствам", 0.82, 7.22, 3.0, 0.14, 7.2, C.muted);
   addText(s, "13", 12.2, 0.25, 0.45, 0.18, 8.5, C.muted, { bold: true, align: "right" });
-  notes(s, "Закройте одной фразой: EraSeMap проверяет путь, а не обещание. Если спросят о следующем шаге, называйте independent hidden challenge и production pilot.");
+  notes(s, "Закройте одной фразой: EraSeMap проверяет путь, а не обещание. Следующий шаг — независимая скрытая проверка, затем испытание в настоящей организации.");
 }
 
 for (const slide of pptx._slides) {

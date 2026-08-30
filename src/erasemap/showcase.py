@@ -347,20 +347,20 @@ def render_showcase_html(report: dict[str, Any]) -> str:
   <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
   <title>EraSeMap — проверяемая демонстрация</title>
   <style>
-    :root {{ color-scheme: light; --ink:#101114; --muted:#62666d; --line:#d9dce1;
-      --paper:#f6f7f8; --accent:#e8532f; --ok:#087f5b; }}
+    :root {{ color-scheme: light; --ink:#123b35; --muted:#5b7069; --line:#cddcd5;
+      --paper:#f5f2e9; --surface:#fffdf8; --accent:#d8614b; --ok:#078c82; }}
     * {{ box-sizing:border-box; }}
-    body {{ margin:0; color:var(--ink); background:white; font:18px/1.45 Inter,Arial,sans-serif; }}
+    body {{ margin:0; color:var(--ink); background:var(--paper); font:18px/1.5 Inter,Arial,sans-serif; }}
     main {{ max-width:1160px; margin:auto; padding:56px 32px 72px; }}
     h1 {{ max-width:900px; margin:18px 0 16px; font-size:58px; line-height:1.02; letter-spacing:-2px; }}
     h2 {{ margin:0 0 18px; font-size:32px; }}
-    .eyebrow {{ color:var(--accent); font-size:14px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }}
+    .eyebrow {{ color:var(--ok); font-size:14px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }}
     .lead {{ max-width:800px; color:var(--muted); font-size:24px; }}
-    .path {{ margin:42px 0; padding:30px; background:var(--paper); border-left:7px solid var(--accent); }}
-    .path strong {{ display:block; margin-bottom:10px; font-size:16px; text-transform:uppercase; }}
+    .path {{ margin:42px 0; padding:30px; background:var(--surface); border:1px solid var(--line); border-left:7px solid var(--accent); border-radius:0 24px 24px 0; }}
+    .path strong {{ display:block; margin-bottom:10px; color:var(--accent); font-size:16px; text-transform:uppercase; }}
     .path span {{ font-size:36px; font-weight:750; }}
     .grid {{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin:30px 0 52px; }}
-    article {{ min-height:220px; padding:26px; border:1px solid var(--line); }}
+    article {{ min-height:220px; padding:26px; background:var(--surface); border:1px solid var(--line); border-radius:22px; }}
     .metric {{ margin:18px 0 4px; font-size:48px; font-weight:800; letter-spacing:-1.5px; }}
     .scope {{ color:var(--muted); font-size:13px; overflow-wrap:anywhere; }}
     .boundary {{ display:grid; grid-template-columns:1fr 1fr; gap:30px; padding-top:38px; border-top:2px solid var(--ink); }}
@@ -374,7 +374,7 @@ def render_showcase_html(report: dict[str, Any]) -> str:
   <h1>Удалить запись недостаточно.</h1>
   <p class=\"lead\">EraSeMap отвечает на простой вопрос: какая зарегистрированная копия или производная ещё может использовать данные человека?</p>
   <section class=\"path\" aria-label=\"Кратчайший остаточный путь\">
-    <strong>Live audit: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
+    <strong>Текущий аудит: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
     <p>{html.escape(live["interpretation"])}</p>
   </section>
   <h2>Один алгоритм из трёх шагов</h2>
@@ -383,31 +383,32 @@ def render_showcase_html(report: dict[str, Any]) -> str:
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
       <p>ложных COMPLETE у EraSeMap против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у аудита только по типам узлов.</p>
-      <div class=\"scope\">{html.escape(mechanism["scope"])}</div></article>
+      </article>
     <article><div class=\"eyebrow\">Реальные процессы</div><div class=\"metric\">{systems["speedup_geometric_mean"]:.2f}×</div>
       <p>ускорение; записано на {systems["bytes_reduction"]:.2%} меньше байтов, завершено {systems["complete_rate"]:.0%} задач.</p>
-      <div class=\"scope\">{html.escape(systems["scope"])}</div></article>
+      </article>
     <article><div class=\"eyebrow\">Формальная связь</div><div class=\"metric\">{formal["runs"]} / {formal["runs"]}</div>
       <p>совпадений точного решателя с полным перебором; расхождений: {formal["mismatches"]}.</p>
-      <div class=\"scope\">{html.escape(formal["scope"])}</div></article>
+      </article>
     <article><div class=\"eyebrow\">Проверка во времени</div><div class=\"metric\">{temporal["risk_detections"]} / 30</div>
       <p>скрытых рисков найдено; после контроля возвратов: {temporal["post_msc_recurrences"]}; совпадений с полным перебором: {temporal["conformance_configurations"]}/16384.</p>
-      <div class=\"scope\">{html.escape(temporal["scope"])}</div></article>
+      </article>
     <article><div class=\"eyebrow\">Проверка на сервисах</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
       <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; обычный статус: {transfer["native_false_complete"]}, аудит узлов: {transfer["typed_false_complete"]}; возвратов после контроля: {transfer["post_control_recurrence"]}.</p>
-      <div class=\"scope\">{html.escape(transfer["scope"])}</div></article>
+      </article>
     <article><div class=\"eyebrow\">Поиск скрытого пути</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["random_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
       <p>активный поиск / случайная стратегия / полный перебор; точно найдено графов: {ghostgraph["exact_graphs"]}, классов путей: {ghostgraph["path_classes"]}, самоуверенных ошибок: {ghostgraph["false_confident"]}.</p>
-      <p>Live four-service: {ghostgraph["live_four_service"]["cases"]}/5 cases, {ghostgraph["live_four_service"]["probes"]} probes, cleanup failures {ghostgraph["live_four_service"]["cleanup_failures"]}; external {ghostgraph["external_status"]}.</p>
-      <div class=\"scope\">{html.escape(ghostgraph["scope"])}</div></article>
+      <p>Проверка на четырёх сервисах: {ghostgraph["live_four_service"]["cases"]}/5 случаев, {ghostgraph["live_four_service"]["probes"]} проб, ошибок очистки: {ghostgraph["live_four_service"]["cleanup_failures"]}; внешний результат пока не собран.</p>
+      </article>
   </section>
-  <section class=\"path\"><strong>Answer-blind handoff</strong>
-    <p>{usability["cards"]} карточек на EN/RU; human result: {html.escape(usability["human_result_status"])}. Пакет готов, но метрики людей не выдуманы.</p>
+  <section class=\"path\"><strong>Проверка без доступа к ответам</strong>
+    <p>{usability["cards"]} карточек на русском и английском; результат с участниками пока не собран. Пакет готов, но метрики людей не выдуманы.</p>
   </section>
   <section class=\"boundary\">
     <div><h2 class=\"supported\">Что доказано</h2><p>{html.escape(boundary["supported"])}</p></div>
     <div><h2 class=\"unsupported\">Что не заявляется</h2><p>{html.escape(boundary["not_supported"])}</p>
-      <p><strong>Независимость: {boundary["independence_score"]}/10</strong> до внешнего hidden challenge.</p></div>
+      <p class=\"scope\"><strong>Независимость доказательств:</strong> {boundary["independence_score"]:.1f}/10. Оценка ограничена, пока скрытую проверку не провёл внешний участник.</p>
+      <p><strong>Следующий необходимый шаг:</strong> внешний участник проводит скрытую проверку, не раскрывая ответы автору до фиксации результата.</p></div>
   </section>
   <details><summary>Машиночитаемый отчёт и SHA-256 источников</summary><pre>{embedded}</pre></details>
 </main></body></html>"""

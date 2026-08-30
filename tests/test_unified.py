@@ -54,7 +54,7 @@ def test_one_pipeline_composes_all_mandatory_stages() -> None:
     assert result.verdict is EraSeMapVerdict.COMPLETE_WITHIN_ENVELOPE
     assert result.certificate_ready
     assert tuple(item.stage for item in result.stages) == tuple(EraSeMapStage)
-    assert result.stages[-1].status is StageStatus.READY
+    assert result.stages[-1].status is StageStatus.COMPLETE
     assert result.deletion_plan.complete
     assert result.stabilization_plan is not None
     assert result.stabilization_plan.complete
@@ -76,7 +76,7 @@ def test_unverified_discovery_blocks_temporal_certificate() -> None:
     assert not result.certificate_ready
     assert result.topology_envelope is None
     assert result.stabilization_plan is None
-    assert result.stages[-1].status is StageStatus.BLOCKED
+    assert result.stages[-1].status is StageStatus.UNVERIFIED
 
 
 def test_infeasible_temporal_control_prevents_complete() -> None:
@@ -97,7 +97,7 @@ def test_infeasible_temporal_control_prevents_complete() -> None:
 
     assert result.verdict is EraSeMapVerdict.INCOMPLETE
     assert not result.certificate_ready
-    assert result.stages[-2].status is StageStatus.INCOMPLETE
+    assert result.stages[-1].status is StageStatus.INCOMPLETE
 
 
 def test_invalid_temporal_controls_fail_closed() -> None:
@@ -119,8 +119,7 @@ def test_invalid_temporal_controls_fail_closed() -> None:
 
     assert result.verdict is EraSeMapVerdict.UNVERIFIED
     assert result.stabilization_plan is None
-    assert result.stages[-2].status is StageStatus.UNVERIFIED
-    assert result.stages[-1].status is StageStatus.BLOCKED
+    assert result.stages[-1].status is StageStatus.UNVERIFIED
 
 
 def test_invalid_discovery_evidence_fails_closed() -> None:
@@ -140,7 +139,7 @@ def test_invalid_discovery_evidence_fails_closed() -> None:
     )
 
     assert result.verdict is EraSeMapVerdict.UNVERIFIED
-    assert result.stages[1].status is StageStatus.UNVERIFIED
+    assert result.stages[0].status is StageStatus.UNVERIFIED
 
 
 def test_stale_discovery_hypothesis_fails_closed() -> None:
@@ -159,4 +158,4 @@ def test_stale_discovery_hypothesis_fails_closed() -> None:
     assert result.verdict is EraSeMapVerdict.UNVERIFIED
     assert result.topology_envelope is None
     assert result.stabilization_plan is None
-    assert result.stages[1].status is StageStatus.UNVERIFIED
+    assert result.stages[0].status is StageStatus.UNVERIFIED

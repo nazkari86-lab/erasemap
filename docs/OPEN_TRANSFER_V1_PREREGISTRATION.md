@@ -52,7 +52,8 @@ change to the matrix, truth, or thresholds requires a new protocol version.
 ## Leave-one-family-out boundary
 
 Each family is held out in one rotation. The held-out run may use its already frozen declarative
-adapter but may not change PCUG, RSE, MSC, TRE, mandatory channels, comparator rules, metrics, or
+adapter but may not change the registered path, temporal replay, mandatory channels, comparator
+rules, metrics, or
 gates. A changed core hash is a transfer failure.
 
 ## Claim boundary

@@ -96,7 +96,6 @@ def main() -> None:
     planner = chart(data, "03_planner_cost")
     multi = chart(data, "04_multiservice")
     ghost = chart(data, "05_ghostgraph_v2")
-    temporal = chart(data, "06_ghostgraph_t")
 
     fig, axes = plt.subplots(1, 2, figsize=(14.2, 5.0), constrained_layout=True)
     bars(
@@ -159,35 +158,20 @@ def main() -> None:
     )
     save(fig, "readable_cdc.png")
 
-    fig, axes = plt.subplots(2, 2, figsize=(14.2, 8.2), constrained_layout=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14.2, 5.0), constrained_layout=True)
     bars(
-        axes[0, 0],
+        axes[0],
         ["Активный", "Жадный", "Случайный", "Перебор"],
         ghost["values"],
         "Поиск скрытого пути",
         "активные пробы ↓",
     )
     bars(
-        axes[0, 1],
-        ["EraSeMap-T", "1 шаг", "Жадный", "Случайный", "Перебор"],
-        temporal["probes"],
-        "Временная диагностика",
-        "средние пробы ↓",
-    )
-    bars(
-        axes[1, 0],
-        ["EraSeMap-T", "1 шаг", "Жадный", "Случайный", "Перебор"],
-        [100, 100, 100, 95.333, 100],
-        "Правильный ответ",
-        "доля правильных % ↑",
-        higher_is_better=True,
-    )
-    bars(
-        axes[1, 1],
-        ["EraSeMap-T", "1 шаг", "Жадный", "Случайный", "Перебор"],
-        temporal["false_confident_pct"],
+        axes[1],
+        ["EraSeMap FIND", "Жадный", "Случайный", "Перебор"],
+        ghost["false_confident"],
         "Ложная уверенность",
-        "false-confidence % ↓",
+        "ошибочные уверенные ответы ↓",
     )
     fig.suptitle(
         "Диагностика пути восстановления: меньше проб и ложной уверенности",

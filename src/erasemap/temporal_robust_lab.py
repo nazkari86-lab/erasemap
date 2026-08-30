@@ -49,13 +49,13 @@ class RobustPhysicalTrial:
     active_carriers: tuple[str, ...]
     nominal_control_ids: tuple[str, ...]
     nominal_cost: int
-    tre_control_ids: tuple[str, ...]
-    tre_cost: int
+    robust_control_ids: tuple[str, ...]
+    robust_cost: int
     robustness_premium: int
     adversarial_witness: tuple[str, ...]
     uncontrolled_regeneration: bool
     nominal_plan_regeneration: bool
-    tre_post_control_regeneration: bool
+    robust_post_control_regeneration: bool
     oracle_control_ids: tuple[str, ...]
     oracle_cost: int
     oracle_match: bool
@@ -103,7 +103,7 @@ def scenario_from_mask(mask: int) -> TopologyScenario:
 
 def topology_uncertainty_envelope() -> TopologyUncertaintyEnvelope:
     return TopologyUncertaintyEnvelope(
-        "topology-robust-erasure-v1",
+        "erasemap-prove-envelope-v1",
         "nominal-backup",
         len(OPTIONAL_TRANSITION_IDS),
         tuple(scenario_from_mask(mask) for mask in range(8)),
@@ -206,7 +206,7 @@ def run_robust_physical_trial(
         topology_uncertainty_envelope(), multipath_controls()
     )
     if oracle_status != StabilizationStatus.OPTIMAL.value:
-        raise ValueError("frozen TRE oracle unexpectedly found no plan")
+        raise ValueError("frozen temporal oracle unexpectedly found no plan")
 
     carriers = scenario.initial_state
     lab = MultiCarrierStorageLab(root, seed=seed, carriers=carriers)
@@ -238,13 +238,13 @@ def run_robust_physical_trial(
         active_carriers=tuple(sorted(carriers)),
         nominal_control_ids=nominal.control_ids,
         nominal_cost=nominal.total_cost,
-        tre_control_ids=robust.control_ids,
-        tre_cost=robust.total_cost,
+        robust_control_ids=robust.control_ids,
+        robust_cost=robust.total_cost,
         robustness_premium=robust.total_cost - nominal.total_cost,
         adversarial_witness=witness,
         uncontrolled_regeneration=uncontrolled,
         nominal_plan_regeneration=after_nominal,
-        tre_post_control_regeneration=after_robust,
+        robust_post_control_regeneration=after_robust,
         oracle_control_ids=oracle_ids,
         oracle_cost=oracle_cost,
         oracle_match=(

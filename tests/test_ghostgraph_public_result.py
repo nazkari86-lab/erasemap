@@ -27,6 +27,6 @@ def test_readme_keeps_bounded_and_external_status_visible() -> None:
     readme = Path("README.md").read_text()
 
     assert "GhostGraph" in readme
-    assert "project-authored bounded result" in readme
-    assert "External GhostGraph challenge" in readme
+    assert "project-authored frozen graph catalogue" in readme
+    assert "independently authored hidden challenge" in readme
     assert "NOT_COLLECTED" in readme

@@ -1,154 +1,63 @@
-# Novelty and prior-art boundary
+# EraSeMap novelty and prior-art boundary
 
-EraseMap does not claim to invent data lineage, machine unlearning, exact retraining, membership
-inference, deletion receipts, or biometric governance. Those components have substantial prior art:
+Snapshot: 2026-08-30. This is a targeted review, not proof of worldwide priority or a legal
+freedom-to-operate opinion.
 
-- [W3C PROV](https://www.w3.org/TR/prov-overview/) standardizes machine-processable provenance of
-  entities, activities, and agents, including derivation chains.
-- Bourtoule et al., [Machine Unlearning](https://arxiv.org/abs/1912.03817), introduced SISA to
-  reduce retraining cost by structuring training state.
-- Chourasia et al., [Forget Unlearning](https://proceedings.mlr.press/v202/chourasia23a/chourasia23a.pdf),
-  explains why similarity to retraining from a single released model is not a complete privacy
-  guarantee.
-- [NIST SP 800-63A](https://pages.nist.gov/800-63-4/sp800-63a.html) requires documented biometric
-  retention/deletion processes and operationally representative evaluation.
-- Zhang et al., [Verification of Machine Unlearning is Fragile](https://proceedings.mlr.press/v235/zhang24h.html),
-  shows that a provider can retain information while passing some verification strategies.
-- [Per-instance privacy for machine unlearning](https://openreview.net/forum?id=0A4Y9qRnu9)
-  estimates item-level deletion privacy/difficulty; PCUG does not claim to invent per-item risk.
-- [PURGE](https://arxiv.org/abs/2606.03808) includes self-regulating stopping criteria and
-  representation erasure; adaptive stopping is therefore outside the PCUG novelty claim.
-- [OriginBlame](https://arxiv.org/abs/2607.13037) connects provenance to precise forget-set
-  construction; provenance-guided record selection is also outside the PCUG novelty claim.
-- [Robust uncertain set covering](https://optimization-online.org/2013/06/3926/) formalizes
-  minimum-cost covering under uncertainty; robust optimization itself is outside the TRE claim.
-- [OneTrust's deletion-testing patent](https://patents.google.com/patent/US20210406398A1/en)
-  describes test data subjects, unique tokens, and post-deletion interactions. Synthetic deletion
-  canaries are therefore outside the novelty claim.
+## What is not claimed as new
 
-The research contribution being tested is narrower: a fail-closed, typed residual-path auditor
-that connects operational biometric copies (source, template, index, cache, backup, model, receipt)
-to artifact-specific evidence rules and produces the shortest actionable counterexample, while
-the model branch is accepted only through a frozen, deletion-matched comparison against exact
-retraining and paired privacy attacks.
+EraSeMap does not claim invention of:
 
-The v3 `deletion_matched_restart` is an engineering method, not a new general unlearning theorem.
-Its auditable property is simple: the forgotten identity is absent from every candidate optimization
-step, and the only approximation is a preregistered smaller training budget. Its measured benefit
-must therefore be reported only for the registered architecture and datasets. A production FaceID,
-eGov, or government-system result requires independent instrumentation, authorization, a committed
-hidden suite, and evaluation on the actual operational population.
+- data lineage, provenance graphs, derived-data discovery, or retention propagation;
+- machine unlearning, exact retraining, SISA, membership inference, or certified unlearning;
+- deletion receipts, proof of deletion, signatures, commitments, or hash chains;
+- set cover, minimum cuts, shortest paths, active testing, group testing, version spaces, or
+  temporal reachability;
+- backups, tombstones, deletion canaries, synthetic subjects, or uncertainty envelopes.
 
-Potential novelty should be presented as the combined system and evaluation contract, subject to a
-formal literature/patent search by the student. It must not be presented as proof that no similar
-system exists.
+Representative prior art includes W3C PROV, Cao and Yang's system unlearning, Bourtoule et al.'s
+SISA, probabilistic and cryptographic unlearning verification, certified unlearning, dependency-
+aware deletion, deletion-testing patents, and lineage-aware deletion patents. The structured table
+is in [`STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md`](STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md).
 
-The expanded 2026-08-22 search found close patent prior art for lineage graphs that traverse derived
-data and apply deletion policies (US20220414070A1 and US20240012797A1), plus auditable proof of
-deletion across data stores (US11120156B2). Accordingly, lineage-aware deletion and deletion proof
-are explicitly outside the novelty claim. See `docs/STRUCTURED_PRIOR_ART_AND_PATENT_REVIEW.md` for
-the search protocol, closest works, patent publications, and corrected contribution boundary.
+## Working contribution
 
-## PCUG working contribution boundary
+The testable contribution is one composition:
 
-Literature snapshot date: 2026-08-22. This is a targeted review, not a completed systematic or patent
-search.
+> A subject-scoped fail-closed algorithm can connect registered physical copies, derivatives,
+> learned influence, bounded hidden recovery paths, future transitions, and replayable evidence into
+> one three-valued verdict and a minimum-cost sufficient remediation plan.
 
-PCUG tests the composition of three parts:
+It is exposed as three stages:
 
-1. registered deletion completeness over typed operational paths, where active physical artifacts,
-   unknown edges, and quantitative influence claims remain distinct;
-2. minimum-cost action selection whose declared transitions must succeed under replay rather than
-   being trusted as static node coverage;
-3. a signed multi-view proof bundle whose verdict, costs, paths, commitments, and model-channel
-   decisions are independently recomputed.
+1. FIND returns a graph, a complete observable path class, or a fail-closed boundary result.
+2. ERASE closes physical and model branches; fast unlearning passes only against exact-retraining
+   and retained-utility/privacy gates.
+3. PROVE blocks certification unless registered future recovery replay remains safe.
 
-The working claim is limited to this tested composition. PCUG does not claim invention of
-provenance, min-cut, set cover, machine unlearning, exact retraining, per-instance privacy, hidden
-evaluation, cryptographic commitments, digital signatures, or deletion receipts. If a work is found
-that implements the same three-part input/algorithm/output contract under a comparable threat model,
-the contribution must be narrowed or redesigned before competition submission.
+The novelty is not the union of many named subalgorithms. It is the enforced dependency between the
+three stages: no lineage receipt, unlearning score, or empty snapshot can independently produce
+`COMPLETE_WITHIN_ENVELOPE`.
 
-Passing the controlled simulator can support only a statement about its registered faults and
-semantics. External generalization requires separately sourced locked evidence. FaceID/eGov claims
-require authorized production instrumentation; application-style labels are not production evidence
-and are not independent scientific datasets.
+## Evidence supporting the working claim
 
-## TRE working contribution boundary
+- Component baselines fail on frozen interaction cases: 0/60 EraSeMap false complete versus 5/60
+  full typed audit and 45/60 native status.
+- Active FIND reduces a bounded probe budget from 13 random or 49 exhaustive to 7, while tying the
+  strong greedy baseline at 7.
+- Exact ERASE matches exhaustive selection in 3,072/3,072 bounded orderings and substantially
+  reduces measured work versus rebuild-all.
+- PROVE detects 30/30 registered future risks that snapshot audit misses and matches its exhaustive
+  oracle in 16,384/16,384 bounded configurations.
+- Failed Qwen unlearning candidates remain failed; the model channel does not convert speed into a
+  deletion claim.
 
-Topology-Robust Erasure does not claim invention of uncertainty sets, robust set cover, robust
-network interdiction, topology mutation, temporal reachability, tombstones, or synthetic deletion
-tests. Its narrower hypothesis is that a subject-scoped RSE contract can select one exact
-minimum-cost control set that passes fail-closed replay across every topology in a declared finite
-uncertainty envelope, while returning a shortest adversarial regeneration witness and an explicit
-robustness premium relative to nominal MSC.
+## Boundary
 
-The first prospective result supports only the eight project-authored scenarios and declared cost
-catalogue. It cannot be generalized to arbitrary missing transitions or used as evidence that an
-external system lies inside the envelope. A broader novelty claim still requires independent cases
-and a professional patent search.
+The experiments use public inputs and real stock/local processes, but mappings, faults, and runs are
+project-authored. A bounded graph catalogue is not arbitrary topology discovery. A conditional Lean
+theorem is not evidence that an organization registered every store. Production FaceID/eGov and
+independent hidden validation remain unestablished.
 
-## Open stock-service transfer contribution boundary
-
-The frozen v1 transfer result adds a narrower empirical contribution: the same family-neutral
-three-valued decision and exact physical-control contract executed without service-specific scoring
-changes on stock Keycloak identity lifecycle, MLflow run/artifact lineage, and Qdrant biometric
-vectors. It caught temporal or derivative failures that native success missed in all three families
-and failures that a complete typed-node snapshot audit missed in the registered recovery cases.
-
-This is evidence for compositional portability, not a claim that using Keycloak, MLflow, Qdrant,
-face vectors, snapshots, garbage collection, lineage adapters, or deletion testing is new. The
-services, public Olivetti input, and underlying operations are prior components. The mappings,
-faults, and execution remain project-authored, so the result cannot establish independent novelty,
-production relevance, world priority, or coverage of arbitrary unknown infrastructures. Those
-claims still require external authorship, an authorized pilot, and a broader professional patent
-review.
-
-## Erasure Tomography working contribution boundary
-
-Erasure Tomography does not claim invention of group testing, disjunct matrices, Boolean network
-tomography, active probes, deletion canaries, synthetic users, data-flow discovery, or coded test
-design. Relevant close foundations include:
-
-- Galesi and Ranjbar,
-  [Counting and localizing defective nodes by Boolean network tomography](https://arxiv.org/abs/2101.04403),
-  localizes network failures from Boolean path outcomes;
-- D'yachkov et al.,
-  [Error-correcting nonadaptive group testing with disjunct matrices](https://doi.org/10.1016/S0166-218X(97)80002-9),
-  provides the error-correcting coding foundation;
-- Chakraborty et al.,
-  [Meaningful Data Erasure in the Presence of Dependencies](https://www.vldb.org/pvldb/vol18/p3435-chakraborty.pdf),
-  computes principled minimal dependent deletion when dependency rules are supplied;
-- [Chava: A Verification-Aware Data Model](https://openreview.net/attachment?id=uB2AIgYgym&name=pdf)
-  carries verification obligations and evidence with processed data; and
-- OneTrust's cited deletion-testing patent already covers synthetic test subjects and tokens.
-
-The targeted search did not find the same tested input/algorithm/output contract: coded
-synthetic-subject deletion/recovery workflows, an exact fail-closed bounded-support certificate,
-localization of a recurrence mechanism, translation into PCUG/TRE, and physical post-control replay.
-That absence supports a high working novelty score but is not proof of world priority or
-patentability.
-
-The first result is deliberately narrow. Its catalogue has four project-authored mechanisms,
-`k=1`, and `e=0`; three probes are only one fewer than four individual checks, and random/greedy
-coded baselines also succeed at three in this small domain. The contribution claim is therefore the
-erasure-specific fail-closed composition and demonstrated topology-acquisition layer, not a better
-general group-testing code.
-
-## GhostGraph working contribution boundary
-
-GhostGraph does not claim invention of active causal discovery, intervention design, version-space
-learning, network tomography, system lineage, deletion canaries, temporal reachability, or robust
-control. Its narrower implemented composition is: bounded recovery-graph hypotheses; active
-temporal deletion/recovery interventions; exact full-version-space filtering; one-step minimax
-selection checked by an independently structured oracle; fail-closed graph/path/equivalence-class
-outputs; and translation of every justified survivor into TRE controls followed by physical replay.
-
-The v2 result raises internal scientific completion because protocol, source hashes, stopping rule,
-reveal, six equal-input strategies, full planner certificates, and gates were frozen prospectively
-and the key conditional properties are Lean-checked. Active minimax used 7 probes versus 13 random
-and 49 exhaustive, but tied greedy at 7; no superiority over greedy is claimed. A separate
-digest-pinned Redis/Keycloak/MLflow/Qdrant execution supports stock-service transfer only. Neither
-result establishes world priority: a systematic multi-database literature and professional patent
-review remains necessary. Neither raises independence because hypotheses and execution were
-project-authored; the external interactive challenge status is `NOT_COLLECTED`.
+Before a peer-review-level priority claim, the project needs a systematic multi-database search,
+professional patent review, and an independently authored hidden evaluation using the frozen blind
+handoff.

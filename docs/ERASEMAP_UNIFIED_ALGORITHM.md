@@ -1,106 +1,104 @@
-# EraSeMap: one deletion-verification algorithm
+# EraSeMap: specification of one deletion algorithm
 
-## The simple idea
+## Purpose
 
-A database saying `DELETE succeeded` does not prove that a person's data disappeared from backups,
-indexes, caches, exports, replicas, or trained models. EraSeMap treats deletion as one end-to-end
-decision problem:
+EraSeMap decides whether one person's registered raw data, derivatives, model influence, and future
+recovery paths have been erased. It intentionally exposes one algorithm and three stages.
 
-> Find every registered way the data can remain or return, choose the least-cost sufficient set of
-> actions, replay the result over time, and issue a certificate only if every mandatory check passes.
+## Inputs
 
-EraSeMap is the only public algorithm name. PCUG, GhostGraph, CDC, RSE, MSC, and TRE are retained as
-implementation and paper identifiers for reproducibility; they are internal stages and solvers.
+- a subject deletion request;
+- a typed graph of copies, derivatives, services, and model influence;
+- mandatory evidence channels and local verifiers;
+- a bounded catalogue of possible hidden recovery paths plus safe probes;
+- permitted physical, model, and temporal actions with declared costs;
+- a registered observation window and future-transition set.
 
-## Input and output
+## Outputs
 
-Input:
+- `COMPLETE_WITHIN_ENVELOPE`: all registered physical, derivative, model, and temporal obligations
+  passed;
+- `INCOMPLETE`: at least one concrete residual or unstable path remains;
+- `UNVERIFIED`: evidence is insufficient for a safe conclusion.
 
-- one subject's deletion request;
-- a typed graph of stored copies, derivatives, services, and model influence;
-- bounded hypotheses for hidden recovery paths;
-- safe active probes and candidate deletion/control actions;
-- mandatory evidence channels and a temporal observation window.
+Only the first verdict permits a certificate. The certificate is invalidated by relevant changes to
+the topology, verifier, model, policy, or observation window.
 
-Output:
+## Stage 1 — FIND
 
-- `COMPLETE_WITHIN_ENVELOPE`: every registered physical, derivative, model, and future-recovery
-  obligation passed;
-- `INCOMPLETE`: a concrete residual path or an unstabilized recovery mechanism remains;
-- `UNVERIFIED`: the available topology or evidence is not sufficient to decide safely.
+FIND answers: **where can this person's data remain or return?**
 
-`COMPLETE_WITHIN_ENVELOPE` is deliberately not an open-world promise. A topology, policy, model, or
-observation change invalidates the certificate and requires replay.
+It replays registered typed paths and filters bounded recovery-graph hypotheses using safe active
+probes. A valid result may identify one graph or a complete observable path class. Out-of-catalogue,
+inconsistent, missing, or tampered evidence produces `UNVERIFIED`, never success.
 
-## Five stages
+Internal components: PCUG path representation and GhostGraph bounded filtering/minimax probing.
 
-| Public stage | Plain-language question | Internal implementation |
-|---|---|---|
-| 1. Map | Where can this person's data or influence exist? | PCUG typed graph and mandatory evidence channels |
-| 2. Discover | Can an unlisted recovery path recreate it? | GhostGraph / erasure-tomography active probes |
-| 3. Minimize | What is the cheapest sufficient set of actions? | exact CDC plus robust control selection |
-| 4. Verify over time | Can data return after deletion succeeds now? | RSE closure over the discovered topology envelope |
-| 5. Certify | Can another verifier replay the decision? | signed proof bundle and time-bound certificate |
+## Stage 2 — ERASE
 
-Model unlearning is an action inside stage 3, not a separate top-level algorithm. It passes only if
-its preregistered utility, privacy, and deletion-matched gates pass; otherwise exact retraining is
-the fallback.
+ERASE answers: **what minimum sufficient set of actions closes every active path?**
+
+It selects a minimum-cost registered feasible plan. Physical actions cover rows, vectors, caches,
+indexes, exports, replicas, and backup lineage. Model influence is mandatory: machine unlearning is
+compared with exact retraining under preregistered forgetting, retained-utility, privacy-proxy, and
+reload gates. A failed fast candidate triggers exact retraining or `INCOMPLETE`; speed alone never
+passes the model channel.
+
+Internal components: PCUG mandatory channels and exact CDC action selection.
+
+## Stage 3 — PROVE
+
+PROVE answers: **can the data return after deletion appears successful?**
+
+It replays registered restore, synchronization, cache-warming, index-rebuild, and model-redeployment
+transitions across the actionable recovery envelope. It emits a replayable certificate only if the
+ERASE plan is complete and every registered temporal scenario remains residual-free.
+
+Internal components: RSE transition closure, MSC exact control selection, evidence hashes, and
+certificate readiness.
 
 ## Decision rule
 
 Let:
 
-- `P = 1` when the selected physical and model action plan closes every active path and mandatory
-  channel;
-- `D = 1` when active evidence identifies an actionable registered topology envelope;
-- `T = 1` when every scenario in that envelope remains residual-free after temporal replay.
-
-Then:
+- `P = 1` if physical and model paths are closed;
+- `D = 1` if recovery-path evidence is actionable and valid;
+- `T = 1` if temporal replay is safe.
 
 ```text
 COMPLETE_WITHIN_ENVELOPE  iff  P = 1 and D = 1 and T = 1
-INCOMPLETE                if   a residual or unstabilized path is demonstrated
+INCOMPLETE                if   a concrete residual or unstable path is shown
 UNVERIFIED                otherwise
 ```
-
-The rule is asymmetric by design: missing evidence can never be converted into `COMPLETE`.
 
 ## Executable pseudocode
 
 ```text
-EraSeMap(request, graph, hypotheses, probes, actions, observations):
-    map_report = replay_all_registered_paths(graph, request)
-    discovery = run_safe_active_probes(hypotheses, probes, observations)
-    deletion_plan = exact_minimum_sufficient_actions(graph, actions)
+EraSeMap(request, graph, hypotheses, probes, actions):
+    discovery = FIND(graph, hypotheses, probes)
+    plan = ERASE(graph, actions, exact_retraining_reference)
 
-    if discovery is not evidence-backed and actionable:
-        return INCOMPLETE if deletion_plan proves a residual else UNVERIFIED
-
-    envelope = build_temporal_envelope(discovery)
-    stabilization_plan = exact_robust_controls(envelope)
-
-    if deletion_plan is incomplete or stabilization_plan is infeasible:
-        return INCOMPLETE with shortest counterexample
-    if either plan or any mandatory observation is unknown:
+    if discovery is not valid and actionable:
+        return INCOMPLETE if plan proves a residual else UNVERIFIED
+    if plan is incomplete:
+        return INCOMPLETE
+    if plan or a mandatory channel is unknown:
         return UNVERIFIED
 
-    return COMPLETE_WITHIN_ENVELOPE with replayable certificate inputs
+    replay = PROVE(discovery.envelope, plan)
+    if replay demonstrates recurrence:
+        return INCOMPLETE
+    if replay is missing or uncertain:
+        return UNVERIFIED
+    return COMPLETE_WITHIN_ENVELOPE with certificate inputs
 ```
 
-The production Python entry point is `erasemap.unified.run_erasemap`. It is a deterministic decision
-facade: a service-specific adapter performs the safe probes and supplies its `DiscoveryReport`, while
-this function composes that evidence with the registered graph, exact action search, and temporal
-replay. Keeping probing at the adapter boundary prevents the pure verifier from making unreviewed
-network or destructive calls.
+The pure production facade is `erasemap.unified.run_erasemap`. Service adapters perform approved
+probes and pass a signed or otherwise evidence-bound `DiscoveryReport`; the verifier itself does not
+make unreviewed network or destructive calls.
 
-## What the comparison figure does and does not show
+## Claim boundary
 
-The unified comparison dashboard uses six committed same-protocol experiments. Each panel reports
-the relevant EraSeMap stage under test against non-EraSeMap baseline strategies: full typed audit,
-native service status, random and exhaustive testing, greedy set cover, delete/rebuild-all, and
-snapshot audit. The dashboard is a readable evidence map, not a pooled leaderboard.
-
-These baseline implementations were executed by the project under the frozen protocols. They are
-not independently authored external reproductions, and results from different panels are not
-pooled into a single superiority score. The current evidence contains both wins and a real tie:
-EraSeMap's exact action minimizer tied greedy set cover on the small development set.
+EraSeMap is stronger than a database receipt because it combines physical, derivative, model, and
+temporal evidence. It is not an oracle for uninstrumented infrastructure. Current external hidden
+evaluation is `NOT_COLLECTED`, and production FaceID/eGov deployment is not established.

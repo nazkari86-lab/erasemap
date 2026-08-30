@@ -62,23 +62,6 @@ jobs:
       - run: >-
           python scripts/verify_regeneration_safe_erasure_v2.py
           --result /tmp/erasemap-rse-v2/result.json
-      - run: python scripts/verify_topology_robust_erasure_v1.py
-      - run: >-
-          PYTHONPATH=src python experiments/run_topology_robust_erasure_v1.py
-          --output /tmp/erasemap-tre-v1
-      - run: >-
-          python scripts/verify_topology_robust_erasure_v1.py
-          --result /tmp/erasemap-tre-v1/result.json
-      - run: python scripts/verify_erasure_tomography_v1.py
-      - run: >-
-          PYTHONPATH=src:. python experiments/run_erasure_tomography_v1.py
-          --protocol benchmark/erasure-tomography-v1.json
-          --reveal benchmark/erasure-tomography-v1-reveal.json
-          --output /tmp/erasemap-et-v1
-      - run: >-
-          PYTHONPATH=src:. python scripts/verify_erasure_tomography_v1.py
-          --result /tmp/erasemap-et-v1/result.json
-      - run: python scripts/verify_erasure_tomography_redis_v1.py
       - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_v1.py
       - run: >-
           PYTHONPATH=src:. python experiments/run_ghostgraph_v1.py
@@ -90,13 +73,6 @@ jobs:
           --output /tmp/erasemap-ghostgraph-v1
       - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_v2.py
       - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_live_v2.py
-      - run: PYTHONPATH=src:. python scripts/verify_ghostgraph_t_v1.py
-      - run: >-
-          PYTHONPATH=src:. python experiments/run_ghostgraph_t_v1.py
-          --output /tmp/erasemap-ghostgraph-t-v1
-      - run: >-
-          PYTHONPATH=src:. python scripts/verify_ghostgraph_t_v1.py
-          --result /tmp/erasemap-ghostgraph-t-v1/result.json
       - run: python -m external_ghostgraph_challenge.verify
       - run: python -m external_ghostgraph_challenge.verify_v2 --help
       - run: >-
@@ -107,14 +83,6 @@ jobs:
           python scripts/verify_rse_conformance.py
           --expected formal/rse-msc-conformance-v1.json
           --output /tmp/rse-msc-conformance.json
-      - run: >-
-          python scripts/verify_tre_conformance.py
-          --expected formal/tre-conformance-v1.json
-          --output /tmp/tre-conformance.json
-      - run: >-
-          PYTHONPATH=src python scripts/verify_erasure_tomography_conformance.py
-          --expected formal/erasure-tomography-conformance-v1.json
-          --output /tmp/erasure-tomography-conformance.json
       - run: >-
           PYTHONPATH=src python scripts/verify_ghostgraph_conformance.py
           --expected formal/ghostgraph-conformance-v1.json

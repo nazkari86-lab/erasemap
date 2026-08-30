@@ -205,36 +205,20 @@ def render_cdc(data: dict[str, Any], output: Path) -> None:
 
 def render_ghostgraph(data: dict[str, Any], output: Path) -> None:
     ghost = _chart(data, "05_ghostgraph_v2")
-    temporal = _chart(data, "06_ghostgraph_t")
-    fig, ax = plt.subplots(2, 2, figsize=(13, 8), constrained_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(13, 4.6), constrained_layout=True)
     _bars(
-        ax[0, 0],
+        ax[0],
         ghost["labels"],
         ghost["values"],
         "How many active checks find a hidden path?\nFewer probes mean faster diagnosis",
         "probes ↓",
     )
     _bars(
-        ax[0, 1],
-        temporal["labels"],
-        temporal["probes"],
-        "How many checks identify the needed action?\n300 temporal cases; fewer are better",
-        "mean probes ↓",
-    )
-    accuracy = [100, 100, 100, 95.333, 100]
-    _bars(
-        ax[1, 0],
-        temporal["labels"],
-        accuracy,
-        "How often is the answer correct?\nRandom misses family-held-out cases",
-        "correct cases % ↑",
-    )
-    _bars(
-        ax[1, 1],
-        temporal["labels"],
-        temporal["false_confident_pct"],
+        ax[1],
+        ghost["labels"],
+        ghost["false_confident"],
         "How often is a wrong answer stated confidently?\nZero is safest",
-        "false-confidence rate % ↓",
+        "false-confident cases ↓",
     )
     fig.suptitle(
         "ERASEMAP INTERNAL STAGE — discovers hidden recovery paths with active probes",
@@ -280,9 +264,8 @@ def render_system_comparison(data: dict[str, Any], output: Path) -> None:
     planner = _chart(data, "03_planner_cost")
     multi = _chart(data, "04_multiservice")
     ghost = _chart(data, "05_ghostgraph_v2")
-    ghost_t = _chart(data, "06_ghostgraph_t")
     temporal = _chart(data, "07_temporal")
-    fig, ax = plt.subplots(2, 4, figsize=(16, 7.5), constrained_layout=True)
+    fig, ax = plt.subplots(2, 3, figsize=(15, 7.5), constrained_layout=True)
     panels = [
         (
             source["labels"],
@@ -293,9 +276,7 @@ def render_system_comparison(data: dict[str, Any], output: Path) -> None:
         (stock["labels"], stock["values"], "Stock services: false COMPLETE", "cases / 60 ↓"),
         (planner["labels"], planner["values"], "Deletion planner cost", "mean cost ↓"),
         (multi["labels"], multi["time"], "Multi-service wall time", "normalized % ↓"),
-        (multi["labels"], multi["bytes"], "Multi-service bytes written", "normalized % ↓"),
         (ghost["labels"], ghost["values"], "GhostGraph v2 probe budget", "probes ↓"),
-        (ghost_t["labels"], ghost_t["probes"], "GhostGraph-T probe budget", "mean probes ↓"),
         (
             temporal["labels"],
             temporal["correct_pct"],

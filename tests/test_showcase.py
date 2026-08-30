@@ -21,9 +21,6 @@ def test_showcase_binds_live_and_frozen_evidence() -> None:
     assert report["evidence"]["formal_conformance"]["mismatches"] == 0
     assert report["evidence"]["temporal_erasure"]["risk_detections"] == 30
     assert report["evidence"]["temporal_erasure"]["conformance_configurations"] == 16384
-    assert report["evidence"]["topology_robust_erasure"]["nominal_recurrences"] == 35
-    assert report["evidence"]["topology_robust_erasure"]["robust_recurrences"] == 0
-    assert report["evidence"]["topology_robust_erasure"]["conformance_configurations"] == 4096
     assert report["evidence"]["open_stock_transfer"]["cases"] == 60
     assert report["evidence"]["open_stock_transfer"]["erasemap_false_complete"] == 0
     assert report["evidence"]["open_stock_transfer"]["retained_loss"] == 0
@@ -42,10 +39,10 @@ def test_showcase_binds_live_and_frozen_evidence() -> None:
         if item["verdict"] == "PATH_CLASS_DISCOVERED"
     )
     assert len(path_class["surviving_graph_ids"]) == 2
-    assert len(report["visual_story"]) == 7
+    assert len(report["visual_story"]) == 3
     assert report["usability_handoff"]["human_result_status"] == "NOT_COLLECTED"
     assert report["claim_boundary"]["independence_score"] == 7.8
-    assert len(report["source_sha256"]) == 17
+    assert len(report["source_sha256"]) == 15
 
 
 def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
@@ -56,9 +53,9 @@ def test_showcase_html_exposes_scope_and_not_supported_claims() -> None:
     assert "production-внедрение в FaceID/eGov" in rendered
     assert "PROJECT_AUTHORED_LIVE_STOCK_SERVICES" in rendered
     assert "NOT_COLLECTED" in rendered
-    assert "GhostGraph" in rendered
+    assert "FIND · скрытые пути" in rendered
     assert "7 / 13 / 49" in rendered
-    assert "Одна понятная история из семи шагов" in rendered
+    assert "Один алгоритм из трёх шагов" in rendered
     assert "7.8/10" in rendered
 
 
@@ -71,8 +68,6 @@ def test_showcase_fails_closed_on_tampered_result(tmp_path: Path) -> None:
         "formal/conformance-v1.json",
         "outputs/regeneration-safe-erasure-v2/result.json",
         "formal/rse-msc-conformance-v1.json",
-        "outputs/topology-robust-erasure-v1/result.json",
-        "formal/tre-conformance-v1.json",
         "outputs/open-transfer-v1/result.json",
         "outputs/open-transfer-v1/PROVENANCE.json",
         "outputs/ghostgraph-v2/result.json",

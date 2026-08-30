@@ -33,8 +33,6 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     formal_path = root / "formal/conformance-v1.json"
     rse_path = root / "outputs/regeneration-safe-erasure-v2/result.json"
     msc_path = root / "formal/rse-msc-conformance-v1.json"
-    tre_path = root / "outputs/topology-robust-erasure-v1/result.json"
-    tre_conformance_path = root / "formal/tre-conformance-v1.json"
     transfer_path = root / "outputs/open-transfer-v1/result.json"
     transfer_provenance_path = root / "outputs/open-transfer-v1/PROVENANCE.json"
     ghostgraph_path = root / "outputs/ghostgraph-v2/result.json"
@@ -86,27 +84,6 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
     msc = _load_object(msc_path)
     _require_equal(msc.get("configurations"), 16384, "MSC conformance configurations")
     _require_equal(msc.get("mismatches"), 0, "MSC conformance mismatches")
-    tre = _load_object(tre_path)
-    _require_equal(tre.get("passed"), True, "TRE v1 decision")
-    tre_metrics = tre.get("metrics")
-    if not isinstance(tre_metrics, dict):
-        raise ValueError("TRE v1 metrics must be an object")
-    _require_equal(
-        tre_metrics.get("nominal_plan_regeneration_count"),
-        35,
-        "TRE nominal-plan recurrences",
-    )
-    _require_equal(
-        tre_metrics.get("tre_post_control_regeneration_count"),
-        0,
-        "TRE post-control recurrences",
-    )
-    tre_conformance = _load_object(tre_conformance_path)
-    _require_equal(
-        tre_conformance.get("configurations"), 4096, "TRE conformance configurations"
-    )
-    _require_equal(tre_conformance.get("mismatches"), 0, "TRE conformance mismatches")
-
     transfer = _load_object(transfer_path)
     transfer_provenance = _load_object(transfer_provenance_path)
     transfer_artifacts = transfer_provenance.get("artifacts")
@@ -206,8 +183,6 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             formal_path,
             rse_path,
             msc_path,
-            tre_path,
-            tre_conformance_path,
             transfer_path,
             transfer_provenance_path,
             ghostgraph_path,
@@ -265,23 +240,6 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
                 "conformance_configurations": int(msc["configurations"]),
                 "conformance_mismatches": int(msc["mismatches"]),
                 "records_sha256": str(msc["records_sha256"]),
-            },
-            "topology_robust_erasure": {
-                "scope": "PROJECT_AUTHORED_PROSPECTIVE_FINITE_ENVELOPE",
-                "scenarios": int(tre_metrics["scenario_count"]),
-                "shifted_cases": int(tre_metrics["shifted_case_count"]),
-                "nominal_recurrences": int(
-                    tre_metrics["nominal_plan_regeneration_count"]
-                ),
-                "robust_recurrences": int(
-                    tre_metrics["tre_post_control_regeneration_count"]
-                ),
-                "nominal_cost": int(tre_metrics["nominal_selected_cost"]),
-                "robust_cost": int(tre_metrics["tre_selected_cost"]),
-                "blanket_cost": int(tre_metrics["blanket_baseline_cost"]),
-                "conformance_configurations": int(tre_conformance["configurations"]),
-                "conformance_mismatches": int(tre_conformance["mismatches"]),
-                "records_sha256": str(tre_conformance["records_sha256"]),
             },
             "open_stock_transfer": {
                 "scope": "PROJECT_AUTHORED_LIVE_STOCK_SERVICES_PUBLIC_OR_SYNTHETIC_INPUTS",
@@ -347,13 +305,9 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             },
         },
         "visual_story": [
-            "Запрос: удалить данные одного человека.",
-            "GhostGraph: включать допустимые операции и наблюдать временной trace.",
-            "Фильтрация: оставить все графы, совместимые с наблюдениями.",
-            "Планирование: выбрать exact minimax эксперимент, лучше всего разделяющий графы.",
-            "Fail-closed: вернуть граф, полный path/equivalence class, OUT или UNVERIFIED.",
-            "Действие: перевести найденные пути в TRE controls и повторить физический replay.",
-            "Доказательство: oracle, Lean и hashes; внешний результат явно NOT_COLLECTED.",
+            "FIND: найти копии, производные, влияние в модели и пути восстановления.",
+            "ERASE: выбрать минимальный физический план и выполнить machine unlearning.",
+            "PROVE: повторить восстановление во времени и выдать проверяемый сертификат.",
         ],
         "usability_handoff": {
             "languages": list(usability_protocol["languages"]),
@@ -364,7 +318,7 @@ def build_showcase(repo_root: str | Path) -> dict[str, Any]:
             "external_handoff": "external_transfer/README.md",
         },
         "claim_boundary": {
-            "supported": "EraSeMap объединяет зарегистрированные артефакты с активным bounded-поиском скрытых путей, полными equivalence classes, OUT/UNVERIFIED, exact control и replay. GhostGraph v2 прошёл frozen strategy comparison и live transfer на четырёх stock-сервисах.",
+            "supported": "EraSeMap одним fail-closed алгоритмом объединяет карту артефактов, активный bounded-поиск скрытых путей, физическое удаление, machine unlearning и temporal replay. Внутренний поиск прошёл frozen strategy comparison и live transfer на четырёх stock-сервисах.",
             "not_supported": "Не заявляются production-внедрение в FaceID/eGov и завершённый независимый hidden challenge.",
             "independence_score": 7.8,
         },
@@ -379,7 +333,6 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     systems = evidence["measured_multiservice"]
     formal = evidence["formal_conformance"]
     temporal = evidence["temporal_erasure"]
-    robust = evidence["topology_robust_erasure"]
     transfer = evidence["open_stock_transfer"]
     ghostgraph = evidence["ghostgraph"]
     boundary = report["claim_boundary"]
@@ -417,16 +370,16 @@ def render_showcase_html(report: dict[str, Any]) -> str:
   </style>
 </head>
 <body><main>
-  <div class=\"eyebrow\">Proof-carrying unlearning graph</div>
+  <div class=\"eyebrow\">FIND · ERASE · PROVE</div>
   <h1>Удалить запись недостаточно.</h1>
   <p class=\"lead\">EraSeMap отвечает на проверяемый вопрос: какая зарегистрированная копия или производная всё ещё может использовать данные человека?</p>
   <section class=\"path\" aria-label=\"Кратчайший остаточный путь\">
     <strong>Live audit: {html.escape(live["status"])}</strong><span>{html.escape(path_text)}</span>
     <p>{html.escape(live["interpretation"])}</p>
   </section>
-  <h2>Одна понятная история из семи шагов</h2>
+  <h2>Один алгоритм из трёх шагов</h2>
   <ol>{''.join(f'<li>{html.escape(step)}</li>' for step in story)}</ol>
-  <h2>Семь разных уровней доказательств</h2>
+  <h2>Шесть разных уровней доказательств</h2>
   <section class=\"grid\">
     <article><div class=\"eyebrow\">Механизм</div><div class=\"metric\">0 / {mechanism["noncomplete_cases"]}</div>
       <p>ложных COMPLETE у PCUG против {mechanism["typed_node_false_complete"]} / {mechanism["noncomplete_cases"]} у node-only typed audit.</p>
@@ -440,13 +393,10 @@ def render_showcase_html(report: dict[str, Any]) -> str:
     <article><div class=\"eyebrow\">Temporal RSE / MSC</div><div class=\"metric\">{temporal["risk_detections"]} / 30</div>
       <p>рисков обнаружено; safe {temporal["safe_specificity"]}/10, post-MSC recurrence {temporal["post_msc_recurrences"]}; conformance {temporal["conformance_configurations"]}/16384.</p>
       <div class=\"scope\">{html.escape(temporal["scope"])}</div></article>
-    <article><div class=\"eyebrow\">Topology-Robust TRE</div><div class=\"metric\">{robust["robust_recurrences"]} / {robust["shifted_cases"]}</div>
-      <p>возвратов после robust-плана против {robust["nominal_recurrences"]}/{robust["shifted_cases"]} у nominal MSC; cost {robust["robust_cost"]} против blanket {robust["blanket_cost"]}; conformance {robust["conformance_configurations"]}/4096.</p>
-      <div class=\"scope\">{html.escape(robust["scope"])}</div></article>
     <article><div class=\"eyebrow\">Open stock transfer</div><div class=\"metric\">{transfer["erasemap_false_complete"]} / {transfer["cases"]}</div>
       <p>ложных COMPLETE на Keycloak, MLflow и Qdrant; native-success: {transfer["native_false_complete"]}, typed audit: {transfer["typed_false_complete"]}; recurrence {transfer["post_control_recurrence"]}.</p>
       <div class=\"scope\">{html.escape(transfer["scope"])}</div></article>
-    <article><div class=\"eyebrow\">GhostGraph v2</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["random_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
+    <article><div class=\"eyebrow\">FIND · скрытые пути</div><div class=\"metric\">{ghostgraph["adaptive_probes"]} / {ghostgraph["random_probes"]} / {ghostgraph["exhaustive_probes"]}</div>
       <p>active / frozen random / exhaustive probes; exact graphs {ghostgraph["exact_graphs"]}, path classes {ghostgraph["path_classes"]}, false confident {ghostgraph["false_confident"]}.</p>
       <p>Live four-service: {ghostgraph["live_four_service"]["cases"]}/5 cases, {ghostgraph["live_four_service"]["probes"]} probes, cleanup failures {ghostgraph["live_four_service"]["cleanup_failures"]}; external {ghostgraph["external_status"]}.</p>
       <div class=\"scope\">{html.escape(ghostgraph["scope"])}</div></article>

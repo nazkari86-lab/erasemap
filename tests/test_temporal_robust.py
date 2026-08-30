@@ -45,12 +45,12 @@ def test_robust_plan_matches_separate_exhaustive_oracle() -> None:
     )
 
 
-def test_nominal_plan_regenerates_after_shift_but_tre_does_not(tmp_path) -> None:
+def test_nominal_plan_regenerates_after_shift_but_robust_prove_does_not(tmp_path) -> None:
     trial = run_robust_physical_trial(tmp_path, scenario_mask=7, seed=71)
 
     assert trial.uncontrolled_regeneration
     assert trial.nominal_plan_regeneration
-    assert not trial.tre_post_control_regeneration
+    assert not trial.robust_post_control_regeneration
     assert trial.adversarial_witness
     assert trial.oracle_match
     assert trial.robustness_premium == 4
@@ -64,7 +64,7 @@ def test_every_shifted_scenario_has_a_nominal_failure_and_robust_success(
             tmp_path / str(mask), scenario_mask=mask, seed=100 + mask
         )
         assert trial.nominal_plan_regeneration
-        assert not trial.tre_post_control_regeneration
+        assert not trial.robust_post_control_regeneration
 
 
 def test_incomplete_scenario_coverage_forces_unverified() -> None:

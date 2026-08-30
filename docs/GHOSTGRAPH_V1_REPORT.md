@@ -62,7 +62,8 @@ production graph belongs to the catalogue.
 ## Contribution and boundary
 
 PCUG asks whether deletion is complete on a registered graph. GhostGraph asks which bounded hidden
-recovery graph explains recurrence traces. Every justified survivor becomes a separate TRE scenario;
+recovery graph explains recurrence traces. Every justified survivor becomes a separate temporal
+replay scenario;
 exact robust controls are then physically replayed while preserving an unrelated synthetic subject.
 
 The implemented composition is active temporal intervention design, full-class fail-closed

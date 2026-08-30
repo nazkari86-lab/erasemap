@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
-from erasemap.cdc import evaluate_actions, exact_cdc
+from erasemap.cdc import exact_cdc
 from erasemap.ghostgraph import DiscoveryReport, DiscoveryVerdict, GraphHypothesis
 from erasemap.ghostgraph_bridge import build_controls, build_topology_envelope
 from erasemap.pcug_domain import (
@@ -29,20 +29,15 @@ class EraSeMapVerdict(StrEnum):
 
 
 class EraSeMapStage(StrEnum):
-    MAP = "MAP"
-    DISCOVER = "DISCOVER"
-    MINIMIZE = "MINIMIZE"
-    VERIFY_OVER_TIME = "VERIFY_OVER_TIME"
-    CERTIFY = "CERTIFY"
+    FIND = "FIND"
+    ERASE = "ERASE"
+    PROVE = "PROVE"
 
 
 class StageStatus(StrEnum):
-    READY = "READY"
-    ACTION_REQUIRED = "ACTION_REQUIRED"
     COMPLETE = "COMPLETE"
     INCOMPLETE = "INCOMPLETE"
     UNVERIFIED = "UNVERIFIED"
-    BLOCKED = "BLOCKED"
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,21 +86,7 @@ def run_erasemap(
     physical/model action plan and every registered temporal scenario both verify.
     """
 
-    baseline = evaluate_actions(graph, protocol, ())
-    map_status = (
-        StageStatus.COMPLETE
-        if baseline.verdict is PCUGVerdict.COMPLETE
-        else StageStatus.UNVERIFIED
-        if baseline.verdict is PCUGVerdict.UNVERIFIED
-        else StageStatus.ACTION_REQUIRED
-    )
-    stages = [
-        EraSeMapStageResult(
-            EraSeMapStage.MAP,
-            map_status,
-            "registered artifacts, derivatives, channels, and residual paths were replayed",
-        )
-    ]
+    stages: list[EraSeMapStageResult] = []
 
     deletion_plan = exact_cdc(graph, protocol, actions)
     minimize_status = (
@@ -120,24 +101,22 @@ def run_erasemap(
         stages.extend(
             (
                 EraSeMapStageResult(
-                    EraSeMapStage.DISCOVER,
+                    EraSeMapStage.FIND,
                     StageStatus.UNVERIFIED,
-                    "bounded active evidence did not identify an actionable topology class",
+                    "registered traces were checked, but recovery-path evidence "
+                    "was insufficient",
                 ),
                 EraSeMapStageResult(
-                    EraSeMapStage.MINIMIZE,
+                    EraSeMapStage.ERASE,
                     minimize_status,
-                    "the minimum registered deletion plan was evaluated independently",
+                    "the least-cost registered physical and model-erasure actions were evaluated",
                 ),
                 EraSeMapStageResult(
-                    EraSeMapStage.VERIFY_OVER_TIME,
-                    StageStatus.BLOCKED,
-                    "temporal replay requires an evidence-backed topology envelope",
-                ),
-                EraSeMapStageResult(
-                    EraSeMapStage.CERTIFY,
-                    StageStatus.BLOCKED,
-                    "a fail-closed run cannot certify an unverified topology",
+                    EraSeMapStage.PROVE,
+                    StageStatus.INCOMPLETE
+                    if deletion_plan.verdict is PCUGVerdict.INCOMPLETE
+                    else StageStatus.UNVERIFIED,
+                    "the result cannot be certified without evidence-backed recovery replay",
                 ),
             )
         )
@@ -155,24 +134,22 @@ def run_erasemap(
         stages.extend(
             (
                 EraSeMapStageResult(
-                    EraSeMapStage.DISCOVER,
+                    EraSeMapStage.FIND,
                     StageStatus.UNVERIFIED,
-                    "discovery evidence could not be reconciled with the registered hypotheses",
+                    "the recovery-path evidence could not be reconciled with the "
+                    "registered system map",
                 ),
                 EraSeMapStageResult(
-                    EraSeMapStage.MINIMIZE,
+                    EraSeMapStage.ERASE,
                     minimize_status,
-                    "the minimum registered deletion plan was evaluated independently",
+                    "the least-cost registered physical and model-erasure actions were evaluated",
                 ),
                 EraSeMapStageResult(
-                    EraSeMapStage.VERIFY_OVER_TIME,
-                    StageStatus.BLOCKED,
-                    "temporal replay requires a reconciled topology envelope",
-                ),
-                EraSeMapStageResult(
-                    EraSeMapStage.CERTIFY,
-                    StageStatus.BLOCKED,
-                    "certificate issuance is blocked by unreconciled discovery evidence",
+                    EraSeMapStage.PROVE,
+                    StageStatus.INCOMPLETE
+                    if deletion_plan.verdict is PCUGVerdict.INCOMPLETE
+                    else StageStatus.UNVERIFIED,
+                    "the result cannot be certified without a reconciled recovery-path map",
                 ),
             )
         )
@@ -184,16 +161,16 @@ def run_erasemap(
         return EraSeMapResult(verdict, tuple(stages), deletion_plan, None, None)
     stages.append(
         EraSeMapStageResult(
-            EraSeMapStage.DISCOVER,
+            EraSeMapStage.FIND,
             StageStatus.COMPLETE,
-            "active probes reduced the registered hypotheses to an actionable envelope",
+            "copies, derivatives, model influence, and bounded recovery paths were identified",
         )
     )
     stages.append(
         EraSeMapStageResult(
-            EraSeMapStage.MINIMIZE,
+            EraSeMapStage.ERASE,
             minimize_status,
-            "exact finite search selected the least-cost sufficient registered actions",
+            "the least-cost sufficient physical and model-erasure actions were selected",
         )
     )
 
@@ -207,22 +184,6 @@ def run_erasemap(
     except ValueError:
         # Invalid controls or an excessive exact-search request must fail closed.
         stabilization_plan = None
-    temporal_status = (
-        StageStatus.COMPLETE
-        if stabilization_plan is not None and stabilization_plan.complete
-        else StageStatus.UNVERIFIED
-        if stabilization_plan is None
-        or stabilization_plan.status is StabilizationStatus.UNVERIFIED
-        else StageStatus.INCOMPLETE
-    )
-    stages.append(
-        EraSeMapStageResult(
-            EraSeMapStage.VERIFY_OVER_TIME,
-            temporal_status,
-            "all registered future recovery scenarios were replayed after control selection",
-        )
-    )
-
     if deletion_plan.verdict is PCUGVerdict.INCOMPLETE:
         verdict = EraSeMapVerdict.INCOMPLETE
     elif deletion_plan.verdict is PCUGVerdict.UNVERIFIED:
@@ -236,13 +197,15 @@ def run_erasemap(
 
     stages.append(
         EraSeMapStageResult(
-            EraSeMapStage.CERTIFY,
-            StageStatus.READY
+            EraSeMapStage.PROVE,
+            StageStatus.COMPLETE
             if verdict is EraSeMapVerdict.COMPLETE_WITHIN_ENVELOPE
-            else StageStatus.BLOCKED,
-            "the result is ready for signed certificate issuance"
+            else StageStatus.INCOMPLETE
+            if verdict is EraSeMapVerdict.INCOMPLETE
+            else StageStatus.UNVERIFIED,
+            "recovery replay passed and the result is ready for a signed certificate"
             if verdict is EraSeMapVerdict.COMPLETE_WITHIN_ENVELOPE
-            else "certificate issuance is blocked until every mandatory stage verifies",
+            else "recovery replay did not justify a deletion certificate",
         )
     )
     return EraSeMapResult(

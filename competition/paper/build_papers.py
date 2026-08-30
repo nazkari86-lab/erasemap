@@ -59,21 +59,19 @@ def make_system_figure(path: Path, ru: bool) -> None:
     small = ImageFont.truetype(font_path(), 25)
     d.text(
         (90, 45),
-        "Один алгоритм EraSeMap: пять этапов"
+        "Один алгоритм EraSeMap: три шага"
         if ru
-        else "One EraSeMap algorithm: five stages",
+        else "One EraSeMap algorithm: three steps",
         fill="#173B57",
         font=title,
     )
 
     boxes = [
         (70, 160, 340, 350, "Запрос\nна удаление" if ru else "Deletion\nrequest"),
-        (410, 130, 740, 380, "1. Карта\n\nкопии · производные\nмодель · backup" if ru else "1. Map\n\ncopies · derivatives\nmodel · backup"),
-        (810, 130, 1140, 380, "2. Обнаружение\n\nбезопасные\nактивные пробы" if ru else "2. Discover\n\nsafe active\nprobes"),
-        (1210, 130, 1690, 380, "3. Минимизация\n\nдостаточные действия\nминимальной стоимости" if ru else "3. Minimize\n\nleast-cost\nsufficient actions"),
-        (1210, 560, 1690, 800, "4. Проверка во времени\n\nможет ли объект\nпоявиться снова?" if ru else "4. Verify over time\n\ncan the object\nreturn later?"),
-        (690, 560, 1140, 800, "5. Сертификат\n\nтолько после\nполного replay" if ru else "5. Certify\n\nonly after\ncomplete replay"),
-        (70, 560, 600, 800, "COMPLETE WITHIN ENVELOPE\nINCOMPLETE\nUNVERIFIED"),
+        (410, 130, 760, 380, "1. FIND\n\nкопии · модель\nскрытые пути" if ru else "1. FIND\n\ncopies · model\nhidden paths"),
+        (830, 130, 1180, 380, "2. ERASE\n\nphysical deletion\n+ unlearning"),
+        (1250, 130, 1690, 380, "3. PROVE\n\ntemporal replay\n+ сертификат" if ru else "3. PROVE\n\ntemporal replay\n+ certificate"),
+        (600, 560, 1200, 800, "COMPLETE WITHIN ENVELOPE\nINCOMPLETE\nUNVERIFIED"),
     ]
     for i, (x1, y1, x2, y2, text) in enumerate(boxes):
         fill = "#EEF4F8" if i < 4 else "#FFF6E6"
@@ -90,11 +88,9 @@ def make_system_figure(path: Path, ru: bool) -> None:
 
     arrows = [
         ((340, 255), (410, 255)),
-        ((740, 255), (810, 255)),
-        ((1140, 255), (1210, 255)),
-        ((1450, 380), (1450, 560)),
-        ((1210, 680), (1140, 680)),
-        ((690, 680), (600, 680)),
+        ((760, 255), (830, 255)),
+        ((1180, 255), (1250, 255)),
+        ((1470, 380), (1200, 650)),
     ]
     for start, end in arrows:
         d.line((start, end), fill="#2E6388", width=8)
@@ -539,6 +535,13 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
     inserted_results = False
     in_code = False
     skip_metadata = True
+
+    def structural(text: str) -> bool:
+        return bool(
+            text.startswith(("#", "|", "> ", "- ", "```"))
+            or re.match(r"^\d+\. ", text)
+        )
+
     i = 1
     while i < len(lines):
         raw = lines[i]
@@ -572,8 +575,8 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
                 add_figure(
                     doc,
                     system_fig,
-                    ("Рисунок 1. Один алгоритм EraSeMap: карта, обнаружение, минимизация, проверка во времени и сертификат. Составлено автором по протоколу EraSeMap." if ru else "Figure 1. One EraSeMap algorithm: map, discover, minimize, verify over time, and certify. Author-generated from the EraSeMap protocol."),
-                    ("Схема: один запрос удаления проходит пять обязательных этапов и заканчивается COMPLETE_WITHIN_ENVELOPE, INCOMPLETE или UNVERIFIED." if ru else "Flow diagram: one deletion request passes through five mandatory stages and ends in COMPLETE_WITHIN_ENVELOPE, INCOMPLETE, or UNVERIFIED."),
+                    ("Рисунок 1. Один алгоритм EraSeMap: FIND, ERASE и PROVE. Составлено автором по протоколу EraSeMap." if ru else "Figure 1. One EraSeMap algorithm: FIND, ERASE, and PROVE. Author-generated from the EraSeMap protocol."),
+                    ("Схема: один запрос удаления проходит три обязательных шага FIND, ERASE и PROVE и заканчивается COMPLETE_WITHIN_ENVELOPE, INCOMPLETE или UNVERIFIED." if ru else "Flow diagram: one deletion request passes through the three mandatory FIND, ERASE, and PROVE steps and ends in COMPLETE_WITHIN_ENVELOPE, INCOMPLETE, or UNVERIFIED."),
                 )
                 inserted_system = True
             if (heading in ("9. Discussion", "9. Обсуждение")) and not inserted_results:
@@ -595,22 +598,40 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
             i += 1
             continue
         if line.startswith("> "):
-            p = doc.add_paragraph(style="Callout")
-            add_inline(p, line[2:])
+            parts = [line[2:]]
             i += 1
+            while i < len(lines) and lines[i].strip().startswith("> "):
+                parts.append(lines[i].strip()[2:])
+                i += 1
+            p = doc.add_paragraph(style="Callout")
+            add_inline(p, " ".join(parts))
             continue
         numbered_match = re.match(r"^(\d+)\. (.*)", line)
         if numbered_match:
+            parts = [numbered_match.group(2)]
+            i += 1
+            while i < len(lines):
+                continuation = lines[i].strip()
+                if not continuation or structural(continuation):
+                    break
+                parts.append(continuation)
+                i += 1
             p = doc.add_paragraph(style="Numbered Item")
             prefix = p.add_run(f"{numbered_match.group(1)}. ")
             set_run_font(prefix)
-            add_inline(p, numbered_match.group(2))
-            i += 1
+            add_inline(p, " ".join(parts))
             continue
         if line.startswith("- "):
-            p = doc.add_paragraph(style="List Bullet")
-            add_inline(p, line[2:])
+            parts = [line[2:]]
             i += 1
+            while i < len(lines):
+                continuation = lines[i].strip()
+                if not continuation or structural(continuation):
+                    break
+                parts.append(continuation)
+                i += 1
+            p = doc.add_paragraph(style="List Bullet")
+            add_inline(p, " ".join(parts))
             continue
         if line.startswith("**") and line.endswith("**") and len(line) > 4:
             p = doc.add_paragraph(style="Formula")
@@ -619,10 +640,17 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
             set_run_font(run, name="Cambria Math", size=11.5)
             i += 1
             continue
+        parts = [line]
+        i += 1
+        while i < len(lines):
+            continuation = lines[i].strip()
+            if not continuation or structural(continuation):
+                break
+            parts.append(continuation)
+            i += 1
         p = doc.add_paragraph()
         p.paragraph_format.widow_control = True
-        add_inline(p, line)
-        i += 1
+        add_inline(p, " ".join(parts))
 
     core = doc.core_properties
     core.title = title

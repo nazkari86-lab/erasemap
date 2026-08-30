@@ -10,7 +10,7 @@ from pathlib import Path
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
@@ -33,6 +33,17 @@ GREEN = "16803C"
 SOFT_BLUE = "F5F8FB"
 SOFT_GREEN = "F0F9F3"
 PAPER = "FBFCFE"
+
+AUTHOR_RU = "Нұрланұлы Дулат, 9 «Б» класс"
+AUTHOR_EN = "Nurlanuly Dulat, Grade 9B"
+SCHOOL_RU = "КГУ «Специализированный лицей-интернат „Білім-инновация“» Управления образования города Алматы"
+SCHOOL_EN = "Specialized Bilim-Innovation Lyceum-Boarding School of the Almaty City Education Department"
+SUPERVISOR_RU = "Смағұл Ерзат Айдынұлы, учитель информатики"
+SUPERVISOR_EN = "Smagul Yerzat Aidynuly, Computer Science Teacher"
+DIRECTION_RU = "Направление II — математическое моделирование экономических и социальных процессов"
+SECTION_RU = "Секция: информатика"
+DIRECTION_EN = "Direction II — mathematical modelling of economic and social processes"
+SECTION_EN = "Section: Computer Science"
 
 # narrative_proposal preset + named A4 academic-submission override.
 PAGE_WIDTH_DXA = 11907
@@ -517,13 +528,15 @@ def add_cover(doc: Document, title: str, ru: bool) -> None:
     sub = doc.add_paragraph()
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     sub.paragraph_format.space_after = Pt(52)
-    r = sub.add_run("Proof-carrying biometric erasure audit" if not ru else "Доказательный аудит удаления биометрических данных")
+    r = sub.add_run("A unified FIND–ERASE–PROVE algorithm" if not ru else "Единый алгоритм FIND–ERASE–PROVE")
     set_run_font(r, name="PT Sans", size=14, italic=True, color=MUTED)
 
     fields = [
-        ("Автор" if ru else "Author", "____________________________"),
-        ("Организация" if ru else "Affiliation", "____________________________"),
-        ("Научный руководитель" if ru else "Supervisor", "____________________________"),
+        ("Автор" if ru else "Author", AUTHOR_RU if ru else AUTHOR_EN),
+        ("Организация" if ru else "Affiliation", SCHOOL_RU if ru else SCHOOL_EN),
+        ("Направление" if ru else "Direction", DIRECTION_RU if ru else DIRECTION_EN),
+        ("Секция" if ru else "Section", SECTION_RU if ru else SECTION_EN),
+        ("Научный руководитель" if ru else "Supervisor", SUPERVISOR_RU if ru else SUPERVISOR_EN),
     ]
     table = doc.add_table(rows=len(fields), cols=2)
     widths = [2450, TABLE_WIDTH_DXA - 2450]
@@ -549,12 +562,66 @@ def add_cover(doc: Document, title: str, ru: bool) -> None:
     set_repeat_table_header(table.rows[0])
 
     # Keep the cover on one A4 page even when a Russian metadata label wraps.
-    for _ in range(2):
-        doc.add_paragraph()
+    doc.add_paragraph()
     year = doc.add_paragraph()
     year.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = year.add_run("2026")
+    r = year.add_run("Алматы, 2026" if ru else "Almaty, 2026")
     set_run_font(r, name="PT Sans", size=11, bold=True, color=MUTED)
+    doc.add_page_break()
+
+
+def add_contents(doc: Document, ru: bool) -> None:
+    heading = doc.add_paragraph("Оглавление" if ru else "Contents", style="Heading 1")
+    heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    items = (
+        [
+            ("Аннотация", 3),
+            ("Abstract", 3),
+            ("1. Введение", 4),
+            ("2. Предшествующие работы и граница новизны", 4),
+            ("3. Модель системы", 5),
+            ("4. Единый алгоритм EraSeMap", 6),
+            ("5. Формальные свойства", 7),
+            ("6. Реализация", 7),
+            ("7. Методика экспериментов", 8),
+            ("8. Результаты", 8),
+            ("9. Обсуждение", 9),
+            ("10. Ограничения и угрозы валидности", 10),
+            ("11. Этика и ответственное применение", 10),
+            ("12. Воспроизводимость", 10),
+            ("13. Заключение", 11),
+            ("Список литературы", 11),
+            ("Приложения", 12),
+        ]
+        if ru
+        else [
+            ("Abstract", 3),
+            ("1. Introduction", 4),
+            ("2. Related work and novelty boundary", 4),
+            ("3. System model", 5),
+            ("4. The unified EraSeMap algorithm", 6),
+            ("5. Formal properties", 7),
+            ("6. Implementation", 7),
+            ("7. Experimental methodology", 8),
+            ("8. Results", 8),
+            ("9. Discussion", 9),
+            ("10. Limitations and threats to validity", 10),
+            ("11. Ethics and responsible use", 10),
+            ("12. Reproducibility", 10),
+            ("13. Conclusion", 11),
+            ("References", 11),
+            ("Appendices", 12),
+        ]
+    )
+    for item, page in items:
+        paragraph = doc.add_paragraph()
+        paragraph.paragraph_format.left_indent = Inches(0.35)
+        paragraph.paragraph_format.space_after = Pt(3.5)
+        paragraph.paragraph_format.tab_stops.add_tab_stop(
+            Inches(6.1), WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS
+        )
+        run = paragraph.add_run(f"{item}\t{page}")
+        set_run_font(run, name="PT Sans", size=10.5, color=DARK)
     doc.add_page_break()
 
 
@@ -627,6 +694,7 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
     doc = Document()
     configure_document(doc, ru)
     add_cover(doc, title, ru)
+    add_contents(doc, ru)
 
     system_fig = ASSET_DIR / ("system-flow-ru.png" if ru else "system-flow-en.png")
     result_fig = ASSET_DIR / ("results-ru.png" if ru else "results-en.png")
@@ -754,7 +822,7 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
     core = doc.core_properties
     core.title = title
     core.subject = "Unified proof-carrying and regeneration-safe biometric erasure auditing"
-    core.author = "EraSeMap project — author fields intentionally left for submission"
+    core.author = "Нұрланұлы Дулат" if ru else "Nurlanuly Dulat"
     core.keywords = "biometric erasure, machine unlearning, data lineage, verifiable deletion, regeneration-safe erasure"
     core.comments = "Design preset: narrative_proposal; named override: A4 academic submission geometry."
     output.parent.mkdir(parents=True, exist_ok=True)

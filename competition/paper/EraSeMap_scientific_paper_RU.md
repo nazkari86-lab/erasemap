@@ -1,8 +1,8 @@
-# EraSeMap: единый fail-closed алгоритм проверяемого удаления данных и влияния в модели
+# EraSeMap: проверяемое удаление персональных данных из распределённых систем и моделей машинного обучения
 
-**Автор:** ____________________
-**Организация:** ____________________
-**Научный руководитель:** ____________________
+**Автор:** Нұрланұлы Дулат, 9 «Б» класс
+**Организация:** КГУ «Специализированный лицей-интернат „Білім-инновация“» Управления образования города Алматы
+**Научный руководитель:** Смағұл Ерзат Айдынұлы, учитель информатики
 
 ## Аннотация
 
@@ -29,6 +29,32 @@ envelopes; production FaceID/eGov и независимый hidden challenge н�
 
 **Ключевые слова:** проверяемое удаление, machine unlearning, data lineage, temporal replay,
 биометрия, fail-closed, сертификат удаления.
+
+## Abstract
+
+Deleting a primary record does not prove that personal data can no longer be used. Copies may
+remain in caches, indexes, replicas, exports, or backups; derivatives may remain as biometric
+templates and vectors; learned influence may remain in a trained model. A deleted object may also
+reappear after restoration, synchronization, rebuilding, or model redeployment.
+
+This work presents EraSeMap, one algorithm with three stages. **FIND** locates registered and
+bounded-hidden paths. **ERASE** selects a minimum sufficient set of physical actions and machine
+unlearning. **PROVE** performs temporal replay and permits a certificate only after every mandatory
+channel passes. The algorithm returns `COMPLETE_WITHIN_ENVELOPE`, `INCOMPLETE`, or `UNVERIFIED`;
+missing evidence is never treated as success.
+
+In a frozen 60-case transfer, EraSeMap produced 0 false `COMPLETE` decisions versus 5 for full typed
+audit and 45 for native service status. Active recovery-graph search used 7 probes versus 13 for
+frozen random and 49 for exhaustive testing. In 20 paired real-process trials, targeted erasure was
+17.64 times faster and wrote 94.62% fewer bytes than rebuild-all. Temporal verification detected
+30/30 latent risks and produced 0/30 post-control recurrences. Exact solvers matched exhaustive
+oracles in 3,072/3,072 and 16,384/16,384 configurations. Fast unlearning candidates on
+Qwen2.5-1.5B failed the complete frozen gates, so exact retraining remains the safe fallback.
+Results are bounded to registered topology and transition envelopes; production deployment and an
+independent hidden result are not claimed.
+
+**Keywords:** verifiable erasure, machine unlearning, data lineage, temporal replay, biometrics,
+fail-closed, deletion certificate.
 
 ## 1. Введение
 

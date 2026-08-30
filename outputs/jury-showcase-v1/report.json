@@ -2,7 +2,7 @@
   "claim_boundary": {
     "independence_score": 7.8,
     "not_supported": "Не заявляются production-внедрение в FaceID/eGov и завершённый независимый hidden challenge.",
-    "supported": "EraSeMap объединяет зарегистрированные артефакты с активным bounded-поиском скрытых путей, полными equivalence classes, OUT/UNVERIFIED, exact control и replay. GhostGraph v2 прошёл frozen strategy comparison и live transfer на четырёх stock-сервисах."
+    "supported": "EraSeMap одним fail-closed алгоритмом объединяет карту артефактов, активный bounded-поиск скрытых путей, физическое удаление, machine unlearning и temporal replay. Внутренний поиск прошёл frozen strategy comparison и live transfer на четырёх stock-сервисах."
   },
   "evidence": {
     "formal_conformance": {
@@ -179,19 +179,6 @@
       "risk_detections": 30,
       "safe_specificity": 10,
       "scope": "PROJECT_AUTHORED_PROSPECTIVE_AND_BOUNDED_CONFORMANCE"
-    },
-    "topology_robust_erasure": {
-      "blanket_cost": 60,
-      "conformance_configurations": 4096,
-      "conformance_mismatches": 0,
-      "nominal_cost": 3,
-      "nominal_recurrences": 35,
-      "records_sha256": "31bbfb02760e8466cbc228c07daea1f94087e22fab5ac8a445b11af4f2df51cd",
-      "robust_cost": 7,
-      "robust_recurrences": 0,
-      "scenarios": 8,
-      "scope": "PROJECT_AUTHORED_PROSPECTIVE_FINITE_ENVELOPE",
-      "shifted_cases": 35
     }
   },
   "live_audit": {
@@ -210,7 +197,6 @@
     "examples/five_branch_system.json": "1b55aa4d418bb1f719de745dd2ce83faaf05d2af5076887e9d26d2f6c24bf8d0",
     "formal/conformance-v1.json": "f4715f8c63e61c6ea93d6f481986f51deac7676090361c3191695c3d6d1c97a8",
     "formal/rse-msc-conformance-v1.json": "8012fd1be492fc89424cdb34b6a45505345e9f50df311dcd037599e2f9f2fb89",
-    "formal/tre-conformance-v1.json": "55500c78876da3540d752f82d3e0cdf39ac3bf79a40c67e9df25665605f6688a",
     "outputs/ghostgraph-live-v2/PROVENANCE.json": "0ab6dd67eaf5519a67cf88ad16dd374ab13d466c4e7e75f9fa46f9d9d718712d",
     "outputs/ghostgraph-live-v2/result.json": "d2bf97bbab0f7894badf2eedb8acfd254c8b4a39dc06fc64e7a8ffacf7cef014",
     "outputs/ghostgraph-live-v2/trials.jsonl": "b742c160c58bbbeb6e811ddf741d5a7524e8d65e2c1c393f7bb842f0cb7a768f",
@@ -220,7 +206,6 @@
     "outputs/open-transfer-v1/PROVENANCE.json": "bda3528c560099c750ebf1f3dd9a75e5cff7eaffbfc08cbe55bdf2fa18de4922",
     "outputs/open-transfer-v1/result.json": "c53adacdf868410034e1734df7a7f1f7ae8c25e1dfdd3502ec06a0f7f81b0598",
     "outputs/regeneration-safe-erasure-v2/result.json": "031c207235310bbe4c51d92bc3c22977dff65648291d71dbf600edfb355c0e2f",
-    "outputs/topology-robust-erasure-v1/result.json": "c7c56f7e076724e6c224e9bf78930afff3aea2e9960720f9f9c75782664964be",
     "usability/protocol-v1.json": "170a7fb60f9f32f63f25ad038d415c57954b6086f475c59355dfd5ab67a5fa2c"
   },
   "usability_handoff": {
@@ -235,12 +220,8 @@
     "packet": "usability/README.md"
   },
   "visual_story": [
-    "Запрос: удалить данные одного человека.",
-    "GhostGraph: включать допустимые операции и наблюдать временной trace.",
-    "Фильтрация: оставить все графы, совместимые с наблюдениями.",
-    "Планирование: выбрать exact minimax эксперимент, лучше всего разделяющий графы.",
-    "Fail-closed: вернуть граф, полный path/equivalence class, OUT или UNVERIFIED.",
-    "Действие: перевести найденные пути в TRE controls и повторить физический replay.",
-    "Доказательство: oracle, Lean и hashes; внешний результат явно NOT_COLLECTED."
+    "FIND: найти копии, производные, влияние в модели и пути восстановления.",
+    "ERASE: выбрать минимальный физический план и выполнить machine unlearning.",
+    "PROVE: повторить восстановление во времени и выдать проверяемый сертификат."
   ]
 }

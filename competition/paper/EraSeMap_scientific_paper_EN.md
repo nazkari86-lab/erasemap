@@ -1,8 +1,8 @@
-# EraSeMap: a unified fail-closed algorithm for verifiable data and model-influence erasure
+# EraSeMap: verifiable personal-data erasure from distributed systems and machine-learning models
 
-**Author:** ____________________
-**Institution:** ____________________
-**Supervisor:** ____________________
+**Author:** Nurlanuly Dulat, Grade 9B
+**Institution:** Specialized Bilim-Innovation Lyceum-Boarding School of the Almaty City Education Department
+**Supervisor:** Smagul Yerzat Aidynuly, Computer Science Teacher
 
 ## Abstract
 

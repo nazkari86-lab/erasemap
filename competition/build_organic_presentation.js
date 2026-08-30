@@ -13,10 +13,10 @@ const PRESENTATION_ASSETS = path.join(REPO, "competition", "assets");
 
 const pptx = new PptxGenJS();
 pptx.layout = "LAYOUT_WIDE";
-pptx.author = "EraSeMap";
+pptx.author = "Нұрланұлы Дулат";
 pptx.subject = "Evidence-led deletion verification";
 pptx.title = "EraSeMap — проверяемый путь удаления данных";
-pptx.company = "EraSeMap Research";
+pptx.company = "КГУ «Специализированный лицей-интернат „Білім-инновация“» Управления образования города Алматы";
 pptx.lang = "ru-RU";
 pptx.theme = {
   headFontFace: "Arial",
@@ -170,7 +170,7 @@ function notes(slide, text) {
   const s = pptx.addSlide();
   s.background = { color: C.bg };
   addDecor(s, 1);
-  addText(s, "ERASEMAP  /  RESEARCH PROTOTYPE", 0.82, 0.44, 3.9, 0.22, 9, C.teal, { bold: true, charSpacing: 0.8 });
+  addText(s, "ERASEMAP  /  НҰРЛАНҰЛЫ ДУЛАТ  ·  9 «Б»", 0.82, 0.44, 4.8, 0.22, 9, C.teal, { bold: true, charSpacing: 0.45 });
   addText(s, "Удаление —\nэто не кнопка.", 0.82, 1.55, 6.1, 1.4, 42, C.ink, { fontFace: F_HEAD, bold: true });
   addText(s, "Это проверяемый путь.", 0.86, 3.16, 5.4, 0.38, 23, C.coral, { fontFace: F_HEAD, bold: true });
   addText(s, "EraSeMap проверяет, исчезли ли данные из копий, производных\nи будущих каналов восстановления.", 0.86, 3.76, 5.55, 0.62, 16.5, C.muted);
@@ -188,7 +188,7 @@ function notes(slide, text) {
   rounded(s, 9.75, 4.85, 2.18, 0.76, C.ink, C.ink, 0.26, 0);
   addText(s, "VERIFY", 9.75, 5.08, 2.18, 0.25, 15, C.white, { fontFace: F_HEAD, bold: true, align: "center" });
   addText(s, "Проверяем путь, а не обещание «удалено»." , 0.86, 6.58, 5.0, 0.24, 12.3, C.teal, { bold: true });
-  addText(s, "проверка удаления по доказательствам", 0.82, 7.22, 3.0, 0.14, 7.2, C.muted);
+  addText(s, "Білім-инновация  ·  руководитель Смағұл Ерзат Айдынұлы", 0.82, 7.22, 5.7, 0.14, 7.2, C.muted);
   addText(s, "01", 12.2, 0.25, 0.45, 0.18, 8.5, C.muted, { bold: true, align: "right" });
   notes(s, "Начните с простой мысли: ответ DELETE 200 OK подтверждает только команду, но не исчезновение копий и производных. EraSeMap превращает обещание удаления в проверяемый путь.");
 }

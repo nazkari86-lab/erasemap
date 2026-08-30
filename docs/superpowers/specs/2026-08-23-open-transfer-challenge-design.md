@@ -234,4 +234,3 @@ The evidence can justify approximately:
 - practical relevance 9.6 to 9.7 from witnessed failures and measured remediation;
 - real inputs and transfer 9.0 to 9.3 or 9.4 if all stock services and public-face gates pass;
 - independence remains 7.8 until external authorship and signed execution occur;
-- RKNP remains 9.8 until an external evidence event supports 9.9.

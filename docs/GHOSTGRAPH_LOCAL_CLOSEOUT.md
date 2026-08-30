@@ -25,5 +25,4 @@ Only evidence that requires a genuinely separate person or organization remains:
 3. an authorized production pilot or independent clean-machine replication.
 
 These are external evidence events, not missing code. Their absence must remain visible as
-`NOT_COLLECTED`; independence stays 7.8/10 and the overall RKNP assessment stays 9.8/10 until a
-named score-changing event occurs.
+`NOT_COLLECTED`; independence stays 7.8/10 until a named score-changing event occurs.

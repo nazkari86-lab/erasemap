@@ -1,7 +1,7 @@
 # EraSeMap competition evidence scorecard
 
-Snapshot: 2026-08-30. This is a stable evidence map, not an official RKNP/ISEF score or probability
-of winning. EraSeMap has one public algorithm and three stages: FIND, ERASE, PROVE.
+Snapshot: 2026-08-30. This is a stable evidence map, not an official score or probability of
+winning. EraSeMap has one public algorithm and three stages: FIND, ERASE, PROVE.
 
 ## Stable assessment
 
@@ -19,8 +19,6 @@ of winning. EraSeMap has one public algorithm and three stages: FIND, ERASE, PRO
 | Reproducibility | 9.9/10 | Committed protocols, raw evidence, frozen dependencies, oracle gates, and release script | Independent clean-machine reproduction |
 | FaceID/eGov/KYC applicability | 9.5/10 | One contract covers physical, derivative, model, and recovery paths; production integration absent | Authorized domain pilot |
 | Competition presentation readiness | 9.8/10 | One algorithm, Russian defense/Q&A, bilingual paper, executable showcase | Timed unfamiliar-reviewer rehearsal |
-| RKNP competitiveness | 9.8/10 | Formal result, real-process measurements, strong demo, and honest limits | External PASS or organization confirmation for 9.9 |
-| ISEF-level readiness | 9.7/10 | Distinct research question, formal boundary, prospective evidence, real open model, and reproducibility | External PASS plus stronger model result |
 
 The independence row is not averaged away. More internally authored code cannot move it above 7.8.
 Removing redundant algorithm names improves clarity but does not fabricate new scientific evidence,
@@ -71,10 +69,8 @@ one superiority score.
 
 ## Event-based score policy
 
-- RKNP 9.8 → 9.9 only after a valid independent hidden execution or organization confirmation.
 - Independence 7.8 → about 9.5 only after an accepted outside evaluator submission satisfying the
   frozen rubric.
-- ISEF readiness moves only after external evidence and/or a strong preregistered model result.
 - 10/10 is not used while a substantial feasible next validation step remains.
 
 ## Reproduce

@@ -91,4 +91,3 @@ and a genuinely unseen third dataset remain external evidence requirements.
 - [NeurIPS 2023 Machine Unlearning Competition](https://neurips.cc/virtual/2023/competition/66581)
 - [Task-agnostic personal-identity unlearning benchmark](https://arxiv.org/abs/2311.02240)
 - [Face identity unlearning for retrieval via embedding dispersion](https://openaccess.thecvf.com/content/WACV2026W/LENS-2026/html/Zakharov_Face_Identity_Unlearning_for_Retrieval_via_Embedding_Dispersion_WACVW_2026_paper.html)
-- [Official ISEF judging criteria](https://www.societyforscience.org/isef/grand-award/criteria/)

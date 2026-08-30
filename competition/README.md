@@ -1,6 +1,6 @@
 # Competition defense package
 
-- `EraSeMap_RKNP_ISEF_RU.pptx`: canonical 13-slide Russian RKNP/ISEF defense deck with a uniform warm-paper organic-tech visual system, high-contrast Arial typography, speaker notes, project comparison charts, and a one-request walkthrough for first-time listeners.
+- `EraSeMap_RU.pptx`: canonical 13-slide Russian defense deck with a uniform warm-paper organic-tech visual system, high-contrast Arial typography, speaker notes, project comparison charts, and a one-request walkthrough for first-time listeners.
 - `build_organic_presentation.js`: editable PptxGenJS source for the deck; `assets/readable_*.png` contains the large, presentation-readable charts generated from `benchmark/evidence-charts-v1.json`.
 - `../docs/JURY_DEFENSE_RU.md`: 30-second and 3-minute spoken versions.
 - `../docs/JUDGE_QA_RU.md`: concise answers to adversarial judge questions.

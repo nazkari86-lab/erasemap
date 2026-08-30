@@ -7,7 +7,7 @@ const {
 } = require("./pptxgenjs_helpers");
 
 const REPO = path.resolve(__dirname, "..");
-const OUT = path.join(REPO, "competition", "EraSeMap_RKNP_ISEF_RU.pptx");
+const OUT = path.join(REPO, "competition", "EraSeMap_RU.pptx");
 const ASSETS = path.join(REPO, "docs", "assets");
 const PRESENTATION_ASSETS = path.join(REPO, "competition", "assets");
 
@@ -113,7 +113,6 @@ function footer(slide, section, n) {
   addText(slide, `ERASEMAP  /  ${section.toUpperCase()}`, 0.82, 0.25, 3.3, 0.18, 8.5, C.teal, { bold: true, charSpacing: 0.4 });
   addText(slide, String(n).padStart(2, "0"), 12.2, 0.25, 0.45, 0.18, 8.5, C.muted, { bold: true, align: "right" });
   addText(slide, "проверка удаления по доказательствам", 0.82, 7.22, 3.0, 0.14, 7.2, C.muted, { charSpacing: 0.1 });
-  addText(slide, "РКНП · ISEF 2026", 11.35, 7.22, 1.08, 0.14, 7.2, C.muted, { bold: true, align: "right" });
 }
 
 function title(slide, section, heading, n, sub = "") {
@@ -185,12 +184,11 @@ function notes(slide, text) {
   node(s, 7.25, 1.55, 1.68, 0.72, "источник", "исходная запись", C.blue, C.sage2);
   node(s, 9.18, 2.34, 1.75, 0.72, "производная", "шаблон / индекс", C.teal, C.sage2);
   node(s, 8.72, 3.66, 1.72, 0.72, "возврат", "резерв / восстановление", C.coral, C.coral2);
-  node(s, 6.9, 3.76, 1.6, 0.72, "доказательство", "квитанция + повтор", C.lilac, C.sage2);
+  node(s, 6.9, 3.76, 1.6, 0.72, "проверка", "квитанция + повтор", C.lilac, C.sage2);
   rounded(s, 9.75, 4.85, 2.18, 0.76, C.ink, C.ink, 0.26, 0);
   addText(s, "VERIFY", 9.75, 5.08, 2.18, 0.25, 15, C.white, { fontFace: F_HEAD, bold: true, align: "center" });
   addText(s, "Проверяем путь, а не обещание «удалено»." , 0.86, 6.58, 5.0, 0.24, 12.3, C.teal, { bold: true });
   addText(s, "проверка удаления по доказательствам", 0.82, 7.22, 3.0, 0.14, 7.2, C.muted);
-  addText(s, "РКНП · ISEF 2026", 11.35, 7.22, 1.08, 0.14, 7.2, C.muted, { bold: true, align: "right" });
   addText(s, "01", 12.2, 0.25, 0.45, 0.18, 8.5, C.muted, { bold: true, align: "right" });
   notes(s, "Начните с простой мысли: ответ DELETE 200 OK подтверждает только команду, но не исчезновение копий и производных. EraSeMap превращает обещание удаления в проверяемый путь.");
 }
@@ -461,7 +459,6 @@ function notes(slide, text) {
   circle(s, 7.25, 4.8, 1.05, C.sage2, C.lilac, 10);
   addText(s, "SAFE", 7.25, 5.23, 1.05, 0.18, 11, C.lilac, { fontFace: F_HEAD, bold: true, align: "center" });
   addText(s, "проверка удаления по доказательствам", 0.82, 7.22, 3.0, 0.14, 7.2, C.muted);
-  addText(s, "РКНП · ISEF 2026", 11.35, 7.22, 1.08, 0.14, 7.2, C.muted, { bold: true, align: "right" });
   addText(s, "13", 12.2, 0.25, 0.45, 0.18, 8.5, C.muted, { bold: true, align: "right" });
   notes(s, "Закройте одной фразой: EraSeMap проверяет путь, а не обещание. Если спросят о следующем шаге, называйте independent hidden challenge и production pilot.");
 }

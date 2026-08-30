@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ruff: noqa: E501, RUF001, RUF034
+# ruff: noqa: E501, RUF001
 """Build synchronized Russian and English EraSeMap paper deliverables."""
 
 from __future__ import annotations
@@ -23,13 +23,16 @@ BUILD_DIR = PAPER_DIR / "build"
 
 BLUE = "173B57"
 MID_BLUE = "2E6388"
-DARK = "17202A"
-MUTED = "5D6D7E"
-PALE = "EEF4F8"
-GRID = "AAB7C4"
+DARK = "1F2933"
+MUTED = "64748B"
+PALE = "EAF1F7"
+GRID = "CBD5E1"
 WHITE = "FFFFFF"
-RED = "A93226"
-GREEN = "1E8449"
+RED = "B42318"
+GREEN = "16803C"
+SOFT_BLUE = "F5F8FB"
+SOFT_GREEN = "F0F9F3"
+PAPER = "FBFCFE"
 
 # narrative_proposal preset + named A4 academic-submission override.
 PAGE_WIDTH_DXA = 11907
@@ -39,144 +42,191 @@ TABLE_WIDTH_DXA = PAGE_WIDTH_DXA - 2 * MARGIN_DXA
 TABLE_INDENT_DXA = 120
 
 
-def font_path(bold: bool = False) -> str:
-    candidates = [
-        "/System/Library/Fonts/Supplemental/Arial Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "/Library/Fonts/Arial Bold.ttf" if bold else "/Library/Fonts/Arial.ttf",
-        "/System/Library/Fonts/Supplemental/DejaVuSans-Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/DejaVuSans.ttf",
-    ]
-    for candidate in candidates:
-        if Path(candidate).exists():
-            return candidate
-    raise FileNotFoundError("A Unicode TrueType font is required")
+PT_SANS = "/System/Library/Fonts/Supplemental/PTSans.ttc"
+PT_SERIF = "/System/Library/Fonts/Supplemental/PTSerif.ttc"
+
+
+def figure_font(size: int, *, bold: bool = False, italic: bool = False) -> ImageFont.FreeTypeFont:
+    """Use the same Cyrillic-safe type family in figures and the manuscript."""
+    if not Path(PT_SANS).exists():
+        raise FileNotFoundError("PT Sans is required for the paper figures")
+    index = 7 if bold else 1 if italic else 0
+    return ImageFont.truetype(PT_SANS, size, index=index)
+
+
+def center_text(
+    d: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    text: str,
+    font: ImageFont.FreeTypeFont,
+    fill: str,
+) -> None:
+    left, top, right, bottom = box
+    bounds = d.multiline_textbbox((0, 0), text, font=font, spacing=8, align="center")
+    d.multiline_text(
+        ((left + right - (bounds[2] - bounds[0])) / 2, (top + bottom - (bounds[3] - bounds[1])) / 2),
+        text,
+        font=font,
+        fill=fill,
+        spacing=8,
+        align="center",
+    )
 
 
 def make_system_figure(path: Path, ru: bool) -> None:
-    img = Image.new("RGB", (1800, 880), "white")
+    img = Image.new("RGB", (2200, 1050), f"#{PAPER}")
     d = ImageDraw.Draw(img)
-    title = ImageFont.truetype(font_path(True), 48)
-    label = ImageFont.truetype(font_path(True), 30)
-    small = ImageFont.truetype(font_path(), 25)
+    title = figure_font(54, bold=True)
+    subtitle = figure_font(29)
+    stage = figure_font(34, bold=True)
+    small = figure_font(25)
     d.text(
-        (90, 45),
+        (110, 72),
         "Один алгоритм EraSeMap: три шага"
         if ru
         else "One EraSeMap algorithm: three steps",
-        fill="#173B57",
+        fill=f"#{BLUE}",
         font=title,
     )
+    d.text(
+        (112, 145),
+        "Один verdict только после обязательных доказательств всех каналов."
+        if ru
+        else "One verdict only after evidence from every required channel.",
+        fill=f"#{MUTED}",
+        font=subtitle,
+    )
+    request = (110, 310, 390, 570)
+    d.rounded_rectangle(request, radius=28, fill="#FFFFFF", outline=f"#{GRID}", width=3)
+    center_text(d, request, "Запрос\nна удаление" if ru else "Deletion\nrequest", stage, f"#{DARK}")
 
-    boxes = [
-        (70, 160, 340, 350, "Запрос\nна удаление" if ru else "Deletion\nrequest"),
-        (410, 130, 760, 380, "1. FIND\n\nкопии · модель\nскрытые пути" if ru else "1. FIND\n\ncopies · model\nhidden paths"),
-        (830, 130, 1180, 380, "2. ERASE\n\nphysical deletion\n+ unlearning"),
-        (1250, 130, 1690, 380, "3. PROVE\n\ntemporal replay\n+ сертификат" if ru else "3. PROVE\n\ntemporal replay\n+ certificate"),
-        (600, 560, 1200, 800, "COMPLETE WITHIN ENVELOPE\nINCOMPLETE\nUNVERIFIED"),
+    stages = [
+        (480, "1", "FIND", "Копии · модель\nскрытые пути" if ru else "Copies · model\nhidden paths"),
+        (980, "2", "ERASE", "Физическое удаление\n+ machine unlearning" if ru else "Physical deletion\n+ machine unlearning"),
+        (1480, "3", "PROVE", "Temporal replay\n+ сертификат" if ru else "Temporal replay\n+ certificate"),
     ]
-    for i, (x1, y1, x2, y2, text) in enumerate(boxes):
-        fill = "#EEF4F8" if i < 4 else "#FFF6E6"
-        d.rounded_rectangle((x1, y1, x2, y2), radius=24, fill=fill, outline="#2E6388", width=4)
-        lines = text.split("\n")
-        heights = [d.textbbox((0, 0), line, font=label if j == 0 else small)[3] for j, line in enumerate(lines)]
-        total = sum(heights) + 8 * (len(lines) - 1)
-        y = (y1 + y2 - total) / 2
-        for j, line in enumerate(lines):
-            f = label if j == 0 else small
-            box = d.textbbox((0, 0), line, font=f)
-            d.text(((x1 + x2 - (box[2] - box[0])) / 2, y), line, fill="#17202A", font=f)
-            y += heights[j] + 8
+    for x, number, name, description in stages:
+        rect = (x, 270, x + 400, 610)
+        d.rounded_rectangle(rect, radius=30, fill="#FFFFFF", outline=f"#{MID_BLUE}", width=4)
+        d.ellipse((x + 32, 300, x + 102, 370), fill=f"#{BLUE}")
+        center_text(d, (x + 32, 300, x + 102, 370), number, figure_font(28, bold=True), "#FFFFFF")
+        d.text((x + 125, 314), name, font=stage, fill=f"#{BLUE}")
+        center_text(d, (x + 40, 400, x + 360, 560), description, small, f"#{DARK}")
+    for x in (410, 910, 1410):
+        d.line((x, 440, x + 65, 440), fill=f"#{MID_BLUE}", width=8)
+        d.polygon([(x + 80, 440), (x + 53, 423), (x + 53, 457)], fill=f"#{MID_BLUE}")
 
-    arrows = [
-        ((340, 255), (410, 255)),
-        ((760, 255), (830, 255)),
-        ((1180, 255), (1250, 255)),
-        ((1470, 380), (1200, 650)),
+    d.text((110, 700), "Fail-closed результат" if ru else "Fail-closed output", font=stage, fill=f"#{BLUE}")
+    outputs = [
+        (110, "COMPLETE\nWITHIN ENVELOPE", "#E8F4EC", GREEN),
+        (780, "INCOMPLETE", "#FFF6E6", "A06100"),
+        (1350, "UNVERIFIED", "#F1F5F9", MUTED),
     ]
-    for start, end in arrows:
-        d.line((start, end), fill="#2E6388", width=8)
-        ex, ey = end
-        sx, sy = start
-        if ex > sx:
-            d.polygon([(ex, ey), (ex - 22, ey - 14), (ex - 22, ey + 14)], fill="#2E6388")
-        elif ex < sx:
-            d.polygon([(ex, ey), (ex + 22, ey - 14), (ex + 22, ey + 14)], fill="#2E6388")
-        elif ey > sy:
-            d.polygon([(ex, ey), (ex - 14, ey - 22), (ex + 14, ey - 22)], fill="#2E6388")
-        else:
-            d.polygon([(ex, ey), (ex - 14, ey + 22), (ex + 14, ey + 22)], fill="#2E6388")
-    img.save(path, dpi=(180, 180))
+    for x, label, fill, outline in outputs:
+        rect = (x, 780, x + 470, 940)
+        d.rounded_rectangle(rect, radius=22, fill=fill, outline=f"#{outline}", width=3)
+        center_text(d, rect, label, figure_font(29, bold=True), f"#{outline}")
+    img.save(path, dpi=(220, 220))
 
 
 def make_result_figure(path: Path, ru: bool) -> None:
-    img = Image.new("RGB", (1800, 1510), "white")
+    img = Image.new("RGB", (2200, 1680), f"#{PAPER}")
     d = ImageDraw.Draw(img)
-    title = ImageFont.truetype(font_path(True), 46)
-    label = ImageFont.truetype(font_path(True), 28)
-    small = ImageFont.truetype(font_path(), 24)
-    d.text((80, 45), "Ключевые измеренные результаты" if ru else "Key measured results", fill="#173B57", font=title)
+    title = figure_font(54, bold=True)
+    panel_title = figure_font(30, bold=True)
+    label = figure_font(25)
+    value = figure_font(42, bold=True)
+    d.text((110, 70), "Результаты: сравнения с baseline" if ru else "Results: comparisons with baselines", fill=f"#{BLUE}", font=title)
+    d.text(
+        (112, 148),
+        "Каждая панель — отдельный зафиксированный эксперимент; объединённый общий score не заявляется."
+        if ru
+        else "Each panel is a separate frozen experiment; no pooled overall score is claimed.",
+        fill=f"#{MUTED}",
+        font=label,
+    )
+    panels = [(110, 245, 1050, 870), (1150, 245, 2090, 870), (110, 965, 1050, 1570), (1150, 965, 2090, 1570)]
+    for panel in panels:
+        d.rounded_rectangle(panel, radius=26, fill="#FFFFFF", outline=f"#{GRID}", width=3)
 
-    d.text((90, 150), "False-complete, mechanism stress (n=75)" if not ru else "Ложный COMPLETE, stress test (n=75)", fill="#17202A", font=label)
-    values = [("EraSeMap", 0, GREEN), ("Typed-node", 75, RED)]
-    for idx, (name, value, color) in enumerate(values):
-        y = 230 + idx * 120
-        d.text((100, y), name, fill="#17202A", font=small)
-        d.rectangle((340, y, 1540, y + 55), fill="#ECF0F1")
-        width = int(1200 * value / 75)
-        if width:
-            d.rectangle((340, y, 340 + width, y + 55), fill=f"#{color}")
-        d.text((1570, y + 8), f"{value}/75", fill=f"#{color}", font=label)
+    # A. False-complete rate: a direct safety comparison.
+    left, top, right, _ = panels[0]
+    d.text((left + 45, top + 40), "A. Безопасность verdict" if ru else "A. Verdict safety", font=panel_title, fill=f"#{DARK}")
+    d.text((left + 45, top + 88), "Ложный COMPLETE — ниже лучше (stress test, n=75)" if ru else "False COMPLETE — lower is better (stress test, n=75)", font=label, fill=f"#{MUTED}")
+    axis_x, axis_y, axis_width = left + 255, top + 235, 560
+    for tick in (0, 25, 50, 75, 100):
+        x = axis_x + int(axis_width * tick / 100)
+        d.line((x, axis_y - 12, x, axis_y + 300), fill="#E2E8F0", width=2)
+        d.text((x - 12, axis_y + 318), str(tick), fill=f"#{MUTED}", font=figure_font(20))
+    for idx, (name, percent, numerator, color) in enumerate((("EraSeMap", 0, "0/75", GREEN), ("Typed-node", 100, "75/75", RED))):
+        y = axis_y + idx * 135
+        d.text((left + 45, y + 12), name, fill=f"#{DARK}", font=label)
+        d.rounded_rectangle((axis_x, y, axis_x + axis_width, y + 58), radius=12, fill="#EEF2F6")
+        if percent:
+            d.rounded_rectangle((axis_x, y, axis_x + int(axis_width * percent / 100), y + 58), radius=12, fill=f"#{color}")
+        else:
+            d.ellipse((axis_x + 13, y + 13, axis_x + 45, y + 45), fill=f"#{color}")
+        d.text((axis_x + axis_width + 26, y + 9), numerator, fill=f"#{color}", font=panel_title)
+    d.text((axis_x, axis_y + 376), "% неточных положительных verdict", fill=f"#{MUTED}", font=figure_font(20))
 
-    d.line((80, 500, 1720, 500), fill="#AAB7C4", width=3)
-    d.text((90, 555), "Measured multi-service holdout (20/20 COMPLETE)" if not ru else "Measured multi-service holdout (20/20 COMPLETE)", fill="#17202A", font=label)
+    # B. Targeted ERASE cost compared with a full rebuild.
+    left, top, right, _ = panels[1]
+    d.text((left + 45, top + 40), "B. Реальное исполнение" if ru else "B. Real execution", font=panel_title, fill=f"#{DARK}")
+    d.text((left + 45, top + 88), "20/20 COMPLETE; targeted ERASE против rebuild-all" if ru else "20/20 COMPLETE; targeted ERASE vs rebuild-all", font=label, fill=f"#{MUTED}")
     metrics = [
-        ("17.64×", "speedup" if not ru else "ускорение"),
-        ("94.62%", "fewer written bytes" if not ru else "меньше записанных байтов"),
-        ("2.22e-15", "max ridge weight gap" if not ru else "макс. отклонение ridge weights"),
+        ("Время записи" if ru else "Write time", "5.67%", "100%", "17.64× быстрее" if ru else "17.64× faster"),
+        ("Записанные байты" if ru else "Written bytes", "5.38%", "100%", "94.62% меньше" if ru else "94.62% fewer"),
     ]
-    for idx, (value, caption) in enumerate(metrics):
-        x1 = 90 + idx * 560
-        d.rounded_rectangle((x1, 650, x1 + 500, 890), radius=22, fill="#EEF4F8", outline="#2E6388", width=3)
-        box = d.textbbox((0, 0), value, font=title)
-        d.text((x1 + (500 - box[2]) / 2, 700), value, fill="#173B57", font=title)
-        box2 = d.textbbox((0, 0), caption, font=small)
-        d.text((x1 + (500 - box2[2]) / 2, 800), caption, fill="#5D6D7E", font=small)
+    for idx, (metric, targeted, rebuild, note) in enumerate(metrics):
+        y = top + 210 + idx * 190
+        d.text((left + 48, y), metric, font=panel_title, fill=f"#{DARK}")
+        d.text((left + 48, y + 48), "EraSeMap", font=label, fill=f"#{MUTED}")
+        d.rounded_rectangle((left + 245, y + 48, left + 770, y + 94), radius=10, fill="#E7EEF5")
+        d.rounded_rectangle((left + 245, y + 48, left + 275, y + 94), radius=10, fill=f"#{BLUE}")
+        d.text((left + 790, y + 51), targeted, font=panel_title, fill=f"#{BLUE}")
+        d.text((left + 48, y + 112), "Rebuild-all", font=label, fill=f"#{MUTED}")
+        d.rounded_rectangle((left + 245, y + 112, left + 770, y + 158), radius=10, fill="#D9E1E8")
+        d.text((left + 790, y + 115), rebuild, font=panel_title, fill=f"#{DARK}")
+        d.text((left + 245, y + 166), note, font=label, fill=f"#{GREEN}")
 
-    d.line((80, 950, 1720, 950), fill="#AAB7C4", width=3)
-    d.text(
-        (90, 995),
-        "EraSeMap temporal stage: preregistered first run"
-        if not ru
-        else "Временной этап EraSeMap: первый preregistered запуск",
-        fill="#17202A",
-        font=label,
-    )
-    temporal_metrics = [
-        ("30/30", "risks detected" if not ru else "рисков обнаружено"),
-        ("10/10", "guarded safe cases" if not ru else "безопасных guarded случаев"),
-        ("0/30", "post-MSC recurrences" if not ru else "повторов после MSC"),
+    # C. Temporal replay: three independently reported checks.
+    left, top, right, bottom = panels[2]
+    d.text((left + 45, top + 40), "C. Проверка во времени" if ru else "C. Temporal replay", font=panel_title, fill=f"#{DARK}")
+    d.text((left + 45, top + 88), "Первый preregistered temporal run" if ru else "First preregistered temporal run", font=label, fill=f"#{MUTED}")
+    temporal = [
+        ("30/30", "рисков найдено" if ru else "risks detected"),
+        ("10/10", "безопасных случаев" if ru else "guarded safe cases"),
+        ("0/30", "повторов после controls" if ru else "recurrences after controls"),
     ]
-    for idx, (value, caption) in enumerate(temporal_metrics):
-        x1 = 90 + idx * 560
-        d.rounded_rectangle((x1, 1060, x1 + 500, 1225), radius=22, fill="#F2F8F3", outline="#1E8449", width=3)
-        box = d.textbbox((0, 0), value, font=title)
-        d.text((x1 + (500 - box[2]) / 2, 1080), value, fill="#1E8449", font=title)
-        box2 = d.textbbox((0, 0), caption, font=small)
-        d.text((x1 + (500 - box2[2]) / 2, 1165), caption, fill="#5D6D7E", font=small)
+    for idx, (number, caption) in enumerate(temporal):
+        y = top + 185 + idx * 118
+        d.ellipse((left + 55, y, left + 125, y + 70), fill=f"#{GREEN}")
+        center_text(d, (left + 55, y, left + 125, y + 70), "✓", figure_font(34, bold=True), "#FFFFFF")
+        d.text((left + 155, y - 2), number, font=value, fill=f"#{GREEN}")
+        d.text((left + 370, y + 13), caption, font=label, fill=f"#{DARK}")
+        if idx < 2:
+            d.line((left + 55, y + 95, right - 45, y + 95), fill="#E2E8F0", width=2)
+    d.rounded_rectangle((left + 45, bottom - 115, right - 45, bottom - 45), radius=14, fill=f"#{SOFT_GREEN}")
+    center_text(d, (left + 45, bottom - 115, right - 45, bottom - 45), "Снимок без controls: 0/30; PROVE обнаружил будущие риски" if ru else "Snapshot without controls: 0/30; PROVE found future risks", figure_font(23, bold=True), f"#{GREEN}")
 
-    d.line((80, 1270, 1720, 1270), fill="#AAB7C4", width=3)
-    d.text(
-        (90, 1310),
-        "EraSeMap active-discovery stage",
-        fill="#17202A",
-        font=label,
-    )
-    ghost_metrics = [("7", "active minimax"), ("13", "frozen random"), ("49", "exhaustive")]
-    for idx, (value, caption) in enumerate(ghost_metrics):
-        x1 = 90 + idx * 560
-        d.rounded_rectangle((x1, 1370, x1 + 500, 1485), radius=20, fill="#F3F0FA", outline="#6C4AA1", width=3)
-        d.text((x1 + 65, 1392), value, fill="#6C4AA1", font=title)
-        d.text((x1 + 170, 1410), caption, fill="#5D6D7E", font=small)
-    img.save(path, dpi=(180, 180))
+    # D. Probe-budget comparison on the bounded hidden graph.
+    left, top, right, bottom = panels[3]
+    d.text((left + 45, top + 40), "D. Активное обнаружение" if ru else "D. Active discovery", font=panel_title, fill=f"#{DARK}")
+    d.text((left + 45, top + 88), "Число проб — ниже лучше (один hidden graph)" if ru else "Probe count — lower is better (one hidden graph)", font=label, fill=f"#{MUTED}")
+    names = ["EraSeMap\nactive minimax", "Frozen\nrandom", "Exhaustive\nsearch"]
+    vals = [7, 13, 49]
+    colors = [BLUE, "94A3B8", "94A3B8"]
+    base_y, max_height = bottom - 105, 260
+    d.line((left + 75, base_y, right - 75, base_y), fill=f"#{GRID}", width=3)
+    for idx, (name, metric, color) in enumerate(zip(names, vals, colors, strict=True)):
+        x = left + 170 + idx * 260
+        height = int(max_height * metric / 49)
+        d.rounded_rectangle((x, base_y - height, x + 110, base_y), radius=12, fill=f"#{color}")
+        d.text((x + 24, base_y - height - 58), str(metric), font=value, fill=f"#{color}")
+        center_text(d, (x - 35, base_y + 22, x + 145, base_y + 98), name, figure_font(21, bold=(idx == 0)), f"#{DARK}")
+    d.rounded_rectangle((left + 45, top + 470, right - 45, top + 545), radius=14, fill=f"#{SOFT_BLUE}")
+    center_text(d, (left + 45, top + 470, right - 45, top + 545), "7 = active-minimax минимум; ничья с greedy, лучше random/exhaustive" if ru else "7 = active-minimax minimum; tied with greedy, better than random/exhaustive", figure_font(22, bold=True), f"#{BLUE}")
+    img.save(path, dpi=(220, 220))
 
 
 def set_cell_shading(cell, fill: str) -> None:
@@ -251,12 +301,36 @@ def set_repeat_table_header(row) -> None:
     tr_pr.append(tbl_header)
 
 
-def set_run_font(run, name: str = "Calibri", size: float | None = None, bold: bool | None = None,
+def prevent_row_split(row) -> None:
+    tr_pr = row._tr.get_or_add_trPr()
+    cant_split = OxmlElement("w:cantSplit")
+    tr_pr.append(cant_split)
+
+
+def set_table_borders(table, color: str = GRID, size: str = "6") -> None:
+    """Apply light, consistent borders instead of Word's heavy Table Grid preset."""
+    tbl_pr = table._tbl.tblPr
+    for child in list(tbl_pr):
+        if child.tag == qn("w:tblBorders"):
+            tbl_pr.remove(child)
+    borders = OxmlElement("w:tblBorders")
+    for edge in ("top", "left", "bottom", "right", "insideH", "insideV"):
+        border = OxmlElement(f"w:{edge}")
+        border.set(qn("w:val"), "single")
+        border.set(qn("w:sz"), size)
+        border.set(qn("w:space"), "0")
+        border.set(qn("w:color"), color)
+        borders.append(border)
+    tbl_pr.append(borders)
+
+
+def set_run_font(run, name: str = "PT Serif", size: float | None = None, bold: bool | None = None,
                  italic: bool | None = None, color: str | None = None) -> None:
     run.font.name = name
     run._element.get_or_add_rPr().rFonts.set(qn("w:ascii"), name)
     run._element.get_or_add_rPr().rFonts.set(qn("w:hAnsi"), name)
     run._element.get_or_add_rPr().rFonts.set(qn("w:eastAsia"), name)
+    run._element.get_or_add_rPr().rFonts.set(qn("w:cs"), name)
     if size is not None:
         run.font.size = Pt(size)
     if bold is not None:
@@ -301,7 +375,7 @@ def add_page_field(paragraph) -> None:
     fld_char2 = OxmlElement("w:fldChar")
     fld_char2.set(qn("w:fldCharType"), "end")
     run._r.extend([fld_char1, instr, fld_char2])
-    set_run_font(run, size=9, color=MUTED)
+    set_run_font(run, name="PT Sans", size=9, color=MUTED)
 
 
 def configure_document(doc: Document, ru: bool) -> None:
@@ -317,17 +391,18 @@ def configure_document(doc: Document, ru: bool) -> None:
     sec.different_first_page_header_footer = True
 
     normal = doc.styles["Normal"]
-    normal.font.name = "Calibri"
-    normal._element.rPr.rFonts.set(qn("w:ascii"), "Calibri")
-    normal._element.rPr.rFonts.set(qn("w:hAnsi"), "Calibri")
-    normal._element.rPr.rFonts.set(qn("w:eastAsia"), "Calibri")
-    normal.font.size = Pt(11)
+    normal.font.name = "PT Serif"
+    normal._element.rPr.rFonts.set(qn("w:ascii"), "PT Serif")
+    normal._element.rPr.rFonts.set(qn("w:hAnsi"), "PT Serif")
+    normal._element.rPr.rFonts.set(qn("w:eastAsia"), "PT Serif")
+    normal._element.rPr.rFonts.set(qn("w:cs"), "PT Serif")
+    normal.font.size = Pt(11.3)
     normal.font.color.rgb = RGBColor.from_string(DARK)
     pf = normal.paragraph_format
-    pf.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    pf.alignment = WD_ALIGN_PARAGRAPH.LEFT
     pf.space_before = Pt(0)
-    pf.space_after = Pt(8)
-    pf.line_spacing = 1.333
+    pf.space_after = Pt(7)
+    pf.line_spacing = 1.23
 
     heading_tokens = {
         "Heading 1": (16, BLUE, 18, 10),
@@ -336,10 +411,11 @@ def configure_document(doc: Document, ru: bool) -> None:
     }
     for name, (size, color, before, after) in heading_tokens.items():
         style = doc.styles[name]
-        style.font.name = "Calibri"
-        style._element.rPr.rFonts.set(qn("w:ascii"), "Calibri")
-        style._element.rPr.rFonts.set(qn("w:hAnsi"), "Calibri")
-        style._element.rPr.rFonts.set(qn("w:eastAsia"), "Calibri")
+        style.font.name = "PT Sans"
+        style._element.rPr.rFonts.set(qn("w:ascii"), "PT Sans")
+        style._element.rPr.rFonts.set(qn("w:hAnsi"), "PT Sans")
+        style._element.rPr.rFonts.set(qn("w:eastAsia"), "PT Sans")
+        style._element.rPr.rFonts.set(qn("w:cs"), "PT Sans")
         style.font.size = Pt(size)
         style.font.bold = True
         style.font.color.rgb = RGBColor.from_string(color)
@@ -349,8 +425,12 @@ def configure_document(doc: Document, ru: bool) -> None:
 
     for style_name in ("List Bullet", "List Number"):
         style = doc.styles[style_name]
-        style.font.name = "Calibri"
-        style.font.size = Pt(11)
+        style.font.name = "PT Serif"
+        style._element.rPr.rFonts.set(qn("w:ascii"), "PT Serif")
+        style._element.rPr.rFonts.set(qn("w:hAnsi"), "PT Serif")
+        style._element.rPr.rFonts.set(qn("w:eastAsia"), "PT Serif")
+        style._element.rPr.rFonts.set(qn("w:cs"), "PT Serif")
+        style.font.size = Pt(11.3)
         style.paragraph_format.left_indent = Inches(0.375)
         style.paragraph_format.first_line_indent = Inches(-0.194)
         style.paragraph_format.space_after = Pt(4)
@@ -367,22 +447,31 @@ def configure_document(doc: Document, ru: bool) -> None:
     formula.paragraph_format.space_after = Pt(8)
     formula.paragraph_format.keep_together = True
     caption = doc.styles["Figure Caption"]
-    caption.font.name = "Calibri"
-    caption.font.size = Pt(9.5)
+    caption.font.name = "PT Sans"
+    caption._element.rPr.rFonts.set(qn("w:ascii"), "PT Sans")
+    caption._element.rPr.rFonts.set(qn("w:hAnsi"), "PT Sans")
+    caption._element.rPr.rFonts.set(qn("w:eastAsia"), "PT Sans")
+    caption._element.rPr.rFonts.set(qn("w:cs"), "PT Sans")
+    caption.font.size = Pt(9.2)
     caption.font.italic = True
     caption.font.color.rgb = RGBColor.from_string(MUTED)
     caption.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     caption.paragraph_format.space_before = Pt(4)
     caption.paragraph_format.space_after = Pt(10)
     callout = doc.styles["Callout"]
-    callout.font.name = "Calibri"
-    callout.font.size = Pt(11)
+    callout.font.name = "PT Serif"
+    callout._element.rPr.rFonts.set(qn("w:ascii"), "PT Serif")
+    callout._element.rPr.rFonts.set(qn("w:hAnsi"), "PT Serif")
+    callout._element.rPr.rFonts.set(qn("w:eastAsia"), "PT Serif")
+    callout._element.rPr.rFonts.set(qn("w:cs"), "PT Serif")
+    callout.font.size = Pt(11.3)
     callout.font.italic = True
     callout.font.color.rgb = RGBColor.from_string(BLUE)
     callout.paragraph_format.left_indent = Inches(0.25)
     callout.paragraph_format.right_indent = Inches(0.25)
     callout.paragraph_format.space_before = Pt(6)
     callout.paragraph_format.space_after = Pt(10)
+    callout.paragraph_format.line_spacing = 1.18
     code = doc.styles["Code Block"]
     code.font.name = "Menlo"
     code.font.size = Pt(8.5)
@@ -390,8 +479,12 @@ def configure_document(doc: Document, ru: bool) -> None:
     code.paragraph_format.space_after = Pt(2)
     code.paragraph_format.line_spacing = 1.0
     numbered = doc.styles["Numbered Item"]
-    numbered.font.name = "Calibri"
-    numbered.font.size = Pt(11)
+    numbered.font.name = "PT Serif"
+    numbered._element.rPr.rFonts.set(qn("w:ascii"), "PT Serif")
+    numbered._element.rPr.rFonts.set(qn("w:hAnsi"), "PT Serif")
+    numbered._element.rPr.rFonts.set(qn("w:eastAsia"), "PT Serif")
+    numbered._element.rPr.rFonts.set(qn("w:cs"), "PT Serif")
+    numbered.font.size = Pt(11.3)
     numbered.paragraph_format.left_indent = Inches(0.375)
     numbered.paragraph_format.first_line_indent = Inches(-0.194)
     numbered.paragraph_format.space_after = Pt(4)
@@ -400,7 +493,7 @@ def configure_document(doc: Document, ru: bool) -> None:
     header = sec.header.paragraphs[0]
     header.text = "EraSeMap | " + ("Научная работа" if ru else "Research paper")
     header.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    set_run_font(header.runs[0], size=9, bold=True, color=MUTED)
+    set_run_font(header.runs[0], name="PT Sans", size=9, bold=True, color=MUTED)
     footer = sec.footer.paragraphs[0]
     add_page_field(footer)
 
@@ -412,20 +505,20 @@ def add_cover(doc: Document, title: str, ru: bool) -> None:
     kicker = doc.add_paragraph()
     kicker.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = kicker.add_run("НАУЧНО-ИССЛЕДОВАТЕЛЬСКАЯ РАБОТА" if ru else "SCIENTIFIC RESEARCH PAPER")
-    set_run_font(run, size=11, bold=True, color=MID_BLUE)
+    set_run_font(run, name="PT Sans", size=11, bold=True, color=MID_BLUE)
     kicker.paragraph_format.space_after = Pt(18)
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(14)
     r = p.add_run(title)
-    set_run_font(r, size=27, bold=True, color=BLUE)
+    set_run_font(r, name="PT Sans", size=27, bold=True, color=BLUE)
 
     sub = doc.add_paragraph()
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     sub.paragraph_format.space_after = Pt(52)
     r = sub.add_run("Proof-carrying biometric erasure audit" if not ru else "Доказательный аудит удаления биометрических данных")
-    set_run_font(r, size=14, italic=True, color=MUTED)
+    set_run_font(r, name="PT Sans", size=14, italic=True, color=MUTED)
 
     fields = [
         ("Автор" if ru else "Author", "____________________________"),
@@ -442,7 +535,7 @@ def add_cover(doc: Document, title: str, ru: bool) -> None:
             for paragraph in cell.paragraphs:
                 paragraph.paragraph_format.space_after = Pt(4)
                 for run in paragraph.runs:
-                    set_run_font(run, size=11, bold=(j == 0), color=MUTED if j == 0 else DARK)
+                    set_run_font(run, name="PT Sans", size=11, bold=(j == 0), color=MUTED if j == 0 else DARK)
             set_cell_shading(cell, WHITE)
     # Remove table borders on the cover.
     tbl_borders = OxmlElement("w:tblBorders")
@@ -461,7 +554,7 @@ def add_cover(doc: Document, title: str, ru: bool) -> None:
     year = doc.add_paragraph()
     year.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r = year.add_run("2026")
-    set_run_font(r, size=11, bold=True, color=MUTED)
+    set_run_font(r, name="PT Sans", size=11, bold=True, color=MUTED)
     doc.add_page_break()
 
 
@@ -494,20 +587,26 @@ def add_table(doc: Document, rows: list[list[str]]) -> None:
     table = doc.add_table(rows=len(rows), cols=cols)
     table.style = "Table Grid"
     set_table_geometry(table, table_widths(cols))
+    set_table_borders(table)
     for i, row in enumerate(rows):
         for j, text in enumerate(row):
             cell = table.cell(i, j)
             cell.text = ""
             p = cell.paragraphs[0]
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             p.paragraph_format.space_before = Pt(0)
-            p.paragraph_format.space_after = Pt(3)
-            p.paragraph_format.line_spacing = 1.08
+            p.paragraph_format.space_after = Pt(4)
+            p.paragraph_format.line_spacing = 1.1
             add_inline(p, text, default_bold=(i == 0))
             for run in p.runs:
-                set_run_font(run, size=9.2, bold=(i == 0 or run.bold))
+                set_run_font(run, name="PT Sans", size=9.3, bold=(i == 0 or run.bold))
             if i == 0:
                 set_cell_shading(cell, PALE)
+            elif i % 2 == 0:
+                set_cell_shading(cell, SOFT_BLUE)
     set_repeat_table_header(table.rows[0])
+    for row in table.rows:
+        prevent_row_split(row)
     doc.add_paragraph().paragraph_format.space_after = Pt(1)
 
 
@@ -571,7 +670,7 @@ def build_from_markdown(source: Path, output: Path, ru: bool) -> None:
         if line.startswith("## "):
             heading = line[3:]
             doc.add_paragraph(heading, style="Heading 1")
-            if (heading in ("2. Related Work and Novelty Boundary", "2. Предшествующие работы и граница новизны")) and not inserted_system:
+            if heading.startswith("2.") and not inserted_system:
                 add_figure(
                     doc,
                     system_fig,

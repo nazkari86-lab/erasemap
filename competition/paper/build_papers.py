@@ -178,7 +178,12 @@ def make_result_figure(path: Path, ru: bool) -> None:
         else:
             d.ellipse((axis_x + 13, y + 13, axis_x + 45, y + 45), fill=f"#{color}")
         d.text((axis_x + axis_width + 26, y + 9), numerator, fill=f"#{color}", font=panel_title)
-    d.text((axis_x, axis_y + 376), "% неточных положительных verdict", fill=f"#{MUTED}", font=figure_font(20))
+    d.text(
+        (axis_x, axis_y + 376),
+        "% false-positive verdicts" if not ru else "% неточных положительных verdict",
+        fill=f"#{MUTED}",
+        font=figure_font(20),
+    )
 
     # B. Targeted ERASE cost compared with a full rebuild.
     left, top, right, _ = panels[1]

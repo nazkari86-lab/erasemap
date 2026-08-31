@@ -10,12 +10,7 @@ const REPO = path.resolve(__dirname, "..");
 const OUT = path.join(REPO, "competition", "EraSeMap_RU.pptx");
 const ASSETS = path.join(REPO, "docs", "assets");
 const PRESENTATION_ASSETS = path.join(REPO, "competition", "assets");
-const BANK_CONCEPT = path.join(
-  REPO,
-  "competition",
-  "design",
-  "synthetic-bank-control-plane-concept-v1.png",
-);
+const SYSTEM_FLOW = path.join(REPO, "competition", "paper", "assets", "system-flow-ru.png");
 
 const pptx = new PptxGenJS();
 pptx.layout = "LAYOUT_WIDE";
@@ -300,21 +295,21 @@ function notes(slide, text) {
   notes(s, "Ключевая сила — безопасный отказ. COMPLETE выдаётся только при одновременном физическом, производном и временном закрытии.");
 }
 
-// 05 — synthetic bank walkthrough
+// 05 — bounded test walkthrough
 {
   const s = pptx.addSlide(); s.background = { color: C.bg };
-  title(s, "Пример", "Синтетический банк: карта данных клиента", 5, "512 вымышленных клиентов, реальные типы хранилищ и ни одной настоящей персональной записи.");
-  addText(s, "512", 0.86, 2.35, 2.7, 0.58, 38, C.teal, { fontFace: F_HEAD, bold: true });
-  addText(s, "синтетических клиентов", 0.88, 2.95, 2.85, 0.28, 15, C.ink, { bold: true });
-  addText(s, "3 072", 0.86, 3.55, 2.7, 0.58, 38, C.teal2, { fontFace: F_HEAD, bold: true });
-  addText(s, "зарегистрированных артефакта", 0.88, 4.15, 3.0, 0.28, 15, C.ink, { bold: true });
+  title(s, "Пример", "Как EraSeMap проверяет один путь удаления", 5, "Обезличенный тестовый сценарий: исходная запись удалена, но производный шаблон остаётся активным.");
+  addText(s, "FIND", 0.86, 2.35, 2.7, 0.5, 32, C.blue, { fontFace: F_HEAD, bold: true });
+  addText(s, "находит оставшийся путь", 0.88, 2.88, 2.85, 0.28, 14, C.ink, { bold: true });
+  addText(s, "ERASE", 0.86, 3.55, 2.7, 0.5, 32, C.teal, { fontFace: F_HEAD, bold: true });
+  addText(s, "закрывает источник возврата", 0.88, 4.08, 3.0, 0.28, 14, C.ink, { bold: true });
   rounded(s, 0.86, 4.84, 3.05, 1.18, C.coral2, C.coral, 0.22, 0);
   addText(s, "INCOMPLETE", 1.08, 5.04, 2.6, 0.34, 21, C.coral, { fontFace: F_HEAD, bold: true });
-  addText(s, "остались 2 скрытых копии\nи 1 непроверенный канал", 1.08, 5.45, 2.55, 0.42, 13, C.ink, { bold: true });
+  addText(s, "шаблон ещё активен —\nсертификат запрещён", 1.08, 5.45, 2.55, 0.42, 13, C.ink, { bold: true });
   rounded(s, 4.2, 2.18, 8.28, 4.35, C.paper, C.line, 0.22, 0);
-  s.addImage({ path: BANK_CONCEPT, ...imageSizingContain(BANK_CONCEPT, 4.34, 2.32, 8.0, 4.05), altText: "Экран синтетического банка с картой артефактов клиента и fail-closed verdict" });
-  addText(s, "Демонстрация показывает не красивый интерфейс, а проверяемый путь: найти → удалить → перепроверить.", 0.98, 6.55, 11.45, 0.28, 13.2, C.muted, { align: "center" });
-  notes(s, "Покажите экран банка: для выбранного клиента EraSeMap видит запись в PostgreSQL, учётную запись, кэш, вектор, резервную копию и модельный канал. Пока два объекта остаются скрытыми и один канал не проверен, система честно выдаёт INCOMPLETE.");
+  s.addImage({ path: SYSTEM_FLOW, ...imageSizingContain(SYSTEM_FLOW, 4.34, 2.32, 8.0, 4.05), altText: "Схема этапов FIND, ERASE и PROVE для обезличенного тестового сценария" });
+  addText(s, "Пока остаётся хотя бы один пригодный путь восстановления, результат остаётся INCOMPLETE.", 0.98, 6.55, 11.45, 0.28, 13.2, C.muted, { align: "center" });
+  notes(s, "Покажите обезличенный сценарий: основная запись уже удалена, но производный шаблон остаётся пригодным. FIND обнаруживает путь, ERASE выбирает действие, PROVE повторяет восстановление. До закрытия пути система честно выдаёт INCOMPLETE.");
 }
 
 // 06 — safety evidence

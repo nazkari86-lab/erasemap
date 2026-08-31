@@ -2,7 +2,7 @@
 
 **One algorithm that finds, erases, and proves deletion of personal data.**
 
-A successful database `DELETE` does not prove that a person's data disappeared. A usable copy may
+A successful local deletion response does not prove that a person's data disappeared. A usable copy may
 remain in a cache, replica, vector index, backup, export, derived biometric template, or trained
 model. It may also reappear later through restore, synchronization, or model deployment.
 
@@ -85,9 +85,9 @@ public stages above while composing:
 - fail-closed verdicts and certificate readiness;
 - machine-unlearning experiments with exact-retraining reference and safe fallback.
 
-The repository also includes a synthetic bank control plane with more than 500 synthetic clients,
-real PostgreSQL/Redis/Qdrant process experiments, stock-service transfer adapters, face-unlearning
-experiments, a Qwen2.5-1.5B adapter-unlearning study, formal Lean statements, and offline verifiers.
+The repository also includes real PostgreSQL/Redis/Qdrant process experiments, stock-service transfer
+adapters, face-unlearning experiments, a Qwen2.5-1.5B adapter-unlearning study, formal Lean statements,
+and offline verifiers.
 
 ## Strongest current evidence
 
@@ -123,15 +123,6 @@ open outputs/jury-showcase-v1/index.html
 The page begins with a deliberately incomplete example: the source row is deleted while a usable
 template remains. It then shows evidence for FIND, ERASE, and PROVE with the scope beside each
 number.
-
-For the synthetic bank control plane:
-
-```bash
-docker compose -f pilot/bank/docker-compose.yml up --build
-```
-
-See [`docs/SYNTHETIC_BANK_CONTROL_PLANE_RU.md`](docs/SYNTHETIC_BANK_CONTROL_PLANE_RU.md) for the
-current service map and demonstration route.
 
 ## Reproduce the checked release
 
